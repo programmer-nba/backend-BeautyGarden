@@ -13,6 +13,9 @@ app.use("/", require("./router"));
 app.use("/beautygraden/admin", require("./router/admin"));
 app.use("/beautygraden/member" ,require("./router/member/index"))
 
+//สร้างสาขา
+app.use("/beautygraden/branch" ,require("./router/branch/index"))
+
 
 const port = process.env.PORT || 4348;
 app.listen(port, console.log(`Listening on port ${port}`));
