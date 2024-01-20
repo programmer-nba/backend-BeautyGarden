@@ -49,7 +49,7 @@ exports.createMember = async (req, res) => {
           .send({ status: false, message: "username นี้มีคนใช้แล้ว" });
       }
       const salt = await bcrypt.genSalt(Number(process.env.SALT));
-      const hashPassword = await bcrypt.hash(req.body.admin_password, salt);
+      const hashPassword = await bcrypt.hash(req.body.member_password, salt);
       const members = new Member({
         profile_image: profile_image,
         member_username: req.body.member_username,

@@ -2,8 +2,9 @@ const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const authAdmin = require("../lib/auth.admin");
+const authMe = require("../lib/authMe")
 const { Admins, validateAdmin } = require("../models/admin/admin.models");
-const {Member , validatemember} =require("../models/member/member.models")
+const { Member, validatemember } = require("../models/member/member.models");
 require("dotenv").config();
 
 router.post("/login", async (req, res) => {
@@ -48,7 +49,7 @@ router.post("/login", async (req, res) => {
       .send({ status: false, message: "Internal Server Error" });
   }
 });
-router.get("/me", authAdmin, async (req, res) => {
+router.get("/me", authMe, async (req, res) => {
   try {
     const { decoded } = req;
     if (decoded && decoded.row === "admin") {
@@ -66,6 +67,24 @@ router.get("/me", authAdmin, async (req, res) => {
           level: admin.admin_position,
         });
       }
+    }
+    if (decoded && decoded.row === "member") {
+      const id = decoded._id;
+      const member = await Member.findOne({ _id: id });
+      console.log(member)
+      if (!member) {
+        return res
+          .status(400)
+          .send({ message: "มีบางอย่างผิดพลาด", status: false });
+      } else {
+        return res.status(200).send({
+          name: member.member_name,
+          username: member.member_username,
+          position: member.member_position,
+          level: member.member_role,
+        });
+      }
+      member;
     }
   } catch (error) {
     res.status(500).send({ message: "Internal Server Error", status: false });
