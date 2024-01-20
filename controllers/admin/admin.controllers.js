@@ -143,3 +143,40 @@ exports.deleteAdmins = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+exports.getAdminAll = async (req, res) => {
+  try {
+    const admin = await Admins.find();
+    if (!admin) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบผู้ใช้งานในระบบ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: admin });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.getAdminsById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const admin = await Admins.findById(id);
+    if (!admin) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบผู้ใช้งานในระบบ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: admin });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};

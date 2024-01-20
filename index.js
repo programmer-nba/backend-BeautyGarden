@@ -11,6 +11,7 @@ app.use(cors());
 
 app.use("/", require("./router"));
 app.use("/beautygraden/admin", require("./router/admin"));
+app.use("/beautygraden/member" ,require("./router/member/index"))
 
 
 const port = process.env.PORT || 4348;
