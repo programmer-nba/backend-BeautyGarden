@@ -12,6 +12,7 @@ const complexityOptions = {
   requirementCount: 2,
 };
 const MemberSchema = new mongoose.Schema({
+  member_number: { type: String, required: false },
   member_username: { type: String, required: false }, // ไอดีสมาชิก
   member_password: { type: String, required: false }, //รหัสผ่าน
   member_id: { type: String, required: false }, //รหัสสมาชิก
@@ -25,9 +26,9 @@ const MemberSchema = new mongoose.Schema({
   member_expirationdate: { type: String, required: false, default: "-" }, //วันหมดอายุ
   member_phone: { type: String, required: true },
   member_position: { type: String, required: true },
-  member_role: {type: String, required: false},
+  member_role: { type: String, required: false },
   member_note: { type: String, default: "ไม่มี" }, //หมายเหตุ
-  member_type: { type: String, required: false, default: "ไม่มี" },
+  member_type: { type: String, required: false, default: "ไม่มี" }, //รายปี  (รายเดือน ทำเสร็จจ่าย / จ่ายล่วงหน้า 3เดือน /6 เดือน)
 });
 MemberSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(

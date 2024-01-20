@@ -52,9 +52,11 @@ exports.create = async (req, res) => {
           .status(409)
           .send({ status: false, message: "username นี้มีคนใช้แล้ว" });
       }
+      const adminNumber = await adminnumber();
       const salt = await bcrypt.genSalt(Number(process.env.SALT));
       const hashPassword = await bcrypt.hash(req.body.admin_password, salt);
       const admin = new Admins({
+        adminnumber: adminNumber,
         profile_image: profile_image,
         admin_username: req.body.admin_username,
         card_number: req.body.card_number,
@@ -180,3 +182,25 @@ exports.getAdminsById = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+async function adminnumber(date) {
+  const admin = await Admins.find();
+  let admin_number = null;
+  if (admin.length !== 0) {
+    let data = "";
+    let num = 0;
+    let check = null;
+    do {
+      num = num + 1;
+      data = `ADMIN${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
+      check = await Admins.find({ adminnumber: data });
+      if (check.length === 0) {
+        admin_number =
+          `ADMIN${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
+      }
+    } while (check.length !== 0);
+  } else {
+    admin_number =
+      `ADMIN${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + "1";
+  }
+  return admin_number;
+}

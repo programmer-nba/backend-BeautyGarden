@@ -14,6 +14,7 @@ const complexityOptions = {
 };
 
 const AdminSchema = new mongoose.Schema({
+  adminnumber: { type: String, required: false }, //หรัสประจำตัว
   profile_image: { type: String, required: false }, //รูปภาพ
   card_number: { type: Number, required: true }, //บัตรประชาชน
   admin_name: { type: String, required: true }, //ชื่อ
