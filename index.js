@@ -13,6 +13,8 @@ app.use("/", require("./router"));
 
 //สร้างเเอดมิน
 app.use("/beautygraden/admin", require("./router/admin"));
+app.use("/beautygraden/quotation", require("./router/admin/quotation"))//ใบเสนอราคา
+app.use("/beautygraden/receiptNoVat", require("./router/admin/receipt.no.vat"))//ใบเสร็จแบบไม่มี vat
 
 //สร้างสมาชิก
 app.use("/beautygraden/member" ,require("./router/member/index"))
