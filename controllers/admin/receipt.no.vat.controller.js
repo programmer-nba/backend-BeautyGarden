@@ -57,7 +57,7 @@ exports.ReceiptNoVat = async (req, res) => {
     });
   }
 };
-exports.EditReceiptNoVat = async (req, res) => {
+exports.PrintReceiptNoVat = async (req, res) => {
   try {
     const { product_detail, ShippingCost, note } = req.body;
     let total = 0;
@@ -108,7 +108,114 @@ exports.EditReceiptNoVat = async (req, res) => {
     });
   }
 };
+exports.EditReceiptNoVat = async (req, res) => {
+  try {
+    const id = req.body.id || req.params.id;
+    const ShippingCost = req.body.ShippingCost;
+    const Receipt = await ReceiptNoVat.findById(id);
+    if (!Receipt) {
+      return res.status(404).send({
+        status: false,
+        message: "Receipt not found",
+      });
+    }
+    const total = Receipt.total;
+    const updatedReceiptData = await ReceiptNoVat.findOneAndUpdate(
+      { _id: id },
+      {
+        $set: {
+          ShippingCost: ShippingCost,
+          Shippingincluded: (total + ShippingCost).toFixed(2),
+          note: req.body.note,
+        },
+      },
+      { new: true }
+    );
+    return res.status(200).send({
+      status: true,
+      message: "แก้ไขข้อมูลสำเร็จ",
+      data: updatedReceiptData,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({
+      status: false,
+      message: "มีบางอย่างผิดพลาด",
+      error: err.message,
+    });
+  }
+};
+exports.getReceiptAll = async (req, res) => {
+  try {
+    const receipt = await ReceiptNoVat.find();
+    if (!receipt) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบข้อมูลใบเสร้จ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: receipt });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.getReceiptById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const admin = await ReceiptNoVat.findById(id);
+    if (!admin) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบข้อมูลใบเสร็จ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: admin });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.deleteReceipt = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const receipt = await ReceiptNoVat.findByIdAndDelete(id);
+    if (!receipt) {
+      return res.status(404).send({ status: false, message: "ไม่พบใบเสร็จ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ลบข้อมูลใบเสร็จสำเร็จ" });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.deleteAllReceipt = async (req, res) => {
+  try {
+    const result = await ReceiptNoVat.deleteMany({});
 
+    if (result.deletedCount > 0) {
+      return res
+        .status(200)
+        .send({ status: true, message: "ลบข้อมูลใบเสร็จทั้งหมด" });
+    } else {
+      return res.status(404).send({ status: false, message: "ไม่พบใบเสร็จ" });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
 async function invoiceNumber(date) {
   const order = await ReceiptNoVat.find();
   let invoice_number = null;
