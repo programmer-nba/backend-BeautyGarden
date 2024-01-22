@@ -10,8 +10,15 @@ app.use(cors());
 
 
 app.use("/", require("./router"));
+
+//สร้างเเอดมิน
 app.use("/beautygraden/admin", require("./router/admin"));
+
+//สร้างสมาชิก
 app.use("/beautygraden/member" ,require("./router/member/index"))
+
+//สร้างลูกค้า
+app.use("/beautygraden/customer" , require("./router/customer/index"))
 
 //สร้างสาขา
 app.use("/beautygraden/branch" ,require("./router/branch/index"))

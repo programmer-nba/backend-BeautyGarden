@@ -1,7 +1,10 @@
 const bcrypt = require("bcrypt");
 const dayjs = require("dayjs");
 const Joi = require("joi");
-const { Member, validatemember } = require("../../models/member/member.models");
+const {
+  Customer,
+  validateCustomer,
+} = require("../../models/customer/customer.models");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const storage = multer.diskStorage({
@@ -15,7 +18,7 @@ const {
   deleteFile,
 } = require("../../funtions/uploadfilecreate");
 
-exports.createMember = async (req, res) => {
+exports.create = async (req, res) => {
   try {
     let upload = multer({ storage: storage }).array("imgCollection", 20);
     upload(req, res, async function (err) {
@@ -34,39 +37,38 @@ exports.createMember = async (req, res) => {
         }
         profile_image = reqFiles[0];
       }
-      const { error } = validatemember(req.body);
+      const { error } = validateCustomer(req.body);
       if (error)
         return res
           .status(400)
           .send({ message: error.details[0].message, status: false });
 
-      const user = await Member.findOne({
-        member_username: req.body.member_username,
+      const user = await Customer.findOne({
+        customer_username: req.body.customer_username,
       });
       if (user) {
         return res
           .status(409)
           .send({ status: false, message: "username นี้มีคนใช้แล้ว" });
       }
-
-      const membernumber1 = await membernumber();
+      const CustomerNumber = await customernumber();
       const salt = await bcrypt.genSalt(Number(process.env.SALT));
-      const hashPassword = await bcrypt.hash(req.body.member_password, salt);
-      const members = new Member({
-        member_number :membernumber1,
+      const hashPassword = await bcrypt.hash(req.body.customer_password, salt);
+      const customers = new Customer({
+        customer_number: CustomerNumber,
         profile_image: profile_image,
-        member_username: req.body.member_username,
-        member_name: req.body.member_name,
-        member_lastname: req.body.member_lastname,
-        member_password: hashPassword,
-        member_position: req.body.member_position,
-        member_idcard: req.body.member_idcard,
-        member_birthday: req.body.member_birthday,
-        member_email: req.body.member_email,
-        member_phone: req.body.member_phone,
-        member_type: req.body.member_type,
+        customer_username: req.body.customer_username,
+        customer_idcard: req.body.customer_idcard,
+        customer_name: req.body.customer_name,
+        customer_lastname: req.body.customer_lastname,
+        customer_phone: req.body.customer_phone,
+        customer_password: hashPassword,
+        customer_position: req.body.customer_position,
+        customer_email: req.body.customer_email,
+        customer_type: req.body.customer_type,
+        customer_birthday: req.body.customer_birthday,
       });
-      const add = await members.save();
+      const add = await customers.save();
       return res.status(200).send({
         status: true,
         message: "คุณได้สร้างไอดี user เรียบร้อย",
@@ -77,7 +79,7 @@ exports.createMember = async (req, res) => {
     return res.status(500).send({ status: false, error: error.message });
   }
 };
-exports.EditMember = async (req, res) => {
+exports.EditCustomer = async (req, res) => {
   try {
     let upload = multer({ storage: storage }).array("imgCollection", 20);
     upload(req, res, async function (err) {
@@ -95,8 +97,8 @@ exports.EditMember = async (req, res) => {
         }
         profile_image = reqFiles[0];
       }
-      const user = await Member.findOne({
-        member_username: req.body.member_username,
+      const user = await Customer.findOne({
+        customer_username: req.body.customer_username,
       });
       if (user) {
         return res
@@ -105,18 +107,21 @@ exports.EditMember = async (req, res) => {
       }
       const id = req.params.id;
       if (!req.body.password) {
-        const member = await Member.findByIdAndUpdate(id, {
+        const member = await Customer.findByIdAndUpdate(id, {
           profile_image: profile_image,
         });
       }
-      if (!req.body.member_username) {
-        const admin_new = await Member.findByIdAndUpdate(id, req.body);
+      if (!req.body.customer_username) {
+        const admin_new = await Customer.findByIdAndUpdate(id, req.body);
       } else {
         const salt = await bcrypt.genSalt(Number(process.env.SALT));
-        const hashPassword = await bcrypt.hash(req.body.member_password, salt);
-        const new_passwordadmin = await Member.findByIdAndUpdate(id, {
+        const hashPassword = await bcrypt.hash(
+          req.body.customer_password,
+          salt
+        );
+        const new_passwordadmin = await Customer.findByIdAndUpdate(id, {
           ...req.body,
-          member_password: hashPassword,
+          customer_password: hashPassword,
         });
         console.log();
         return res
@@ -128,11 +133,11 @@ exports.EditMember = async (req, res) => {
     return res.status(500).send({ status: false, error: error.message });
   }
 };
-exports.deleteMember = async (req, res) => {
+exports.deleteCustomer = async (req, res) => {
   try {
     const id = req.params.id;
-    const member = await Member.findByIdAndDelete(id);
-    if (!member) {
+    const customer = await Customer.findByIdAndDelete(id);
+    if (!customer) {
       return res
         .status(404)
         .send({ status: false, message: "ไม่พบผู้ใช้งานในระบบ" });
@@ -147,17 +152,17 @@ exports.deleteMember = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
-exports.getMemberAll = async (req, res) => {
+exports.getCustomerAll = async (req, res) => {
   try {
-    const admin = await Member.find();
-    if (!admin) {
+    const customer = await Customer.find();
+    if (!customer) {
       return res
         .status(404)
         .send({ status: false, message: "ไม่พบผู้ใช้งานในระบบ" });
     } else {
       return res
         .status(200)
-        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: admin });
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: customer });
     }
   } catch (err) {
     return res
@@ -165,18 +170,18 @@ exports.getMemberAll = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
-exports.getMemberById = async (req, res) => {
+exports.getCustomerById = async (req, res) => {
   try {
     const id = req.params.id;
-    const admin = await Member.findById(id);
-    if (!admin) {
+    const customer = await Customer.findById(id);
+    if (!customer) {
       return res
         .status(404)
         .send({ status: false, message: "ไม่พบผู้ใช้งานในระบบ" });
     } else {
       return res
         .status(200)
-        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: admin });
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: customer });
     }
   } catch (err) {
     return res
@@ -185,25 +190,25 @@ exports.getMemberById = async (req, res) => {
   }
 };
 
-async function membernumber(date) {
-  const member = await Member.find();
-  let member_number = null;
-  if (member.length !== 0) {
+async function customernumber(date) {
+  const customer = await Customer.find();
+  let customer_number = null;
+  if (customer.length !== 0) {
     let data = "";
     let num = 0;
     let check = null;
     do {
       num = num + 1;
-      data = `BM${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
-      check = await Member.find({ member_number: data });
+      data = `CS${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
+      check = await Customer.find({ customer_number: data });
       if (check.length === 0) {
-        member_number =
-          `BM${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
+        customer_number =
+          `CS${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + num;
       }
     } while (check.length !== 0);
   } else {
-    member_number =
-      `BM${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + "1";
+    customer_number =
+      `CS${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + "1";
   }
-  return member_number;
+  return customer_number;
 }
