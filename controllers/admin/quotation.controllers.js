@@ -146,6 +146,25 @@ exports.deleteQuotation = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+exports.deleteAllQuotation = async (req, res) => {
+  try {
+    const result = await Quotation.deleteMany({});
+
+    if (result.deletedCount > 0) {
+      return res
+        .status(200)
+        .send({ status: true, message: "ลบข้อมูลใบเสนอราคาทั้งหมดสำเร็จ" });
+    } else {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบใบเสนอราคาที่ต้องการลบ" });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
 exports.getQuotationAll = async (req, res) => {
   try {
     const quotation = await Quotation.find();

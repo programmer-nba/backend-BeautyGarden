@@ -25,9 +25,10 @@ const ReceiptNoVatSchema = new mongoose.Schema({
       product_total: { type: Number, required: false }, //ราคารวมสินค้าต่อชิ้น
     },
   ],
-  total: { type: String, required: false }, //ราคารวมสินค้นทั้งหมด
-  discount: { type: String, required: false }, //ส่วนลด
-  ShippingCost: { type: String, required: false }, //ค่าจัดส่ง
+  total: { type: Number, required: false }, //ราคารวมสินค้นทั้งหมด
+  discount: { type: Number, required: false }, //ส่วนลด
+  ShippingCost: { type: Number, required: false }, //ค่าจัดส่ง
+  Shippingincluded: { type: Number, required: false }, //รวมค่าจัดส่ง
   note: { type: String, required: false }, //หมายเหตุ
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
   status: { type: Array, required: false },
