@@ -156,9 +156,7 @@ exports.deleteBranch = async (req, res) => {
         .status(404)
         .send({ status: false, message: "ไม่พบสาขาในระบบ" });
     } else {
-      return res
-        .status(200)
-        .send({ status: true, message: "ลบข้อมูลสำเร็จ" });
+      return res.status(200).send({ status: true, message: "ลบข้อมูลสำเร็จ" });
     }
   } catch (err) {
     return res
