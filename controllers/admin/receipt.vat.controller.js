@@ -30,6 +30,7 @@ exports.ReceiptVat = async (req, res) => {
   try {
     const id = req.body.id || req.body;
     const quotationData = await Quotation.findOne({ _id: id });
+    const invoice = await invoiceNumber();
     const { _id, timestamps, vat, ...receiptDataFields } =
       quotationData.toObject();
 
@@ -43,6 +44,7 @@ exports.ReceiptVat = async (req, res) => {
 
     const savedReceiptData = await ReceiptVat.create({
       ...receiptDataFields,
+      invoice: invoice,
       ShippingCost: ShippingCost,
       Shippingincluded: (total + ShippingCost).toFixed(2),
       vat: vatAmount.toFixed(2),
@@ -72,7 +74,7 @@ exports.PrintReceiptVat = async (req, res) => {
       const price = product.product_price;
       const amount = product.product_amount;
       const product_total = (price * amount).toFixed(2);
-      total += +product_total; 
+      total += +product_total;
       return {
         ...product,
         product_total,
@@ -81,13 +83,14 @@ exports.PrintReceiptVat = async (req, res) => {
     const vatRate = 0.07;
     const vatAmount = total * vatRate;
     const totalWithVat = total + vatAmount;
-
+    const invoice = await invoiceNumber();
     const Shippingincluded = (total + ShippingCost).toFixed(2);
     const quotation = await new ReceiptVat({
       ...req.body,
       customer_detail: {
         ...req.body.customer_detail,
       },
+      invoice:invoice,
       ShippingCost: ShippingCost,
       Shippingincluded: Shippingincluded,
       product_detail: updatedProductDetail,
@@ -226,3 +229,25 @@ exports.EditReceiptVat = async (req, res) => {
     });
   }
 };
+async function invoiceNumber(date) {
+  const order = await ReceiptVat.find();
+  let invoice_number = null;
+  if (order.length !== 0) {
+    let data = "";
+    let num = 0;
+    let check = null;
+    do {
+      num = num + 1;
+      data = `RECEIPT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+      check = await ReceiptVat.find({ invoice: data });
+      if (check.length === 0) {
+        invoice_number =
+          `RECEIPT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+      }
+    } while (check.length !== 0);
+  } else {
+    invoice_number =
+      `RECEIPT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+  }
+  return invoice_number;
+}

@@ -71,7 +71,6 @@ exports.PrintReceiptNoVat = async (req, res) => {
         product_total,
       };
     });
-
     const Shippingincluded = (total + ShippingCost).toFixed(2);
     const invoice = await invoiceNumber();
     const quotation = await new ReceiptNoVat({
