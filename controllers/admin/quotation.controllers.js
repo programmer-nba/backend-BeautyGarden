@@ -259,15 +259,15 @@ exports.getQuotationAll = async (req, res) => {
 exports.getQuotationById = async (req, res) => {
   try {
     const id = req.params.id;
-    const admin = await Admins.findById(id);
-    if (!admin) {
+    const quotation = await Quotation.findById(id);
+    if (!quotation) {
       return res
         .status(404)
-        .send({ status: false, message: "ไม่พบผู้ใช้งานในระบบ" });
+        .send({ status: false, message: "ไม่พบใบเสนอราคา" });
     } else {
       return res
         .status(200)
-        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: admin });
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: quotation });
     }
   } catch (err) {
     return res

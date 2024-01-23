@@ -9,4 +9,5 @@ router.put("/EditQuotation/:id", authAdmin, admin.EditQuotation)
 router.delete("/deleteQuotation/:id", authAdmin, admin.deleteQuotation)
 router.delete("/deleteAllQuotation", authAdmin, admin.deleteAllQuotation)
 router.get("/getQuotationAll",authAdmin,admin.getQuotationAll)
+router.get("/getQuotationBy/:id",authAdmin,admin.getQuotationById)
 module.exports = router;  
