@@ -72,12 +72,15 @@ exports.PrintReceiptVat = async (req, res) => {
       const price = product.product_price;
       const amount = product.product_amount;
       const product_total = (price * amount).toFixed(2);
-      total += +product_total; // ให้มี + หน้าตัวแปรเพื่อแปลงเป็นตัวเลข
+      total += +product_total; 
       return {
         ...product,
         product_total,
       };
     });
+    const vatRate = 0.07;
+    const vatAmount = total * vatRate;
+    const totalWithVat = total + vatAmount;
 
     const Shippingincluded = (total + ShippingCost).toFixed(2);
     const quotation = await new ReceiptVat({
@@ -89,6 +92,8 @@ exports.PrintReceiptVat = async (req, res) => {
       Shippingincluded: Shippingincluded,
       product_detail: updatedProductDetail,
       total: total.toFixed(2),
+      vat: vatAmount.toFixed(2),
+      totalvat: totalWithVat.toFixed(2),
       timestamps: dayjs(Date.now()).format(""),
     }).save();
 
@@ -110,6 +115,114 @@ exports.PrintReceiptVat = async (req, res) => {
       message: "มีบางอย่างผิดพลาด",
       status: false,
       error: error.message,
+    });
+  }
+};
+exports.deleteReceiptVat = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const receipt = await ReceiptVat.findByIdAndDelete(id);
+    if (!receipt) {
+      return res.status(404).send({ status: false, message: "ไม่พบใบเสร็จ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ลบข้อมูลใบเสร็จสำเร็จ" });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.deleteAllReceiptVat = async (req, res) => {
+  try {
+    const result = await ReceiptVat.deleteMany({});
+
+    if (result.deletedCount > 0) {
+      return res
+        .status(200)
+        .send({ status: true, message: "ลบข้อมูลใบเสร็จทั้งหมด" });
+    } else {
+      return res.status(404).send({ status: false, message: "ไม่พบใบเสร็จ" });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.getReceiptVatAll = async (req, res) => {
+  try {
+    const receipt = await ReceiptVat.find();
+    if (!receipt) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบข้อมูลใบเสร้จ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: receipt });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.getReceiptVatById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const admin = await ReceiptVat.findById(id);
+    if (!admin) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบข้อมูลใบเสร็จ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: admin });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.EditReceiptVat = async (req, res) => {
+  try {
+    const id = req.body.id || req.params.id;
+    const ShippingCost = req.body.ShippingCost;
+    const Receipt = await ReceiptVat.findById(id);
+    if (!Receipt) {
+      return res.status(404).send({
+        status: false,
+        message: "Receipt not found",
+      });
+    }
+    const total = Receipt.total;
+    const updatedReceiptData = await ReceiptVat.findOneAndUpdate(
+      { _id: id },
+      {
+        $set: {
+          ShippingCost: ShippingCost,
+          Shippingincluded: (total + ShippingCost).toFixed(2),
+          note: req.body.note,
+        },
+      },
+      { new: true }
+    );
+    return res.status(200).send({
+      status: true,
+      message: "แก้ไขข้อมูลสำเร็จ",
+      data: updatedReceiptData,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({
+      status: false,
+      message: "มีบางอย่างผิดพลาด",
+      error: err.message,
     });
   }
 };
