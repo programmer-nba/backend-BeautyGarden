@@ -30,6 +30,8 @@ const QuotationSchema = new mongoose.Schema({
   net: { type: Number, required: false }, //ราคารวมหลังหักส่วนลด
   vat:{ type: Number, required: false },//vat 7 %
   totalvat:{ type: Number, required: false },//ราคารวมหลัง vat
+  ShippingCost: { type: Number, required: false }, //ค่าจัดส่ง
+  Shippingincluded: { type: Number, required: false }, //รวมค่าจัดส่ง
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
   status: { type: Array, required: false },
   start_date: { type: String, required: false },//วันที่ออกบิล

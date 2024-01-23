@@ -30,6 +30,7 @@ exports.QuotationVat = async (req, res) => {
       product_detail,
       customer_detail,
       customer_number,
+      ShippingCost,
       discount,
       start_date,
       end_date,
@@ -50,6 +51,9 @@ exports.QuotationVat = async (req, res) => {
     const vatRate = 0.07;
     const vat = Number((net * vatRate).toFixed(2));
     const totalvat = Number((net + vat).toFixed(2));
+    const Shippingincluded = (
+      parseFloat(totalvat) - parseFloat(ShippingCost)
+    ).toFixed(2);
     let customer = {};
     if (customer_number) {
       customer = await Customer.findOne({ customer_number });
@@ -75,6 +79,8 @@ exports.QuotationVat = async (req, res) => {
       total: total.toFixed(2),
       vat: vat,
       net: net,
+      ShippingCost: ShippingCost,
+      Shippingincluded:Shippingincluded,
       totalvat: totalvat,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
@@ -101,7 +107,7 @@ exports.QuotationVat = async (req, res) => {
 };
 exports.Quotation = async (req, res) => {
   try {
-    const { product_detail, customer_detail, customer_number, discount } =
+    const { product_detail, customer_detail, customer_number, discount ,ShippingCost } =
       req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -116,6 +122,9 @@ exports.Quotation = async (req, res) => {
     });
     const discount_percent = discount ? (discount / total) * 100 : 0;
     const net = discount ? total - discount : total;
+    const Shippingincluded = (
+      parseFloat(net) - parseFloat(ShippingCost)
+    ).toFixed(2);
     let customer = {};
     if (customer_number) {
       customer = await Customer.findOne({ customer_number });
@@ -140,6 +149,8 @@ exports.Quotation = async (req, res) => {
       discount: discount.toFixed(2),
       discount_persen: discount_percent.toFixed(2),
       net: net,
+      ShippingCost:ShippingCost,
+      Shippingincluded:Shippingincluded,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
     if (quotation) {
@@ -181,7 +192,8 @@ exports.EditQuotation = async (req, res) => {
     const updatedQuotation = await Quotation.findOneAndUpdate(
       { "customer_detail.customer_number": customer_number },
       {
-        $set: { product_detail: updatedProductDetail, total: total.toFixed(2) },
+        $set: { product_detail: updatedProductDetail, total: total.toFixed(2) }
+        ,discount:req.body.discount
       },
       { new: true }
     );

@@ -215,43 +215,6 @@ exports.getReceiptVatById = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
-exports.EditReceiptVat = async (req, res) => {
-  try {
-    const id = req.body.id || req.params.id;
-    const ShippingCost = req.body.ShippingCost;
-    const Receipt = await ReceiptVat.findById(id);
-    if (!Receipt) {
-      return res.status(404).send({
-        status: false,
-        message: "Receipt not found",
-      });
-    }
-    const total = Receipt.total;
-    const updatedReceiptData = await ReceiptVat.findOneAndUpdate(
-      { _id: id },
-      {
-        $set: {
-          ShippingCost: ShippingCost,
-          Shippingincluded: (total + ShippingCost).toFixed(2),
-          note: req.body.note,
-        },
-      },
-      { new: true }
-    );
-    return res.status(200).send({
-      status: true,
-      message: "แก้ไขข้อมูลสำเร็จ",
-      data: updatedReceiptData,
-    });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).send({
-      status: false,
-      message: "มีบางอย่างผิดพลาด",
-      error: err.message,
-    });
-  }
-};
 async function invoiceNumber(date) {
   const order = await ReceiptVat.find();
   let invoice_number = null;

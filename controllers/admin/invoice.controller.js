@@ -210,6 +210,8 @@ exports.getInvoiceVatById = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+
+
 async function invoiceNumber(date) {
   const number = await Invoice.find();
   let invoice_number = null;
