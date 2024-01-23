@@ -72,7 +72,6 @@ exports.ReceiptVat = async (req, res) => {
     });
   }
 };
-
 exports.PrintReceiptVat = async (req, res) => {
   try {
     const { product_detail, ShippingCost, note, discount } = req.body;
