@@ -30,15 +30,17 @@ exports.ReceiptNoVat = async (req, res) => {
     const id = req.body.id || req.body;
     const quotationData = await Quotation.findOne({ _id: id });
     const invoice = await invoiceNumber();
-    const { _id, timestamps, ...receiptDataFields } = quotationData.toObject();
+    const { _id, timestamps, net, ...receiptDataFields } =
+      quotationData.toObject();
 
     const total = quotationData.total;
     const ShippingCost = req.body.ShippingCost;
 
     const savedReceiptData = await ReceiptNoVat.create({
       ...receiptDataFields,
+      net:net,
       ShippingCost: ShippingCost,
-      Shippingincluded: (total + ShippingCost).toFixed(2),
+      Shippingincluded: (net + ShippingCost).toFixed(2),
       note: req.body.note,
       invoice: invoice,
     });
@@ -59,7 +61,7 @@ exports.ReceiptNoVat = async (req, res) => {
 };
 exports.PrintReceiptNoVat = async (req, res) => {
   try {
-    const { product_detail, ShippingCost, note } = req.body;
+    const { product_detail, ShippingCost, note ,discount } = req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
       const price = product.product_price;
@@ -71,7 +73,8 @@ exports.PrintReceiptNoVat = async (req, res) => {
         product_total,
       };
     });
-    const Shippingincluded = (total + ShippingCost).toFixed(2);
+    const net = discount ? total - discount : total;
+    const Shippingincluded = (net + ShippingCost).toFixed(2);
     const invoice = await invoiceNumber();
     const quotation = await new ReceiptNoVat({
       ...req.body,
@@ -79,6 +82,7 @@ exports.PrintReceiptNoVat = async (req, res) => {
       customer_detail: {
         ...req.body.customer_detail,
       },
+      net:net,
       ShippingCost: ShippingCost,
       Shippingincluded: Shippingincluded,
       product_detail: updatedProductDetail,

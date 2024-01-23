@@ -40,7 +40,6 @@ exports.QuotationVat = async (req, res) => {
       };
     });
     const discount_percent = discount ? (discount / total) * 100 : 0;
-    console.log(discount_percent)
     const net = discount ? total - discount : total;
     const vatRate = 0.07;
     const vat = Number((net * vatRate).toFixed(2));
@@ -66,7 +65,7 @@ exports.QuotationVat = async (req, res) => {
       },
       product_detail: updatedProductDetail,
       discount: discount.toFixed(2),
-      discount_percent:discount_percent,
+      discount_persen: discount_percent.toFixed(2),
       total: total.toFixed(2),
       vat: vat,
       net: net,
@@ -109,6 +108,7 @@ exports.Quotation = async (req, res) => {
         product_total,
       };
     });
+    const discount_percent = discount ? (discount / total) * 100 : 0;
     const net = discount ? total - discount : total;
     let customer = {};
     if (customer_number) {
@@ -132,6 +132,7 @@ exports.Quotation = async (req, res) => {
       product_detail: updatedProductDetail,
       total: total.toFixed(2), // ให้ total มีทศนิยม 2 ตำแหน่ง
       discount: discount.toFixed(2),
+      discount_persen: discount_percent.toFixed(2),
       net: net,
       timestamps: dayjs(Date.now()).format(""),
     }).save();

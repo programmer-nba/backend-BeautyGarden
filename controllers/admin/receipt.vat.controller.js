@@ -31,24 +31,30 @@ exports.ReceiptVat = async (req, res) => {
     const id = req.body.id || req.body;
     const quotationData = await Quotation.findOne({ _id: id });
     const invoice = await invoiceNumber();
-    const { _id, timestamps, vat, ...receiptDataFields } =
+    const { _id, timestamps, vat, discount, ...receiptDataFields } =
       quotationData.toObject();
 
     const total = quotationData.total;
     const ShippingCost = req.body.ShippingCost;
-
+    const net = discount ? total - discount : total;
     const vatPercentage = 0.07; // VAT rate (7%)
-    const vatAmount = quotationData.total * vatPercentage;
-    const totalExcludingVAT = quotationData.total - vatAmount;
-    const totalIncludedShipping = totalExcludingVAT + ShippingCost;
+
+    const vatAmount = net * vatPercentage;
+    const totalExcludingVAT = net - vatAmount;
+    const totalvat = (vatAmount + net).toFixed(2);
+    const Shippingincluded = (
+      parseFloat(totalvat) + parseFloat(ShippingCost)
+    ).toFixed(2);
 
     const savedReceiptData = await ReceiptVat.create({
       ...receiptDataFields,
       invoice: invoice,
-      ShippingCost: ShippingCost,
-      Shippingincluded: (total + ShippingCost).toFixed(2),
+      discount: discount.toFixed(2),
+      net: net.toFixed(2),
       vat: vatAmount.toFixed(2),
-      totalvat: (total + vatAmount).toFixed(2),
+      totalvat: (vatAmount + net).toFixed(2),
+      ShippingCost: ShippingCost,
+      Shippingincluded: Shippingincluded,
       note: req.body.note,
     });
 
@@ -66,9 +72,10 @@ exports.ReceiptVat = async (req, res) => {
     });
   }
 };
+
 exports.PrintReceiptVat = async (req, res) => {
   try {
-    const { product_detail, ShippingCost, note } = req.body;
+    const { product_detail, ShippingCost, note, discount } = req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
       const price = product.product_price;
@@ -80,17 +87,20 @@ exports.PrintReceiptVat = async (req, res) => {
         product_total,
       };
     });
+    const net = discount ? total - discount : total;
     const vatRate = 0.07;
-    const vatAmount = total * vatRate;
-    const totalWithVat = total + vatAmount;
+    const vatAmount = net * vatRate;
+    const totalWithVat = net + vatAmount;
     const invoice = await invoiceNumber();
-    const Shippingincluded = (total + ShippingCost).toFixed(2);
+    const Shippingincluded = (totalWithVat + ShippingCost).toFixed(2);
     const quotation = await new ReceiptVat({
       ...req.body,
       customer_detail: {
         ...req.body.customer_detail,
       },
-      invoice:invoice,
+      invoice: invoice,
+      discount: discount.toFixed(2),
+      net: net,
       ShippingCost: ShippingCost,
       Shippingincluded: Shippingincluded,
       product_detail: updatedProductDetail,
@@ -251,4 +261,3 @@ async function invoiceNumber(date) {
   }
   return invoice_number;
 }
-
