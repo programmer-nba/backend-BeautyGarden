@@ -74,7 +74,7 @@ exports.PrintReceiptNoVat = async (req, res) => {
       };
     });
     const net = discount ? total - discount : total;
-    const Shippingincluded = (net + ShippingCost).toFixed(2);
+    const Shippingincluded = (total + ShippingCost).toFixed(2);
     const invoice = await invoiceNumber();
     const quotation = await new ReceiptNoVat({
       ...req.body,
@@ -228,16 +228,16 @@ async function invoiceNumber(date) {
     let check = null;
     do {
       num = num + 1;
-      data = `INVOICE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+      data = `RE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
       check = await ReceiptNoVat.find({ invoice: data });
       if (check.length === 0) {
         invoice_number =
-          `INVOICE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+          `RE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
       }
     } while (check.length !== 0);
   } else {
     invoice_number =
-      `INVOICE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+      `RE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
   }
   return invoice_number;
 }

@@ -247,16 +247,16 @@ async function invoiceNumber(date) {
     let check = null;
     do {
       num = num + 1;
-      data = `RECEIPT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+      data = `RE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
       check = await ReceiptVat.find({ invoice: data });
       if (check.length === 0) {
         invoice_number =
-          `RECEIPT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+          `RE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
       }
     } while (check.length !== 0);
   } else {
     invoice_number =
-      `RECEIPT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+      `RE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
   }
   return invoice_number;
 }

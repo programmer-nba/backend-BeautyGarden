@@ -27,6 +27,7 @@ const ReceiptVatSchema = new mongoose.Schema({
   ],
   total: { type: Number, required: false }, //ราคารวมสินค้นทั้งหมด
   discount: { type: Number, required: false }, //
+  discount_persen :{ type: Number, required: false }, //ส่วนลด เป็นเปอร์เซ็น
   net: { type: Number, required: false }, //ราคารวมหลังหักส่วนลด
   vat:{ type: Number, required: false }, //vat 7%
   totalvat: { type: Number, required: false },//ราคาหลังรวม vat

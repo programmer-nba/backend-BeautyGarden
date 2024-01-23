@@ -286,16 +286,16 @@ async function QuotationNumber(date) {
     let check = null;
     do {
       num = num + 1;
-      data = `${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+      data = `QT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
       check = await Quotation.find({ quotation: data });
       if (check.length === 0) {
         quotation_number =
-          `${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+          `QT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
       }
     } while (check.length !== 0);
   } else {
     quotation_number =
-      `${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+      `QT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
   }
   return quotation_number;
 }
