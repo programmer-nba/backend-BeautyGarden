@@ -251,3 +251,25 @@ async function invoiceNumber(date) {
   }
   return invoice_number;
 }
+async function invoiceNumber1(date) {
+  const order = await ReceiptVat.find();
+  let invoice_number = null;
+  if (order.length !== 0) {
+    let data = "";
+    let num = 0;
+    let check = null;
+    do {
+      num = num + 1;
+      data = `RECEIPT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+      check = await ReceiptVat.find({ invoice: data });
+      if (check.length === 0) {
+        invoice_number =
+          `RECEIPT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+      }
+    } while (check.length !== 0);
+  } else {
+    invoice_number =
+      `RECEIPT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+  }
+  return invoice_number;
+}
