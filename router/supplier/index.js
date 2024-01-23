@@ -6,6 +6,7 @@ const authAdmin = require("../../lib/auth.admin");
 
 
 router.post("/create",authAdmin, supplier.create);
+router.delete("/deleteSupplier/:id",authAdmin, supplier.deleteSuppliers)
 router.get("/getSupplierAll",authAdmin, supplier.getSupplierAll)
 router.get("/getSupplierBy/:id",authAdmin, supplier.getSupplierById)
 module.exports = router;

@@ -80,3 +80,22 @@ exports.getSupplierById = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+exports.deleteSuppliers = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const supplier = await Suppliers.findByIdAndDelete(id);
+    if (!supplier) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบข้อมูลซัพพายเออร์ในระบบ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ลบข้อซัพพายเออร์สำเร็จ" });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
