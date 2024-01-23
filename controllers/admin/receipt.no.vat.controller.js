@@ -38,11 +38,13 @@ exports.ReceiptNoVat = async (req, res) => {
 
     const savedReceiptData = await ReceiptNoVat.create({
       ...receiptDataFields,
-      net:net,
+      net: net,
       ShippingCost: ShippingCost,
       Shippingincluded: (net + ShippingCost).toFixed(2),
+      start_date:req.body.start_date,
+      end_date:req.body.end_date,
       note: req.body.note,
-      invoice: invoice,
+      receipt: invoice,
     });
 
     return res.status(200).send({
@@ -61,7 +63,7 @@ exports.ReceiptNoVat = async (req, res) => {
 };
 exports.PrintReceiptNoVat = async (req, res) => {
   try {
-    const { product_detail, ShippingCost, note ,discount } = req.body;
+    const { product_detail, ShippingCost, note, discount ,start_date , end_date } = req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
       const price = product.product_price;
@@ -78,11 +80,11 @@ exports.PrintReceiptNoVat = async (req, res) => {
     const invoice = await invoiceNumber();
     const quotation = await new ReceiptNoVat({
       ...req.body,
-      invoice: invoice,
+      receipt: invoice,
       customer_detail: {
         ...req.body.customer_detail,
       },
-      net:net,
+      net: net,
       ShippingCost: ShippingCost,
       Shippingincluded: Shippingincluded,
       product_detail: updatedProductDetail,
@@ -228,16 +230,16 @@ async function invoiceNumber(date) {
     let check = null;
     do {
       num = num + 1;
-      data = `RE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
-      check = await ReceiptNoVat.find({ invoice: data });
+      data = `REB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+      check = await ReceiptNoVat.find({ receipt: data });
       if (check.length === 0) {
         invoice_number =
-          `RE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+          `REB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
       }
     } while (check.length !== 0);
   } else {
     invoice_number =
-      `RE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+      `REB${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
   }
   return invoice_number;
 }

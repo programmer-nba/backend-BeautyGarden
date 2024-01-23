@@ -48,13 +48,15 @@ exports.ReceiptVat = async (req, res) => {
 
     const savedReceiptData = await ReceiptVat.create({
       ...receiptDataFields,
-      invoice: invoice,
+      receipt: invoice,
       discount: discount.toFixed(2),
       net: net.toFixed(2),
       vat: vatAmount.toFixed(2),
       totalvat: (vatAmount + net).toFixed(2),
       ShippingCost: ShippingCost,
       Shippingincluded: Shippingincluded,
+      start_date: req.body.start_date,
+      end_date: req.body.end_date,
       note: req.body.note,
     });
 
@@ -74,7 +76,14 @@ exports.ReceiptVat = async (req, res) => {
 };
 exports.PrintReceiptVat = async (req, res) => {
   try {
-    const { product_detail, ShippingCost, note, discount } = req.body;
+    const {
+      product_detail,
+      ShippingCost,
+      note,
+      discount,
+      start_date,
+      end_date,
+    } = req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
       const price = product.product_price;
@@ -97,7 +106,7 @@ exports.PrintReceiptVat = async (req, res) => {
       customer_detail: {
         ...req.body.customer_detail,
       },
-      invoice: invoice,
+      receipt: invoice,
       discount: discount.toFixed(2),
       net: net,
       ShippingCost: ShippingCost,
@@ -247,16 +256,16 @@ async function invoiceNumber(date) {
     let check = null;
     do {
       num = num + 1;
-      data = `RE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
-      check = await ReceiptVat.find({ invoice: data });
+      data = `REP${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+      check = await ReceiptVat.find({ receipt: data });
       if (check.length === 0) {
         invoice_number =
-          `RE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+          `REP${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
       }
     } while (check.length !== 0);
   } else {
     invoice_number =
-      `RE${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+      `REP${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
   }
   return invoice_number;
 }

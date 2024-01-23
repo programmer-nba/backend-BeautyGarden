@@ -26,8 +26,14 @@ const { admin } = require("googleapis/build/src/apis/admin");
 
 exports.QuotationVat = async (req, res) => {
   try {
-    const { product_detail, customer_detail, customer_number, discount } =
-      req.body;
+    const {
+      product_detail,
+      customer_detail,
+      customer_number,
+      discount,
+      start_date,
+      end_date,
+    } = req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
       const price = parseFloat(product.product_price);

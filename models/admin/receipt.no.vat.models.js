@@ -2,7 +2,7 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 
 const ReceiptNoVatSchema = new mongoose.Schema({
-  invoice: { type: String, required: false }, //เลขที่ใบเสร้จ
+  receipt: { type: String, required: false }, //เลขที่ใบเสร้จ
   receiptNoVat: { type: String, required: false }, //เลขที่ใบเสร้จ
   quotation: { type: String, required: false }, //เลขที่ใบเสนออราคา
   employee_name: { type: String, required: false }, //คนทำรายการ
@@ -34,6 +34,8 @@ const ReceiptNoVatSchema = new mongoose.Schema({
   note: { type: String, required: false }, //หมายเหตุ
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
   status: { type: Array, required: false },
+  start_date: { type: String, required: false },//วันที่ออกบิล
+  end_date: { type: String, required: false },//วันที่ต้องจ่ายเงิน
   timestamps: { type: Date, required: false, default: Date.now() },
 });
 
