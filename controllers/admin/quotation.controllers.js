@@ -39,6 +39,8 @@ exports.QuotationVat = async (req, res) => {
         product_total,
       };
     });
+    const discount_percent = discount ? (discount / total) * 100 : 0;
+    console.log(discount_percent)
     const net = discount ? total - discount : total;
     const vatRate = 0.07;
     const vat = Number((net * vatRate).toFixed(2));
@@ -64,6 +66,7 @@ exports.QuotationVat = async (req, res) => {
       },
       product_detail: updatedProductDetail,
       discount: discount.toFixed(2),
+      discount_percent:discount_percent,
       total: total.toFixed(2),
       vat: vat,
       net: net,

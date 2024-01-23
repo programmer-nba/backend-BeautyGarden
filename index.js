@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cors());
 
 
-app.use("/beautygraden", require("./router"));
+app.use("/", require("./router"));
 
 //สร้างเเอดมิน
 app.use("/beautygraden/admin", require("./router/admin"));
