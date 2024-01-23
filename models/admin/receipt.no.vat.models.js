@@ -3,8 +3,9 @@ const mongoose = require("mongoose");
 
 const ReceiptNoVatSchema = new mongoose.Schema({
   receipt: { type: String, required: false }, //เลขที่ใบเสร้จ
+  quotation: { type: String, required: false }, //เลขที่ใบเสนอราคา
+  invoice: { type: String, required: false }, //เลขที่ใบเเเจ้งหนี้
   receiptNoVat: { type: String, required: false }, //เลขที่ใบเสร้จ
-  quotation: { type: String, required: false }, //เลขที่ใบเสนออราคา
   employee_name: { type: String, required: false }, //คนทำรายการ
   customer_detail: {
     //ข้อมูลของลูกค้า

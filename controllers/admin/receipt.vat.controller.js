@@ -6,6 +6,7 @@ const { default: axios } = require("axios");
 const req = require("express/lib/request.js");
 const { Admins, validateAdmin } = require("../../models/admin/admin.models");
 const { Quotation } = require("../../models/admin/quotation.models");
+const { Invoice } = require("../../models/admin/invoice.models");
 const { ReceiptNoVat } = require("../../models/admin/receipt.no.vat.models");
 const { ReceiptVat } = require("../../models/admin/receipt.vat.models");
 const {
@@ -28,8 +29,8 @@ const { admin } = require("googleapis/build/src/apis/admin");
 
 exports.ReceiptVat = async (req, res) => {
   try {
-    const quotationID = req.body.quotationID || req.body;
-    const quotationData = await Quotation.findOne({ _id: quotationID });
+    const invoiceID = req.body.invoiceID || req.body;
+    const quotationData = await Invoice.findOne({ _id: invoiceID });
     const invoice = await invoiceNumber();
     const { _id, timestamps, vat, discount, ...receiptDataFields } =
       quotationData.toObject();
@@ -49,6 +50,8 @@ exports.ReceiptVat = async (req, res) => {
     const savedReceiptData = await ReceiptVat.create({
       ...receiptDataFields,
       receipt: invoice,
+      quotation: quotationData.quotation,
+      invoice: quotationData.invoice,
       discount: discount.toFixed(2),
       net: net.toFixed(2),
       vat: vatAmount.toFixed(2),
@@ -83,6 +86,8 @@ exports.PrintReceiptVat = async (req, res) => {
       discount,
       start_date,
       end_date,
+      quotation,
+      invoice,
     } = req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -99,14 +104,14 @@ exports.PrintReceiptVat = async (req, res) => {
     const vatRate = 0.07;
     const vatAmount = net * vatRate;
     const totalWithVat = net + vatAmount;
-    const invoice = await invoiceNumber();
+    const invoice1 = await invoiceNumber();
     const Shippingincluded = (totalWithVat + ShippingCost).toFixed(2);
-    const quotation = await new ReceiptVat({
+    const quotation1 = await new ReceiptVat({
       ...req.body,
       customer_detail: {
         ...req.body.customer_detail,
       },
-      receipt: invoice,
+      receipt: invoice1,
       discount: discount.toFixed(2),
       net: net,
       ShippingCost: ShippingCost,
@@ -118,15 +123,15 @@ exports.PrintReceiptVat = async (req, res) => {
       timestamps: dayjs(Date.now()).format(""),
     }).save();
 
-    if (quotation) {
+    if (quotation1) {
       return res.status(200).send({
         status: true,
-        message: "สร้างใบเสนอราคาสำเร็จ",
-        data: quotation,
+        message: "สร้างใบเสร็จรับเงินสำเร็จ",
+        data: quotation1,
       });
     } else {
       return res.status(500).send({
-        message: quotation,
+        message: quotation1,
         status: false,
       });
     }

@@ -1,12 +1,10 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
 
-const ReceiptVatSchema = new mongoose.Schema({
-  receipt: { type: String, required: false }, //เลขที่ใบเสร้จ
+const InvoiceSchema = new mongoose.Schema({
+  invoice: { type: String, required: false }, //เลขที่ใบเเจ้งหนี
   quotation: { type: String, required: false }, //เลขที่ใบเสนอราคา
-  invoice: { type: String, required: false }, //เลขที่ใบเเเจ้งหนี้
-  receiptNoVat: { type: String, required: false }, //เลขที่ใบเสร้จ
-  quotation: { type: String, required: false }, //เลขที่ใบเสนออราคา
+  tax_id: { type: Number, required: false },//เลขประจำตัวผู้เสียภาษี
   employee_name: { type: String, required: false }, //คนทำรายการ
   customer_detail: {
     //ข้อมูลของลูกค้า
@@ -28,14 +26,11 @@ const ReceiptVatSchema = new mongoose.Schema({
     },
   ],
   total: { type: Number, required: false }, //ราคารวมสินค้นทั้งหมด
-  discount: { type: Number, required: false }, //
+  discount: { type: Number, required: false }, //ส่วนลด เป็นบาท
   discount_persen :{ type: Number, required: false }, //ส่วนลด เป็นเปอร์เซ็น
   net: { type: Number, required: false }, //ราคารวมหลังหักส่วนลด
-  vat:{ type: Number, required: false }, //vat 7%
-  totalvat: { type: Number, required: false },//ราคาหลังรวม vat
-  ShippingCost: { type: Number, required: false }, //ค่าจัดส่ง
-  Shippingincluded: { type: Number, required: false }, //รวมคารวมจัดส่ง
-  note: { type: String, required: false }, //หมายเหตุ
+  vat:{ type: Number, required: false },//vat 7 %
+  totalvat:{ type: Number, required: false },//ราคารวมหลัง vat
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
   status: { type: Array, required: false },
   start_date: { type: String, required: false },//วันที่ออกบิล
@@ -43,7 +38,6 @@ const ReceiptVatSchema = new mongoose.Schema({
   timestamps: { type: Date, required: false, default: Date.now() },
 });
 
-const ReceiptVat = mongoose.model("ReceiptVat", ReceiptVatSchema);
+const Invoice = mongoose.model("Invoice", InvoiceSchema);
 
-module.exports = { ReceiptVat };
-
+module.exports = { Invoice };
