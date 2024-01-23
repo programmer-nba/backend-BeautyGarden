@@ -2,7 +2,8 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 
 const QuotationSchema = new mongoose.Schema({
-  quotation: { type: String, required: false }, //เลขที่ใบเวนอราคา
+  quotation: { type: String, required: false }, //เลขที่ใบเสนอราคา
+  tax_id: { type: Number, required: false },//เลขประจำตัวผู้เสียภาษี
   employee_name: { type: String, required: false }, //คนทำรายการ
   customer_detail: {
     //ข้อมูลของลูกค้า
@@ -24,7 +25,8 @@ const QuotationSchema = new mongoose.Schema({
     },
   ],
   total: { type: Number, required: false }, //ราคารวมสินค้นทั้งหมด
-  discount: { type: Number, required: false }, //ส่วนลด
+  discount: { type: Number, required: false }, //ส่วนลด เป็นบาท
+  discount_persen :{ type: Number, required: false }, //ส่วนลด เป็นเปอร์เซ็น
   net: { type: Number, required: false }, //ราคารวมหลังหักส่วนลด
   vat:{ type: Number, required: false },//vat 7 %
   totalvat:{ type: Number, required: false },//ราคารวมหลัง vat
