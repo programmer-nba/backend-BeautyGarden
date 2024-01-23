@@ -28,8 +28,8 @@ const { admin } = require("googleapis/build/src/apis/admin");
 
 exports.ReceiptVat = async (req, res) => {
   try {
-    const id = req.body.id || req.body;
-    const quotationData = await Quotation.findOne({ _id: id });
+    const quotationID = req.body.quotationID || req.body;
+    const quotationData = await Quotation.findOne({ _id: quotationID });
     const invoice = await invoiceNumber();
     const { _id, timestamps, vat, discount, ...receiptDataFields } =
       quotationData.toObject();
