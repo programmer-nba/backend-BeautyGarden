@@ -10,7 +10,11 @@ app.use(cors());
 
 const prefix = "/beautygraden";
 
-app.use(prefix + "/", require("./router"));
+app.use(prefix + "/", require("./router/index"));
+
+// app.use(prefix+'/log',require("./router/index"))
+
+
 
 //สร้างเเอดมิน
 app.use(prefix +"/admin", require("./router/admin"));
