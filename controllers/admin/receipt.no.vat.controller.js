@@ -27,8 +27,8 @@ const { admin } = require("googleapis/build/src/apis/admin");
 
 exports.ReceiptNoVat = async (req, res) => {
   try {
-    const id = req.body.id || req.body;
-    const quotationData = await Quotation.findOne({ _id: id });
+    const quotationID  = req.body.quotationID  || req.body;
+    const quotationData = await Quotation.findOne({ _id: quotationID  });
     const invoice = await invoiceNumber();
     const { _id, timestamps, net, ...receiptDataFields } =
       quotationData.toObject();
@@ -41,8 +41,8 @@ exports.ReceiptNoVat = async (req, res) => {
       net: net,
       ShippingCost: ShippingCost,
       Shippingincluded: (net + ShippingCost).toFixed(2),
-      start_date:req.body.start_date,
-      end_date:req.body.end_date,
+      start_date: req.body.start_date,
+      end_date: req.body.end_date,
       note: req.body.note,
       receipt: invoice,
     });
@@ -63,7 +63,14 @@ exports.ReceiptNoVat = async (req, res) => {
 };
 exports.PrintReceiptNoVat = async (req, res) => {
   try {
-    const { product_detail, ShippingCost, note, discount ,start_date , end_date } = req.body;
+    const {
+      product_detail,
+      ShippingCost,
+      note,
+      discount,
+      start_date,
+      end_date,
+    } = req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
       const price = product.product_price;
