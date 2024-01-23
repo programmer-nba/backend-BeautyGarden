@@ -24,9 +24,10 @@ const {
 } = require("../../funtions/uploadfilecreate");
 const { admin } = require("googleapis/build/src/apis/admin");
 
-exports.Quotation = async (req, res) => {
+exports.QuotationVat = async (req, res) => {
   try {
-    const { product_detail, customer_detail, customer_number } = req.body;
+    const { product_detail, customer_detail, customer_number, discount } =
+      req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
       const price = parseFloat(product.product_price);
@@ -38,7 +39,74 @@ exports.Quotation = async (req, res) => {
         product_total,
       };
     });
-
+    const net = discount ? total - discount : total;
+    const vatRate = 0.07;
+    const vat = Number((net * vatRate).toFixed(2));
+    const totalvat = Number((net + vat).toFixed(2));
+    let customer = {};
+    if (customer_number) {
+      customer = await Customer.findOne({ customer_number });
+    } else {
+      customer = req.body.customer_detail || {};
+    }
+    const quotation1 = await QuotationNumber();
+    const quotation = await new Quotation({
+      ...req.body,
+      quotation: quotation1, //เลขใยเสนอราคา
+      customer_detail: {
+        ...req.body.customer_detail,
+        customer_name: customer.customer_name,
+        customer_lastname: customer.customer_lastname,
+        customer_phone: customer.customer_phone,
+        customer_email: customer.customer_email,
+        customer_address: customer.customer_address,
+        customer_type: customer.customer_type,
+      },
+      product_detail: updatedProductDetail,
+      discount: discount.toFixed(2),
+      total: total.toFixed(2),
+      vat: vat,
+      net: net,
+      totalvat: totalvat,
+      timestamps: dayjs(Date.now()).format(""),
+    }).save();
+    if (quotation) {
+      return res.status(200).send({
+        status: true,
+        message: "สร้างใบเสนอราคาสำเร็จ",
+        data: quotation,
+      });
+    } else {
+      return res.status(500).send({
+        message: quotation,
+        status: false,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      message: "มีบางอย่างผิดพลาด222",
+      status: false,
+      error: error.message,
+    });
+  }
+};
+exports.Quotation = async (req, res) => {
+  try {
+    const { product_detail, customer_detail, customer_number, discount } =
+      req.body;
+    let total = 0;
+    const updatedProductDetail = product_detail.map((product) => {
+      const price = parseFloat(product.product_price);
+      const amount = parseInt(product.product_amount);
+      const product_total = (price * amount).toFixed(2);
+      total += parseFloat(product_total); // รวม product_total เข้า total
+      return {
+        ...product,
+        product_total,
+      };
+    });
+    const net = discount ? total - discount : total;
     let customer = {};
     if (customer_number) {
       customer = await Customer.findOne({ customer_number });
@@ -60,6 +128,8 @@ exports.Quotation = async (req, res) => {
       },
       product_detail: updatedProductDetail,
       total: total.toFixed(2), // ให้ total มีทศนิยม 2 ตำแหน่ง
+      discount: discount.toFixed(2),
+      net: net,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
     if (quotation) {
