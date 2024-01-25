@@ -23,6 +23,9 @@ app.use(prefix + "/receiptVat", require("./router/admin/receipt.vat")); //ใบ
 app.use(prefix + "/purchaseOrder" , require("./router/admin/purchase.order"))//ใบคำสั่งชื้อ
 app.use(prefix + "/DeliveryTaxInvoice" , require("./router/admin/Delivery.Tax.Invoice"))//ใบส่งสินค้า เเละ ใบ กำกับภาษี
 
+//สร้างพนักงานบํญชี
+app.use(prefix + "/accountant", require("./router/accountant/index"));
+
 //สร้างสมาชิก
 app.use(prefix + "/member", require("./router/member/index"));
 

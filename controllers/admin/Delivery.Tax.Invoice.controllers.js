@@ -147,6 +147,87 @@ exports.PrintOTVat = async (req, res) => {
     });
   }
 };
+exports.getDTAll = async (req, res) => {
+  try {
+    const DT = await DeliveryTaxInvoice.find();
+    if (!DT) {
+      return res.status(404).send({
+        status: false,
+        message: "ไม่พบข้อมูลรายการ ใบส่งของ เเละ รายการใบกำกับภาษี",
+      });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: DT });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.getDTById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const DT = await DeliveryTaxInvoice.findById(id);
+    if (!DT) {
+      return res.status(404).send({
+        status: false,
+        message: "ไม่พบข้อมูลรายการ ใบส่งของ เเละ รายการใบกำกับภาษี",
+      });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: DT });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.deleteDT = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const receipt = await DeliveryTaxInvoice.findByIdAndDelete(id);
+    if (!receipt) {
+      return res
+        .status(404)
+        .send({
+          status: false,
+          message: "ไม่พบข้อมูลรายการ ใบส่งของ เเละ รายการใบกำกับภาษี",
+        });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ลบข้อมูลใบเสร็จสำเร็จ" });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.deleteAllDT = async (req, res) => {
+  try {
+    const result = await DeliveryTaxInvoice.deleteMany({});
+
+    if (result.deletedCount > 0) {
+      return res
+        .status(200)
+        .send({
+          status: true,
+          message: "ลบข้อมูลใบเสร็จสำเร็จ",
+        });
+    } else {
+      return res.status(404).send({ status: false, message: "ไม่พบข้อมูลรายการ ใบส่งของ เเละ รายการใบกำกับภาษี" });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
 async function invoiceOTNumber(date) {
   const order = await DeliveryTaxInvoice.find();
   let invoice_number = null;

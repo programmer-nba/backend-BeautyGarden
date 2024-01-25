@@ -9,6 +9,10 @@ const {
   Customer,
   validateCustomer,
 } = require("../models/customer/customer.models");
+const {
+  Accountant,
+  validateAccountant,
+} = require("../models/accountant/accountant.models");
 require("dotenv").config();
 
 router.post("/login", async (req, res) => {
@@ -108,6 +112,23 @@ router.get("/me", authMe, async (req, res) => {
       }
       customer;
     }
+    if (decoded && decoded.row === "accountant") {
+      const id = decoded._id;
+      const accountant = await Accountant.findOne({ _id: id });
+      console.log(accountant);
+      if (!accountant) {
+        return res
+          .status(400)
+          .send({ message: "มีบางอย่างผิดพลาด", status: false });
+      } else {
+        return res.status(200).send({
+          name: accountant.accountant_name,
+          username: accountant.accountant_username,
+          position: accountant.accountant_position,
+        });
+      }
+      accountant;
+    }
   } catch (error) {
     res.status(500).send({ message: "Internal Server Error", status: false });
   }
@@ -155,7 +176,7 @@ const checkCustomer = async (req, res) => {
     const customer = await Customer.findOne({
       customer_username: req.body.username,
     });
-    // if (!manager) return await checkEmployee(req, res);
+    if (!customer) return await checkAccountant(req, res);
     // if (!manager) {
     //   // await checkEmployee(req, res);
     //   console.log("123456");
@@ -184,6 +205,47 @@ const checkCustomer = async (req, res) => {
         result: ResponesData,
         level: "manager",
         position: customer.customer_role,
+      });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ message: "Internal Server Error", status: false });
+  }
+};
+const checkAccountant = async (req, res) => {
+  try {
+    const accountant = await Accountant.findOne({
+      accountant_username: req.body.username,
+    });
+    // if (!manager) return await checkEmployee(req, res);
+    // if (!manager) {
+    //   // await checkEmployee(req, res);
+    //   console.log("123456");
+    // }
+    const validPasswordaccountant = await bcrypt.compare(
+      req.body.password,
+      accountant.accountant_password
+    );
+    if (!validPasswordaccountant) {
+      // รหัสไม่ตรง
+      return res.status(401).send({
+        message: "password is not find",
+        status: false,
+      });
+    } else {
+      const token = accountant.generateAuthToken();
+      const ResponesData = {
+        name: accountant.accountant_name,
+        tel: accountant.accountant_tel,
+        // shop_id: cashier.cashier_shop_id,
+      };
+      return res.status(200).send({
+        status: true,
+        token: token,
+        message: "เข้าสู่ระบบสำเร็จ",
+        result: ResponesData,
+        level: "accountant",
       });
     }
   } catch (error) {
