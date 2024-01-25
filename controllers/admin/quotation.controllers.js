@@ -52,7 +52,7 @@ exports.QuotationVat = async (req, res) => {
     const vat = Number((net * vatRate).toFixed(2));
     const totalvat = Number((net + vat).toFixed(2));
     const Shippingincluded = (
-      parseFloat(totalvat) - parseFloat(ShippingCost)
+      parseFloat(totalvat) + parseFloat(ShippingCost)
     ).toFixed(2);
     let customer = {};
     if (customer_number) {

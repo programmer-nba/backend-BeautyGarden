@@ -35,7 +35,7 @@ exports.ReceiptNoVat = async (req, res) => {
       quotationData.toObject();
 
     const total = quotationData.total;
-    const ShippingCost = req.body.ShippingCost;
+    const ShippingCost = req.body.ShippingCost || 0;
 
     const savedReceiptData = await ReceiptNoVat.create({
       ...receiptDataFields,
@@ -66,7 +66,7 @@ exports.PrintReceiptNoVat = async (req, res) => {
   try {
     const {
       product_detail,
-      ShippingCost,
+      ShippingCost = 0,
       note,
       discount,
       start_date,

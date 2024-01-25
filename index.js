@@ -20,6 +20,7 @@ app.use(prefix + "/quotation", require("./router/admin/quotation")); //ใบเ
 app.use(prefix + "/invoice", require("./router/admin/invoice")); //ใบเเจ้งหนี้
 app.use(prefix + "/receiptNoVat", require("./router/admin/receipt.no.vat")); //ใบเสร็จแบบไม่มี vat
 app.use(prefix + "/receiptVat", require("./router/admin/receipt.vat")); //ใบเสร็จแบบมี vat
+app.use(prefix + "/purchaseOrder" , require("./router/admin/purchase.order"))//ใบคำสั่งชื้อ
 
 //สร้างสมาชิก
 app.use(prefix + "/member", require("./router/member/index"));

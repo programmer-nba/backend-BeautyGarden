@@ -7,6 +7,7 @@ const req = require("express/lib/request.js");
 const { Admins, validateAdmin } = require("../../models/admin/admin.models");
 const { Invoice } = require("../../models/admin/invoice.models");
 const { Quotation } = require("../../models/admin/quotation.models");
+const { PurchaseOrder } = require("../../models/admin/purchase.order.models");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const storage = multer.diskStorage({
@@ -21,18 +22,22 @@ const {
 } = require("../../funtions/uploadfilecreate");
 const { admin } = require("googleapis/build/src/apis/admin");
 
-exports.ReceiptInvoiceVat = async (req, res) => {
+exports.purchaseOrder = async (req, res) => {
   try {
-    const quotationID = req.body.quotationID || req.body;
-    const quotationData = await Quotation.findOne({ _id: quotationID });
-    const invoice = await invoiceNumber();
+    const purchaseOrderID = req.body.purchaseOrderID || req.body;
+    const quotationData = await Quotation.findOne({ _id: purchaseOrderID });
+    const purchaseOrder = await purchaseOrderNumber();
     const { _id, timestamps, vat, discount, ...receiptDataFields } =
       quotationData.toObject();
-
+    console.log(quotationData);
     const total = quotationData.total;
+
+    // กำหนดค่า ShippingCost เป็น 0 หากไม่ได้ระบุค่า
     const ShippingCost = req.body.ShippingCost || 0;
+
     const net = discount ? total - discount : total;
     const vatPercentage = 0.07; // VAT rate (7%)
+
     const vatAmount = net * vatPercentage;
     const totalExcludingVAT = net - vatAmount;
     const totalvat = (vatAmount + net).toFixed(2);
@@ -40,9 +45,9 @@ exports.ReceiptInvoiceVat = async (req, res) => {
       parseFloat(totalvat) + parseFloat(ShippingCost)
     ).toFixed(2);
 
-    const savedReceiptData = await Invoice.create({
+    const savedReceiptData = await PurchaseOrder.create({
       ...receiptDataFields,
-      invoice: invoice,
+      purchase_order: purchaseOrder,
       quotation: quotationData.quotation,
       discount: discount.toFixed(2),
       net: net.toFixed(2),
@@ -69,11 +74,11 @@ exports.ReceiptInvoiceVat = async (req, res) => {
     });
   }
 };
-exports.PrintInviuceVat = async (req, res) => {
+exports.PrintPOVat = async (req, res) => {
   try {
     const {
       product_detail,
-      ShippingCost = 0,
+      ShippingCost,
       note,
       discount,
       start_date,
@@ -81,6 +86,10 @@ exports.PrintInviuceVat = async (req, res) => {
       quotation,
       invoice,
     } = req.body;
+
+    // เพิ่มเงื่อนไขกำหนดค่าเริ่มต้นของ ShippingCost เป็น 0 ถ้าไม่มีค่า
+    const FistShippingCost = ShippingCost || 0;
+
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
       const price = product.product_price;
@@ -92,22 +101,23 @@ exports.PrintInviuceVat = async (req, res) => {
         product_total,
       };
     });
-
     const net = discount ? total - discount : total;
     const vatRate = 0.07;
     const vatAmount = net * vatRate;
     const totalWithVat = net + vatAmount;
-    const invoice1 = await invoiceNumber();
-    const Shippingincluded = (totalWithVat + ShippingCost).toFixed(2);
-    const quotation1 = await new Invoice({
+    const purchaseOrder = await purchaseOrderNumber();
+
+    // ใช้ค่าที่ได้จากเงื่อนไข ShippingCost ที่ถูกปรับแล้ว
+    const Shippingincluded = (totalWithVat + FistShippingCost).toFixed(2);
+    const PurchaseOrder1 = await new PurchaseOrder({
       ...req.body,
       customer_detail: {
         ...req.body.customer_detail,
       },
-      receipt: invoice1,
+      purchase_order: purchaseOrder,
       discount: discount.toFixed(2),
       net: net,
-      ShippingCost: ShippingCost,
+      ShippingCost: FistShippingCost,
       Shippingincluded: Shippingincluded,
       product_detail: updatedProductDetail,
       total: total.toFixed(2),
@@ -116,15 +126,15 @@ exports.PrintInviuceVat = async (req, res) => {
       timestamps: dayjs(Date.now()).format(""),
     }).save();
 
-    if (quotation1) {
+    if (PurchaseOrder1) {
       return res.status(200).send({
         status: true,
-        message: "สร้างใบเสร็จรับเงินสำเร็จ",
-        data: quotation1,
+        message: "สร้างใบสั่งชื้อสินค้าสำเร็จ",
+        data: PurchaseOrder1,
       });
     } else {
       return res.status(500).send({
-        message: quotation1,
+        message: PurchaseOrder1,
         status: false,
       });
     }
@@ -137,98 +147,26 @@ exports.PrintInviuceVat = async (req, res) => {
     });
   }
 };
-exports.deleteInvoice = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const receipt = await Invoice.findByIdAndDelete(id);
-    if (!receipt) {
-      return res
-        .status(404)
-        .send({ status: false, message: "ไม่พบใบเเจ้งหนี้" });
-    } else {
-      return res
-        .status(200)
-        .send({ status: true, message: "ลบข้อมูลใบเสร็จสำเร็จ" });
-    }
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
-  }
-};
-exports.deleteAllInvoice = async (req, res) => {
-  try {
-    const result = await Invoice.deleteMany({});
 
-    if (result.deletedCount > 0) {
-      return res
-        .status(200)
-        .send({ status: true, message: "ลบข้อมูลใบเเจ้งหนี้สำเร็จ" });
-    } else {
-      return res.status(404).send({ status: false, message: "ไม่พบใบเสร็จ" });
-    }
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
-  }
-};
-exports.getInvoiceVatAll = async (req, res) => {
-  try {
-    const invoice = await Invoice.find();
-    if (!invoice) {
-      return res
-        .status(404)
-        .send({ status: false, message: "ไม่พบใบเเจ้งหนี้" });
-    } else {
-      return res
-        .status(200)
-        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: invoice });
-    }
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
-  }
-};
-exports.getInvoiceVatById = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const invoice = await Invoice.findById(id);
-    if (!invoice) {
-      return res
-        .status(404)
-        .send({ status: false, message: "ไม่พบใบเเจ้งหนี้" });
-    } else {
-      return res
-        .status(200)
-        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: invoice });
-    }
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
-  }
-};
-async function invoiceNumber(date) {
-  const number = await Invoice.find();
-  let invoice_number = null;
+async function purchaseOrderNumber(date) {
+  const number = await PurchaseOrder.find();
+  let purchaseOrder_number = null;
   if (number.length !== 0) {
     let data = "";
     let num = 0;
     let check = null;
     do {
       num = num + 1;
-      data = `IV${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
-      check = await Invoice.find({ invoice: data });
+      data = `PO${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+      check = await PurchaseOrder.find({ purchase_order: data });
       if (check.length === 0) {
-        invoice_number =
-          `IV${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+        purchaseOrder_number =
+          `PO${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
       }
     } while (check.length !== 0);
   } else {
-    invoice_number =
-      `IV${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+    purchaseOrder_number =
+      `PO${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
   }
-  return invoice_number;
+  return purchaseOrder_number;
 }

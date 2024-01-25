@@ -184,7 +184,26 @@ exports.getMemberById = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+exports.deleteAllMember = async (req, res) => {
+  try {
+    const result = await Member.deleteMany({});
 
+    if (result.deletedCount > 0) {
+      return res
+        .status(200)
+        .send({ status: true, message: "ลบข้อมูลเมมเบอร์ทั้งหมดสำเร็จ" });
+    } else {
+      return res.status(404).send({
+        status: false,
+        message: "ไม่พบเมมเมอร์ที่ต้องการลบ",
+      });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
 async function membernumber(date) {
   const member = await Member.find();
   let member_number = null;
