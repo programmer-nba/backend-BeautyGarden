@@ -36,7 +36,7 @@ exports.ReceiptVat = async (req, res) => {
       quotationData.toObject();
 
     const total = quotationData.total;
-    const ShippingCost = req.body.ShippingCost;
+    const ShippingCost = req.body.ShippingCost || 0;
     const net = discount ? total - discount : total;
     const vatPercentage = 0.07; // VAT rate (7%)
 
@@ -81,7 +81,7 @@ exports.PrintReceiptVat = async (req, res) => {
   try {
     const {
       product_detail,
-      ShippingCost,
+      ShippingCost = 0,
       note,
       discount,
       start_date,
