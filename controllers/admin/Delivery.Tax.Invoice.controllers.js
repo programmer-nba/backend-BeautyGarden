@@ -10,6 +10,9 @@ const { Invoice } = require("../../models/admin/invoice.models");
 const { ReceiptNoVat } = require("../../models/admin/receipt.no.vat.models");
 const { ReceiptVat } = require("../../models/admin/receipt.vat.models");
 const {
+  DeliveryTaxInvoice,
+} = require("../../models/admin/Delivery.Tax.Invoice.models");
+const {
   Customer,
   validateCustomer,
 } = require("../../models/customer/customer.models");
@@ -27,11 +30,11 @@ const {
 } = require("../../funtions/uploadfilecreate");
 const { admin } = require("googleapis/build/src/apis/admin");
 
-exports.ReceiptVat = async (req, res) => {
+exports.ReceiptDTVat = async (req, res) => {
   try {
     const invoiceID = req.body.invoiceID || req.body;
     const quotationData = await Invoice.findOne({ _id: invoiceID });
-    const invoice = await invoiceNumber();
+    const invoiceOT = await invoiceOTNumber();
     const { _id, timestamps, vat, discount, ...receiptDataFields } =
       quotationData.toObject();
 
@@ -47,9 +50,9 @@ exports.ReceiptVat = async (req, res) => {
       parseFloat(totalvat) + parseFloat(ShippingCost)
     ).toFixed(2);
 
-    const savedReceiptData = await ReceiptVat.create({
+    const savedReceiptData = await DeliveryTaxInvoice.create({
       ...receiptDataFields,
-      receipt: invoice,
+      delivery_tax_invoice: invoiceOT,
       quotation: quotationData.quotation,
       invoice: quotationData.invoice,
       discount: discount.toFixed(2),
@@ -77,7 +80,7 @@ exports.ReceiptVat = async (req, res) => {
     });
   }
 };
-exports.PrintReceiptVat = async (req, res) => {
+exports.PrintOTVat = async (req, res) => {
   try {
     const {
       product_detail,
@@ -104,14 +107,14 @@ exports.PrintReceiptVat = async (req, res) => {
     const vatRate = 0.07;
     const vatAmount = net * vatRate;
     const totalWithVat = net + vatAmount;
-    const invoice1 = await invoiceNumber();
+    const invoiceOT = await invoiceOTNumber();
     const Shippingincluded = (totalWithVat + ShippingCost).toFixed(2);
-    const quotation1 = await new ReceiptVat({
+    const quotation1 = await new DeliveryTaxInvoice({
       ...req.body,
       customer_detail: {
         ...req.body.customer_detail,
       },
-      receipt: invoice1,
+      delivery_tax_invoice: invoiceOT,
       discount: discount.toFixed(2),
       net: net,
       ShippingCost: ShippingCost,
@@ -144,79 +147,8 @@ exports.PrintReceiptVat = async (req, res) => {
     });
   }
 };
-exports.deleteReceiptVat = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const receipt = await ReceiptVat.findByIdAndDelete(id);
-    if (!receipt) {
-      return res.status(404).send({ status: false, message: "ไม่พบใบเสร็จ" });
-    } else {
-      return res
-        .status(200)
-        .send({ status: true, message: "ลบข้อมูลใบเสร็จสำเร็จ" });
-    }
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
-  }
-};
-exports.deleteAllReceiptVat = async (req, res) => {
-  try {
-    const result = await ReceiptVat.deleteMany({});
-
-    if (result.deletedCount > 0) {
-      return res
-        .status(200)
-        .send({ status: true, message: "ลบข้อมูลใบเสร็จทั้งหมด" });
-    } else {
-      return res.status(404).send({ status: false, message: "ไม่พบใบเสร็จ" });
-    }
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
-  }
-};
-exports.getReceiptVatAll = async (req, res) => {
-  try {
-    const receipt = await ReceiptVat.find();
-    if (!receipt) {
-      return res
-        .status(404)
-        .send({ status: false, message: "ไม่พบข้อมูลใบเสร้จ" });
-    } else {
-      return res
-        .status(200)
-        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: receipt });
-    }
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
-  }
-};
-exports.getReceiptVatById = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const admin = await ReceiptVat.findById(id);
-    if (!admin) {
-      return res
-        .status(404)
-        .send({ status: false, message: "ไม่พบข้อมูลใบเสร็จ" });
-    } else {
-      return res
-        .status(200)
-        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: admin });
-    }
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
-  }
-};
-async function invoiceNumber(date) {
-  const order = await ReceiptVat.find();
+async function invoiceOTNumber(date) {
+  const order = await DeliveryTaxInvoice.find();
   let invoice_number = null;
   if (order.length !== 0) {
     let data = "";
@@ -224,16 +156,16 @@ async function invoiceNumber(date) {
     let check = null;
     do {
       num = num + 1;
-      data = `REP${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
-      check = await ReceiptVat.find({ receipt: data });
+      data = `OT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+      check = await DeliveryTaxInvoice.find({ delivery_tax_invoice: data });
       if (check.length === 0) {
         invoice_number =
-          `REP${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
+          `OT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
       }
     } while (check.length !== 0);
   } else {
     invoice_number =
-      `REP${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
+      `OT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
   }
   return invoice_number;
 }

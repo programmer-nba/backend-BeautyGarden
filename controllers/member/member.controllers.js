@@ -53,7 +53,8 @@ exports.createMember = async (req, res) => {
       const salt = await bcrypt.genSalt(Number(process.env.SALT));
       const hashPassword = await bcrypt.hash(req.body.member_password, salt);
       const members = new Member({
-        member_number :membernumber1,
+        member_taxnumber:req.body.member_taxnumber,
+        member_number: membernumber1,
         profile_image: profile_image,
         member_username: req.body.member_username,
         member_name: req.body.member_name,
@@ -221,8 +222,7 @@ async function membernumber(date) {
       }
     } while (check.length !== 0);
   } else {
-    member_number =
-      `BM${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + "1";
+    member_number = `BM${dayjs(date).format("YYYYMMDD")}`.padEnd(10, "0") + "1";
   }
   return member_number;
 }

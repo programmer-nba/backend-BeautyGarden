@@ -4,10 +4,10 @@ const mongoose = require("mongoose");
 const InvoiceSchema = new mongoose.Schema({
   invoice: { type: String, required: false }, //เลขที่ใบเเจ้งหนี
   quotation: { type: String, required: false }, //เลขที่ใบเสนอราคา
-  tax_id: { type: Number, required: false },//เลขประจำตัวผู้เสียภาษี
   employee_name: { type: String, required: false }, //คนทำรายการ
   customer_detail: {
     //ข้อมูลของลูกค้า
+    tax_id: { type: String, required: false },//เลขประจำตัวผู้เสียภาษี
     customer_name: { type: String, required: false },
     customer_lastname: { type: String, required: false },
     customer_phone: { type: String, required: false },

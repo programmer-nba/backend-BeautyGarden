@@ -75,7 +75,7 @@ exports.PrintInviuceVat = async (req, res) => {
       product_detail,
       ShippingCost = 0,
       note,
-      discount,
+      discount = 0 ,
       start_date,
       end_date,
       quotation,

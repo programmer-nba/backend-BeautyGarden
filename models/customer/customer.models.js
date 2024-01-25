@@ -12,6 +12,7 @@ const complexityOptions = {
   requirementCount: 2,
 };
 const CustomerSchema = new mongoose.Schema({
+  customer_taxnumber: { type: String, required: false }, //เลขปรพจำตัวผู้เสียภาษี
   customer_number: { type: String, required: false },
   customer_username: { type: String, required: false }, // ไอดีสมาชิก
   customer_password: { type: String, required: false }, //รหัสผ่าน
@@ -43,6 +44,9 @@ const Customer = mongoose.model("customer", CustomerSchema);
 
 const validateCustomer = (data) => {
   const schema = Joi.object({
+    customer_taxnumber: Joi.string()
+      .required()
+      .label("กนุณากรอกเลขประจำตัวผู้เสียภาษี"),
     customer_username: Joi.string().required().label("กรุณากรอกไอดี"),
     customer_password: Joi.string().required().label("กรุณากรอกพาสเวิร์ด"),
     customer_name: Joi.string().required().label("กรุณากรอกชื่อ"),

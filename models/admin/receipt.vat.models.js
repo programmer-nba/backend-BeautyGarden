@@ -10,6 +10,7 @@ const ReceiptVatSchema = new mongoose.Schema({
   employee_name: { type: String, required: false }, //คนทำรายการ
   customer_detail: {
     //ข้อมูลของลูกค้า
+    tax_id: { type: String, required: false },//เลขประจำตัวผู้เสียภาษี
     customer_name: { type: String, required: false },
     customer_lastname: { type: String, required: false },
     customer_phone: { type: String, required: false },

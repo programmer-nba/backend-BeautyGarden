@@ -4,5 +4,8 @@ const authAdmin = require("../../lib/auth.admin");
 
 router.post("/Create", authAdmin, admin.purchaseOrder)//ใบสั่งชื้อแบบ BY ID
 router.post("/PrintPOVat", authAdmin, admin.PrintPOVat)//สร้างใบสั่งชื้อแบบกรอกมือ
-
+router.delete("/deletepurchaseOrder/:id", authAdmin, admin.deletepurchaseOrder)
+router.delete("/deleteAllPO", authAdmin, admin.deleteAllPO)
+router.get("/getPurchaserderAll", authAdmin, admin.getPurchaserderAll)
+router.get("/getPurchaserderBy/:id", authAdmin, admin.getPurchaserderById)
 module.exports = router;  

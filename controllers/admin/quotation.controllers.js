@@ -30,8 +30,8 @@ exports.QuotationVat = async (req, res) => {
       product_detail,
       customer_detail,
       customer_number,
-      ShippingCost,
-      discount,
+      ShippingCost = 0,
+      discount = 0,
       start_date,
       end_date,
     } = req.body;
@@ -60,12 +60,14 @@ exports.QuotationVat = async (req, res) => {
     } else {
       customer = req.body.customer_detail || {};
     }
+    console.log(customer);
     const quotation1 = await QuotationNumber();
     const quotation = await new Quotation({
       ...req.body,
       quotation: quotation1, //เลขใบเสนอราคา
       customer_detail: {
         ...req.body.customer_detail,
+        tax_id: customer.customer_taxnumber,
         customer_name: customer.customer_name,
         customer_lastname: customer.customer_lastname,
         customer_phone: customer.customer_phone,
@@ -111,8 +113,8 @@ exports.Quotation = async (req, res) => {
       product_detail,
       customer_detail,
       customer_number,
-      discount,
-      ShippingCost,
+      discount = 0,
+      ShippingCost = 0,
     } = req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -142,6 +144,7 @@ exports.Quotation = async (req, res) => {
       quotation: quotation1, //เลขใยเสนอราคา
       customer_detail: {
         ...req.body.customer_detail,
+        tax_id: customer.customer_taxnumber,
         customer_name: customer.customer_name,
         customer_lastname: customer.customer_lastname,
         customer_phone: customer.customer_phone,
