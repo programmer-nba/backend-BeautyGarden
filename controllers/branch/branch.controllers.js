@@ -127,7 +127,6 @@ exports.getBranchAll = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
-
 exports.getBranchById = async (req, res) => {
   try {
     const id = req.params.id;
@@ -157,6 +156,25 @@ exports.deleteBranch = async (req, res) => {
         .send({ status: false, message: "ไม่พบสาขาในระบบ" });
     } else {
       return res.status(200).send({ status: true, message: "ลบข้อมูลสำเร็จ" });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.deleteAllBranch = async (req, res) => {
+  try {
+    const result = await Branch.deleteMany({});
+
+    if (result.deletedCount > 0) {
+      return res
+        .status(200)
+        .send({ status: true, message: "ลบข้อมูลสาขาทั้งหมดสำเร็จ" });
+    } else {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบข้อมุลสาขา" });
     }
   } catch (err) {
     return res

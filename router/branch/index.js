@@ -9,5 +9,6 @@ router.put("/EditBranch/:id",authAdmin, branch.EditBranch)
 router.get("/getBranchAll",authAdmin, branch.getBranchAll)
 router.get("/getBranchBy/:id",authAdmin, branch.getBranchById)
 router.delete("/deleteBranch/:id",authAdmin, branch.deleteBranch)
+router.delete("/deleteAllBranch",authAdmin, branch.deleteAllBranch)
 
 module.exports = router;

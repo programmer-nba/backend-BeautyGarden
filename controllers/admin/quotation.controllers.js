@@ -63,7 +63,7 @@ exports.QuotationVat = async (req, res) => {
     const quotation1 = await QuotationNumber();
     const quotation = await new Quotation({
       ...req.body,
-      quotation: quotation1, //เลขใยเสนอราคา
+      quotation: quotation1, //เลขใบเสนอราคา
       customer_detail: {
         ...req.body.customer_detail,
         customer_name: customer.customer_name,
@@ -80,7 +80,7 @@ exports.QuotationVat = async (req, res) => {
       vat: vat,
       net: net,
       ShippingCost: ShippingCost,
-      Shippingincluded:Shippingincluded,
+      Shippingincluded: Shippingincluded,
       totalvat: totalvat,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
@@ -107,8 +107,13 @@ exports.QuotationVat = async (req, res) => {
 };
 exports.Quotation = async (req, res) => {
   try {
-    const { product_detail, customer_detail, customer_number, discount ,ShippingCost } =
-      req.body;
+    const {
+      product_detail,
+      customer_detail,
+      customer_number,
+      discount,
+      ShippingCost,
+    } = req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
       const price = parseFloat(product.product_price);
@@ -149,8 +154,8 @@ exports.Quotation = async (req, res) => {
       discount: discount.toFixed(2),
       discount_persen: discount_percent.toFixed(2),
       net: net,
-      ShippingCost:ShippingCost,
-      Shippingincluded:Shippingincluded,
+      ShippingCost: ShippingCost,
+      Shippingincluded: Shippingincluded,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
     if (quotation) {
@@ -192,8 +197,8 @@ exports.EditQuotation = async (req, res) => {
     const updatedQuotation = await Quotation.findOneAndUpdate(
       { "customer_detail.customer_number": customer_number },
       {
-        $set: { product_detail: updatedProductDetail, total: total.toFixed(2) }
-        ,discount:req.body.discount
+        $set: { product_detail: updatedProductDetail, total: total.toFixed(2) },
+        discount: req.body.discount,
       },
       { new: true }
     );
