@@ -32,6 +32,9 @@ app.use(prefix + "/member", require("./router/member/index"));
 //สร้างลูกค้า
 app.use(prefix + "/customer", require("./router/customer/index"));
 
+//สร้างข้อมูลบริษัท
+app.use(prefix + "/Company", require("./router/Company/index"));
+
 //สร้างสาขา
 app.use(prefix + "/branch", require("./router/branch/index"));
 

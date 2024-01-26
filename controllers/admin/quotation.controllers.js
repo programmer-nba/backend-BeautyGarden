@@ -7,6 +7,7 @@ const req = require("express/lib/request.js");
 const { Admins, validateAdmin } = require("../../models/admin/admin.models");
 const { Quotation } = require("../../models/admin/quotation.models");
 const { Branch } = require("../../models/ฺฺbranch/ฺฺbranch.models");
+const {Company} = require("../../models/company/company.models")
 const {
   Customer,
   validateCustomer,
@@ -58,7 +59,7 @@ exports.QuotationVat = async (req, res) => {
 
     let customer = {};
     const branchId = req.body.branchId;
-    const branch = branchId ? await Branch.findById(branchId) : null;
+    const branch = branchId ? await Company.findById(branchId) : null;
 
     if (customer_number) {
       customer = await Customer.findOne({ customer_number });
@@ -146,7 +147,7 @@ exports.Quotation = async (req, res) => {
     ).toFixed(2);
     let customer = {};
     const branchId = req.body.branchId;
-    const branch = branchId ? await Branch.findById(branchId) : null;
+    const branch = branchId ? await Company.findById(branchId) : null;
 
     if (customer_number) {
       customer = await Customer.findOne({ customer_number });
@@ -158,13 +159,13 @@ exports.Quotation = async (req, res) => {
       ...req.body,
       quotation: quotation1, //เลขใยเสนอราคา
       customer_branch: branch
-      ? {
-          Branch_company_name: branch.Branch_company_name,
-          Branch_company_number: branch.Branch_company_number,
-          Branch_company_address: branch.Branch_company_address,
-          Branch_tel: branch.Branch_tel,
-        }
-      : null,
+        ? {
+            Branch_company_name: branch.Branch_company_name,
+            Branch_company_number: branch.Branch_company_number,
+            Branch_company_address: branch.Branch_company_address,
+            Branch_tel: branch.Branch_tel,
+          }
+        : null,
       customer_detail: {
         ...req.body.customer_detail,
         tax_id: customer.customer_taxnumber,
