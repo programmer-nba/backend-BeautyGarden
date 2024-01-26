@@ -8,4 +8,5 @@ router.delete("/deleteReceiptVat/:id", authAdmin, admin.deleteReceiptVat)
 router.delete("/deleteAllReceiptVat", authAdmin, admin.deleteAllReceiptVat)
 router.get("/getReceiptVatAll", authAdmin, admin.getReceiptVatAll)
 router.get("/getReceiptVatBy/:id", authAdmin, admin.getReceiptVatById)
+router.get("/getReceiptVatByREB/:id", authAdmin, admin.getReceiptVatByREB)
 module.exports = router;

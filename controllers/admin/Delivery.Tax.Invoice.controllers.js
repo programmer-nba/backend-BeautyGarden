@@ -186,17 +186,35 @@ exports.getDTById = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+exports.getDTByIdDT = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const DT = await DeliveryTaxInvoice.findOne({ delivery_tax_invoice: id });
+    if (!DT) {
+      return res.status(404).send({
+        status: false,
+        message: "ไม่พบข้อมูลรายการ ใบส่งของ เเละ รายการใบกำกับภาษี",
+      });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: DT });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
 exports.deleteDT = async (req, res) => {
   try {
     const id = req.params.id;
     const receipt = await DeliveryTaxInvoice.findByIdAndDelete(id);
     if (!receipt) {
-      return res
-        .status(404)
-        .send({
-          status: false,
-          message: "ไม่พบข้อมูลรายการ ใบส่งของ เเละ รายการใบกำกับภาษี",
-        });
+      return res.status(404).send({
+        status: false,
+        message: "ไม่พบข้อมูลรายการ ใบส่งของ เเละ รายการใบกำกับภาษี",
+      });
     } else {
       return res
         .status(200)
@@ -213,19 +231,59 @@ exports.deleteAllDT = async (req, res) => {
     const result = await DeliveryTaxInvoice.deleteMany({});
 
     if (result.deletedCount > 0) {
-      return res
-        .status(200)
-        .send({
-          status: true,
-          message: "ลบข้อมูลใบเสร็จสำเร็จ",
-        });
+      return res.status(200).send({
+        status: true,
+        message: "ลบข้อมูลใบเสร็จสำเร็จ",
+      });
     } else {
-      return res.status(404).send({ status: false, message: "ไม่พบข้อมูลรายการ ใบส่งของ เเละ รายการใบกำกับภาษี" });
+      return res.status(404).send({
+        status: false,
+        message: "ไม่พบข้อมูลรายการ ใบส่งของ เเละ รายการใบกำกับภาษี",
+      });
     }
   } catch (err) {
     return res
       .status(500)
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.ImportImgProduct = async (req, res) => {
+  try {
+    let upload = multer({ storage: storage }).array("imgCollection", 20);
+    upload(req, res, async function (err) {
+      const reqFiles = [];
+      const result = [];
+      if (err) {
+        return res.status(500).send(err);
+      }
+      if (req.files) {
+        const url = req.protocol + "://" + req.get("host");
+        for (var i = 0; i < req.files.length; i++) {
+          const src = await uploadFileCreate(req.files, res, { i, reqFiles });
+          result.push(src);
+        }
+      }
+      const id = req.params.id;
+      if (id && !req.body.password) {
+        const member = await Member.findByIdAndUpdate(id, {
+          ...req.body,
+          "customer_detail.product_logo": reqFiles[0],
+        });
+        if (member) {
+          return res.status(200).send({
+            message: "เพิ่มรูปภาพสำเร็จ",
+            status: true,
+          });
+        } else {
+          return res.status(500).send({
+            message: "ไม่สามารถเพิ่มรูปภาพได้",
+            status: false,
+          });
+        }
+      }
+    });
+  } catch (error) {
+    return res.status(500).send({ status: false, error: error.message });
   }
 };
 async function invoiceOTNumber(date) {

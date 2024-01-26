@@ -215,6 +215,25 @@ exports.getReceiptVatById = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+exports.getReceiptVatByREB = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const admin = await ReceiptVat.findOne({ receipt: id });
+    if (!admin) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบข้อมูลใบเสร็จ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: admin });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
 async function invoiceNumber(date) {
   const order = await ReceiptVat.find();
   let invoice_number = null;

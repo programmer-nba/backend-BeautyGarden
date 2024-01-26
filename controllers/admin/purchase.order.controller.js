@@ -80,7 +80,7 @@ exports.PrintPOVat = async (req, res) => {
       product_detail,
       ShippingCost,
       note,
-      discount = 0 ,
+      discount = 0,
       start_date,
       end_date,
       quotation,
@@ -207,6 +207,25 @@ exports.getPurchaserderById = async (req, res) => {
   try {
     const id = req.params.id;
     const po = await PurchaseOrder.findById(id);
+    if (!po) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบใบสั่งชื้อ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: po });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.getPurchaserderById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const po = await PurchaseOrder.findOne({purchase_order:id});
     if (!po) {
       return res
         .status(404)

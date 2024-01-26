@@ -68,7 +68,7 @@ exports.PrintReceiptNoVat = async (req, res) => {
       product_detail,
       ShippingCost = 0,
       note,
-      discount = 0 ,
+      discount = 0,
       start_date,
       end_date,
       quotation,
@@ -187,6 +187,25 @@ exports.deleteAllReceipt = async (req, res) => {
         .send({ status: true, message: "ลบข้อมูลใบเสร็จทั้งหมด" });
     } else {
       return res.status(404).send({ status: false, message: "ไม่พบใบเสร็จ" });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.getReceiptByREB = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const admin = await ReceiptNoVat.findOne({ receipt: id });
+    if (!admin) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบข้อมูลใบเสร็จ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: admin });
     }
   } catch (err) {
     return res

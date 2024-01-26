@@ -302,6 +302,81 @@ exports.getQuotationById = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+exports.getQuotationByQT = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const quotation = await Quotation.findOne({quotation:id});
+    if (!quotation) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบใบเสนอราคา" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: quotation });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.ImportImgProduct = async (req, res) => {
+  try {
+    let upload = multer({ storage: storage }).array("imgCollection", 20);
+    upload(req, res, async function (err) {
+      const reqFiles = [];
+      const result = [];
+      if (err) {
+        return res.status(500).send(err);
+      }
+      if (req.files) {
+        const url = req.protocol + "://" + req.get("host");
+        for (var i = 0; i < req.files.length; i++) {
+          const src = await uploadFileCreate(req.files, res, { i, reqFiles });
+          result.push(src);
+        }
+      }
+      const productId = req.params.id;  // _id ที่อยู่ภายใน product_detail
+      const quotationId = req.params.quotationId;  // _id ของเอกสาร Quotation
+      
+      if (req.files && req.files.length > 0) {
+        const updatedQuotation = await Quotation.findOneAndUpdate(
+          {
+            "_id": quotationId,
+            "product_detail._id": productId
+          },
+          {
+            $set: {
+              "product_detail.$.product_logo": req.files[0].filename,
+            },
+          },
+          { new: true }
+        );
+      
+        if (updatedQuotation) {
+          return res.status(200).send({
+            message: "อัปเดตรูปภาพสำเร็จ",
+            status: true,
+          });
+        } else {
+          return res.status(500).send({
+            message: "ไม่สามารถอัปเดตรูปภาพได้",
+            status: false,
+          });
+        }
+      } else {
+        return res.status(400).send({
+          message: "ไม่พบไฟล์ที่อัปโหลด",
+          status: false,
+        });
+      }
+      
+    });
+  } catch (error) {
+    return res.status(500).send({ status: false, error: error.message });
+  }
+};
 //ค้นหาและสร้างเลข invoice
 async function QuotationNumber(date) {
   const number = await Quotation.find();

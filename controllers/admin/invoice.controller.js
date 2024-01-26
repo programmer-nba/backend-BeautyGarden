@@ -75,7 +75,7 @@ exports.PrintInviuceVat = async (req, res) => {
       product_detail,
       ShippingCost = 0,
       note,
-      discount = 0 ,
+      discount = 0,
       start_date,
       end_date,
       quotation,
@@ -195,6 +195,25 @@ exports.getInvoiceVatById = async (req, res) => {
   try {
     const id = req.params.id;
     const invoice = await Invoice.findById(id);
+    if (!invoice) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบใบเเจ้งหนี้" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: invoice });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.getInvoiceVatById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const invoice = await Invoice.findOne({ invoice: id });
     if (!invoice) {
       return res
         .status(404)
