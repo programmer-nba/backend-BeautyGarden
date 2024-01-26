@@ -32,6 +32,8 @@ const CustomerSchema = new mongoose.Schema({
     required: false,
     default: "เพิ่มข้อมูลติดต่อลูกค้า",
   }, //ที่ติดต่อลูกค้า
+  customer_contact_number: { type: String, required: false },//เบอร์โทรติดต่อผู้ประสานงาน
+  status: { type: Array, required: false },
   customer_note: { type: String, default: "ไม่มี" }, //หมายเหตุ
   customer_type: { type: String, required: false, default: "ไม่มี" }, //รายปี  (รายเดือน ทำเสร็จจ่าย / จ่ายล่วงหน้า 3เดือน /6 เดือน)
 });
@@ -63,6 +65,7 @@ const validateCustomer = (data) => {
     customer_email: Joi.string().required().label("กรอกอีเมล์"),
     customer_type: Joi.string().required().label("กรอกสถานะประเภทลูกค้า"),
     customer_contact: Joi.string().required().label("กรอกข้อมูลติดต่อลูกค้า"),
+    customer_contact_number: Joi.string().required().label("กรอกข้อมูลผู้ประสานงาน"),
   });
   if ("member_note" in data) {
     delete data.member_note;
