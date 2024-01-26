@@ -7,7 +7,7 @@ const req = require("express/lib/request.js");
 const { Admins, validateAdmin } = require("../../models/admin/admin.models");
 const { Quotation } = require("../../models/admin/quotation.models");
 const { Branch } = require("../../models/ฺฺbranch/ฺฺbranch.models");
-const {Company} = require("../../models/company/company.models")
+const { Company } = require("../../models/company/company.models");
 const {
   Customer,
   validateCustomer,
@@ -400,6 +400,24 @@ exports.ImportImgProduct = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).send({ status: false, error: error.message });
+  }
+};
+exports.getQTAllfilter = async (req, res) => {
+  try {
+    const quotations = await Quotation.find({}, { _id: 1, quotation: 1 });
+    if (!quotations || quotations.length === 0) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบข้อมูลใบเสนอราคา" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: quotations });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
 //ค้นหาและสร้างเลข invoice
