@@ -222,10 +222,10 @@ exports.getPurchaserderById = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
-exports.getPurchaserderById = async (req, res) => {
+exports.getPDByIds = async (req, res) => {
   try {
     const id = req.params.id;
-    const po = await PurchaseOrder.findOne({purchase_order:id});
+    const po = await PurchaseOrder.findOne({ purchase_order: id });
     if (!po) {
       return res
         .status(404)
@@ -241,6 +241,25 @@ exports.getPurchaserderById = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+exports.getPOAllfilter = async (req, res) => {
+  try {
+    const po = await PurchaseOrder.find({}, { _id: 1, purchase_order: 1 });
+    if (!po || po.length === 0) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบข้อมูลใบสั่งซื้อ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: po });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+
 async function purchaseOrderNumber(date) {
   const number = await PurchaseOrder.find();
   let purchaseOrder_number = null;

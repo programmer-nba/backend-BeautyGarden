@@ -10,5 +10,5 @@ router.get("/getDTBy/:id", authAdmin, admin.getDTById)
 router.delete("/deleteDT/:id", authAdmin, admin.deleteDT)
 router.delete("/deleteAllDT", authAdmin, admin.deleteAllDT)
 router.get("/getDTByIdDT/:id", authAdmin, admin.getDTByIdDT)
-
+router.get("/getDTAllfilter", authAdmin, admin.getDTAllfilter)
 module.exports = router;  

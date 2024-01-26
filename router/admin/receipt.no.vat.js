@@ -9,4 +9,5 @@ router.get("/getReceiptBy/:id",authAdmin,admin.getReceiptById)
 router.delete("/deleteReceipt/:id",authAdmin,admin.deleteReceipt)
 router.delete("/deleteAllReceipt",authAdmin,admin.deleteAllReceipt)
 router.get("/getReceiptByREB/:id",authAdmin,admin.getReceiptByREB)
+router.get("/getREBAllfilter",authAdmin,admin.getREBAllfilter)
 module.exports = router;

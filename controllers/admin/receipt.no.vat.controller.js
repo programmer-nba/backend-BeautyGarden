@@ -213,6 +213,24 @@ exports.getReceiptByREB = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+exports.getREBAllfilter = async (req, res) => {
+  try {
+    const reb = await ReceiptNoVat.find({}, { _id: 1, receipt: 1 });
+    if (!reb || reb.length === 0) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบข้อมูลใบสั่งซื้อ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: reb });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
 async function invoiceNumber(date) {
   const order = await ReceiptNoVat.find();
   let invoice_number = null;

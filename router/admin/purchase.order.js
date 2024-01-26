@@ -8,4 +8,6 @@ router.delete("/deletepurchaseOrder/:id", authAdmin, admin.deletepurchaseOrder)
 router.delete("/deleteAllPO", authAdmin, admin.deleteAllPO)
 router.get("/getPurchaserderAll", authAdmin, admin.getPurchaserderAll)
 router.get("/getPurchaserderBy/:id", authAdmin, admin.getPurchaserderById)
+router.get("/getPDBy/:id", authAdmin, admin.getPDByIds)
+router.get("/getPOAllfilter", authAdmin, admin.getPOAllfilter)
 module.exports = router;  

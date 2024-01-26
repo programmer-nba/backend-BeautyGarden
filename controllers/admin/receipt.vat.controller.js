@@ -215,7 +215,7 @@ exports.getReceiptVatById = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
-exports.getReceiptVatByREB = async (req, res) => {
+exports.getReceiptVatByREP = async (req, res) => {
   try {
     const id = req.params.id;
     const admin = await ReceiptVat.findOne({ receipt: id });
@@ -227,6 +227,24 @@ exports.getReceiptVatByREB = async (req, res) => {
       return res
         .status(200)
         .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: admin });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.getREPAllfilter = async (req, res) => {
+  try {
+    const rep = await ReceiptVat.find({}, { _id: 1, receipt: 1 });
+    if (!rep || rep.length === 0) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบข้อมูลใบสั่งซื้อ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: rep });
     }
   } catch (err) {
     return res

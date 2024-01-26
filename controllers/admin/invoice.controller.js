@@ -210,7 +210,7 @@ exports.getInvoiceVatById = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
-exports.getInvoiceVatById = async (req, res) => {
+exports.getIVVatByIdS = async (req, res) => {
   try {
     const id = req.params.id;
     const invoice = await Invoice.findOne({ invoice: id });
@@ -229,6 +229,25 @@ exports.getInvoiceVatById = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+exports.getIVAllfilter = async (req, res) => {
+  try {
+    const iv = await Invoice.find({}, { _id: 1, invoice: 1 });
+    if (!iv || iv.length === 0) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบข้อมูลใบสั่งซื้อ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: iv });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+
 async function invoiceNumber(date) {
   const number = await Invoice.find();
   let invoice_number = null;

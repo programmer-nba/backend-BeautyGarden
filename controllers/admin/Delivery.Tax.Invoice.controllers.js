@@ -247,43 +247,22 @@ exports.deleteAllDT = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
-exports.ImportImgProduct = async (req, res) => {
+exports.getDTAllfilter = async (req, res) => {
   try {
-    let upload = multer({ storage: storage }).array("imgCollection", 20);
-    upload(req, res, async function (err) {
-      const reqFiles = [];
-      const result = [];
-      if (err) {
-        return res.status(500).send(err);
-      }
-      if (req.files) {
-        const url = req.protocol + "://" + req.get("host");
-        for (var i = 0; i < req.files.length; i++) {
-          const src = await uploadFileCreate(req.files, res, { i, reqFiles });
-          result.push(src);
-        }
-      }
-      const id = req.params.id;
-      if (id && !req.body.password) {
-        const member = await Member.findByIdAndUpdate(id, {
-          ...req.body,
-          "customer_detail.product_logo": reqFiles[0],
-        });
-        if (member) {
-          return res.status(200).send({
-            message: "เพิ่มรูปภาพสำเร็จ",
-            status: true,
-          });
-        } else {
-          return res.status(500).send({
-            message: "ไม่สามารถเพิ่มรูปภาพได้",
-            status: false,
-          });
-        }
-      }
-    });
-  } catch (error) {
-    return res.status(500).send({ status: false, error: error.message });
+    const dt = await DeliveryTaxInvoice.find({}, { _id: 1, delivery_tax_invoice: 1 });
+    if (!dt || dt.length === 0) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบข้อมูลใบสั่งซื้อ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: dt });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
 async function invoiceOTNumber(date) {
