@@ -8,6 +8,12 @@ const ReceiptVatSchema = new mongoose.Schema({
   receiptNoVat: { type: String, required: false }, //เลขที่ใบเสร้จ
   quotation: { type: String, required: false }, //เลขที่ใบเสนออราคา
   employee_name: { type: String, required: false }, //คนทำรายการ
+  customer_branch: {//ข้อมูลธนาคาร
+    Branch_company_name: { type: String, required: false, default: "ไม่มี" }, //ชื่อบริษัท
+    Branch_company_number: { type: String, required: false, default: "ไม่มี" }, //เลขที่บริษัท
+    Branch_company_address: { type: String, required: false, default: "ไม่มี" }, //ที่อยู่บริษัท
+    Branch_tel: { type: String, required: false }, //เบอร์โทรศัพท์
+  },
   customer_detail: {
     //ข้อมูลของลูกค้า
     tax_id: { type: String, required: false },//เลขประจำตัวผู้เสียภาษี

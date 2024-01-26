@@ -6,6 +6,7 @@ const { default: axios } = require("axios");
 const req = require("express/lib/request.js");
 const { Admins, validateAdmin } = require("../../models/admin/admin.models");
 const { Quotation } = require("../../models/admin/quotation.models");
+const { Branch } = require("../../models/ฺฺbranch/ฺฺbranch.models");
 const {
   Customer,
   validateCustomer,
@@ -54,17 +55,28 @@ exports.QuotationVat = async (req, res) => {
     const Shippingincluded = (
       parseFloat(totalvat) + parseFloat(ShippingCost)
     ).toFixed(2);
+
     let customer = {};
+    const branchId = req.body.branchId;
+    const branch = branchId ? await Branch.findById(branchId) : null;
+
     if (customer_number) {
       customer = await Customer.findOne({ customer_number });
     } else {
       customer = req.body.customer_detail || {};
     }
-    console.log(customer);
     const quotation1 = await QuotationNumber();
     const quotation = await new Quotation({
       ...req.body,
       quotation: quotation1, //เลขใบเสนอราคา
+      customer_branch: branch
+        ? {
+            Branch_company_name: branch.Branch_company_name,
+            Branch_company_number: branch.Branch_company_number,
+            Branch_company_address: branch.Branch_company_address,
+            Branch_tel: branch.Branch_tel,
+          }
+        : null,
       customer_detail: {
         ...req.body.customer_detail,
         tax_id: customer.customer_taxnumber,
@@ -133,6 +145,9 @@ exports.Quotation = async (req, res) => {
       parseFloat(net) - parseFloat(ShippingCost)
     ).toFixed(2);
     let customer = {};
+    const branchId = req.body.branchId;
+    const branch = branchId ? await Branch.findById(branchId) : null;
+
     if (customer_number) {
       customer = await Customer.findOne({ customer_number });
     } else {
@@ -142,6 +157,14 @@ exports.Quotation = async (req, res) => {
     const quotation = await new Quotation({
       ...req.body,
       quotation: quotation1, //เลขใยเสนอราคา
+      customer_branch: branch
+      ? {
+          Branch_company_name: branch.Branch_company_name,
+          Branch_company_number: branch.Branch_company_number,
+          Branch_company_address: branch.Branch_company_address,
+          Branch_tel: branch.Branch_tel,
+        }
+      : null,
       customer_detail: {
         ...req.body.customer_detail,
         tax_id: customer.customer_taxnumber,
