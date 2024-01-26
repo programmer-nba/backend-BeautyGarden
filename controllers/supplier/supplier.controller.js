@@ -169,10 +169,10 @@ exports.updateImgIdens = async (req, res) => {
           await uploadFileCreate(req.files, res, { i, reqFiles });
         }
         const id = req.params.id;
-        const {supplier_iden_number} = req.body
+        const { supplier_iden_number } = req.body;
         const new_supplier = await Suppliers.findByIdAndUpdate(id, {
           supplier_iden: reqFiles[0],
-          supplier_iden_number:supplier_iden_number
+          supplier_iden_number: supplier_iden_number,
         });
         if (new_supplier) {
           return res.status(200).send({
@@ -238,3 +238,4 @@ exports.updateImgBank = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+

@@ -12,7 +12,7 @@ const complexityOptions = {
   requirementCount: 2,
 };
 const MemberSchema = new mongoose.Schema({
-  member_taxnumber: { type: String, required: false },//เลขปรพจำตัวผู้เสียภาษี
+  member_taxnumber: { type: String, required: false }, //เลขปรพจำตัวผู้เสียภาษี
   member_number: { type: String, required: false },
   profile_image: { type: String, required: false },
   member_username: { type: String, required: false }, // ไอดีสมาชิก
@@ -46,7 +46,9 @@ const Member = mongoose.model("member", MemberSchema);
 
 const validatemember = (data) => {
   const schema = Joi.object({
-    member_taxnumber: Joi.string().required().label("กนุณากรอกเลขประจำตัวผู้เสียภาษี"),
+    member_taxnumber: Joi.string()
+      .required()
+      .label("กนุณากรอกเลขประจำตัวผู้เสียภาษี"),
     member_username: Joi.string().required().label("กรุณากรอกไอดี"),
     member_password: Joi.string().required().label("กรุณากรอกพาสเวิร์ด"),
     member_name: Joi.string().required().label("กรุณากรอกชื่อ"),

@@ -14,4 +14,6 @@ router.put("/updateImgBank/:id",authAdmin, supplier.updateImgBank)
 router.get("/getSupplierAll",authAdmin, supplier.getSupplierAll)
 router.get("/getSupplierBy/:id",authAdmin, supplier.getSupplierById)
 
+
+
 module.exports = router;
