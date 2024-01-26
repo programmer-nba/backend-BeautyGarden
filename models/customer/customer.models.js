@@ -40,7 +40,7 @@ CustomerSchema.methods.generateAuthToken = function () {
     { _id: this._id, name: this.customer_name, row: "customer" },
     process.env.JWTPRIVATEKEY,
     {
-      expiresIn: "4h",
+      expiresIn: "4d",
     }
   );
   return token;

@@ -11,5 +11,5 @@ router.delete("/deleteAllQuotation", authAdmin, admin.deleteAllQuotation)
 router.get("/getQuotationAll",authAdmin,admin.getQuotationAll)
 router.get("/getQuotationBy/:id",authAdmin,admin.getQuotationById)
 router.get("/getQuotationByQT/:id",authAdmin,admin.getQuotationByQT)
-router.put("/ImportImgProduct/:id",authAdmin,admin.ImportImgProduct)
+router.put("/ImportImgProduct/:id/:quotationId",authAdmin,admin.ImportImgProduct)
 module.exports = router;  

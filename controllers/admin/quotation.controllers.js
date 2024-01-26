@@ -305,7 +305,7 @@ exports.getQuotationById = async (req, res) => {
 exports.getQuotationByQT = async (req, res) => {
   try {
     const id = req.params.id;
-    const quotation = await Quotation.findOne({quotation:id});
+    const quotation = await Quotation.findOne({ quotation: id });
     if (!quotation) {
       return res
         .status(404)
@@ -337,23 +337,25 @@ exports.ImportImgProduct = async (req, res) => {
           result.push(src);
         }
       }
-      const productId = req.params.id;  // _id ที่อยู่ภายใน product_detail
-      const quotationId = req.params.quotationId;  // _id ของเอกสาร Quotation
-      
+      const productId = req.params.id; // _id ที่อยู่ภายใน product_detail
+      const quotationId = req.params.quotationId;
       if (req.files && req.files.length > 0) {
         const updatedQuotation = await Quotation.findOneAndUpdate(
           {
-            "_id": quotationId,
-            "product_detail._id": productId
+            _id: quotationId,
+            "product_detail._id": productId,
           },
           {
             $set: {
-              "product_detail.$.product_logo": req.files[0].filename,
+              "product_detail.$[element].product_logo": reqFiles[0],
             },
           },
-          { new: true }
+          {
+            arrayFilters: [{ "element._id": productId }],
+            new: true,
+          }
         );
-      
+
         if (updatedQuotation) {
           return res.status(200).send({
             message: "อัปเดตรูปภาพสำเร็จ",
@@ -371,7 +373,6 @@ exports.ImportImgProduct = async (req, res) => {
           status: false,
         });
       }
-      
     });
   } catch (error) {
     return res.status(500).send({ status: false, error: error.message });
