@@ -32,7 +32,7 @@ exports.Create = async (req, res) => {
     const productCostTypes = product_detail.map(
       (product) => product.product_cost_type
     );
-    const costTypes = await CostType.find({ _id: { $in: productCostTypes } }) 
+    const costTypes = await CostType.find({ _id: { $in: productCostTypes } });
     const updatedProductDetail = product_detail.map((product) => {
       const price = product.product_price;
       const amount = product.product_amount;
@@ -86,7 +86,152 @@ exports.Create = async (req, res) => {
     });
   }
 };
+exports.EditPurchaseOS = async (req, res) => {
+  try {
+    const { customer_number } = req.params;
+    const { product_detail, discount = 0 } = req.body;
+    let total = 0;
 
+    const updatedProductDetail = product_detail.map((product) => {
+      const price = product.product_price;
+      const amount = product.product_amount;
+      const product_total = (price * amount).toFixed(2);
+      total += +product_total; // รวม product_total เข้า total
+      return {
+        ...product,
+        product_total,
+      };
+    });
+
+    const net = total - discount;
+    const updatedQuotation = await PurchaseOrderSup.findOneAndUpdate(
+      { "customer_detail.customer_number": customer_number },
+      {
+        $set: {
+          product_detail: updatedProductDetail,
+          total: total.toFixed(2),
+          net: net.toFixed(2),
+        },
+        discount,
+      },
+      { new: true }
+    );
+    if (updatedQuotation) {
+      return res.status(200).send({
+        status: true,
+        message: "แก้ไขข้อมูล รายละเอียดสินค้า สำเร็จ",
+        data: updatedQuotation,
+      });
+    } else {
+      return res.status(404).send({
+        message: "ไม่พบใบเสนอราคาที่ต้องการแก้ไข",
+        status: false,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      message: "มีบางอย่างผิดพลาด",
+      status: false,
+      error: error.message,
+    });
+  }
+};
+exports.getPOSByIdPOS = async (req, res) => {
+  try {
+    const pos = await PurchaseOrderSup.find({}, { _id: 1, purchase_order: 1 });
+    if (!pos || pos.length === 0) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบข้อมูลใบสั่งซื้อ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: pos });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.getPOSById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    console.log(id);
+    const pos = await PurchaseOrderSup.findById(id);
+    if (!pos) {
+      return res.status(404).send({
+        status: false,
+        message: "ไม่พบข้อมูลรายการ ใบสั่งชื้อ",
+      });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: pos });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.getPosAll = async (req, res) => {
+  try {
+    const pos = await PurchaseOrderSup.find();
+    if (!pos) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบใบสั่งชื้อ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: pos });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.deletePosByid = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const pos = await PurchaseOrderSup.findByIdAndDelete(id);
+    if (!pos) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบใบสั่งชื้อ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ลบข้อมูลใบสั่งชื้อเสร็จสำเร็จ" });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.deleteAllPos = async (req, res) => {
+  try {
+    const result = await PurchaseOrderSup.deleteMany({});
+
+    if (result.deletedCount > 0) {
+      return res
+        .status(200)
+        .send({ status: true, message: "ลบข้อมูลใบสั่งชื้อเสร็จสำเร็จ" });
+    } else {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบใบสั่งชื้อ" });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
 async function purchaseOrderNumber(date) {
   const order = await PurchaseOrderSup.find();
   let pos_number = null;
