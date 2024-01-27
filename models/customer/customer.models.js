@@ -12,6 +12,7 @@ const complexityOptions = {
   requirementCount: 2,
 };
 const CustomerSchema = new mongoose.Schema({
+  profile_image: { type: String, required: false }, 
   customer_taxnumber: { type: String, required: false }, //เลขปรพจำตัวผู้เสียภาษี
   customer_number: { type: String, required: false },
   customer_username: { type: String, required: false }, // ไอดีสมาชิก
@@ -21,7 +22,7 @@ const CustomerSchema = new mongoose.Schema({
   customer_prefix: { type: String, required: false }, //คำนำหน้า
   customer_name: { type: String, required: false },
   customer_lastname: { type: String, required: true },
-  customer_idcard: { type: Number, required: true }, //รหัสบัตรประชาชน
+  customer_idcard: { type: String, required: true }, //รหัสบัตรประชาชน
   customer_birthday: { type: String, required: true }, //วันเกิด
   customer_email: { type: String, required: false },
   customer_phone: { type: String, required: true },
