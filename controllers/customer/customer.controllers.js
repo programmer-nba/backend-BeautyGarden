@@ -43,9 +43,7 @@ exports.create = async (req, res) => {
           .status(400)
           .send({ message: error.details[0].message, status: false });
 
-      const TaxNumber = await checkTaxNumber(
-        req.body.customer_taxnumber
-      );
+      const TaxNumber = await checkTaxNumber(req.body.customer_taxnumber);
       if (TaxNumber) {
         return res.status(409).send({
           status: false,
@@ -237,10 +235,10 @@ async function customernumber(date) {
 }
 
 const checkTaxNumber = async (taxNumber) => {
-  const existingCustomerTaxNumber = await Customer.findOne({
+  const CustomerTaxNumber = await Customer.findOne({
     customer_taxnumber: taxNumber,
   });
-  return !!existingCustomerTaxNumber;
+  return !!CustomerTaxNumber;
 };
 const checkLastName = async (name, lastName) => {
   const existingCustomer = await Customer.findOne({
