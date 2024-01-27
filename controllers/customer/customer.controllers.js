@@ -43,6 +43,25 @@ exports.create = async (req, res) => {
           .status(400)
           .send({ message: error.details[0].message, status: false });
 
+      const TaxNumber = await checkTaxNumber(
+        req.body.customer_taxnumber
+      );
+      if (TaxNumber) {
+        return res.status(409).send({
+          status: false,
+          message: "เลขประจำตัวผู้เสียภาษีนี้มีผู้ใช้แล้ว",
+        });
+      }
+      const NameAndLastName = await checkLastName(
+        req.body.customer_name,
+        req.body.customer_lastname
+      );
+      if (NameAndLastName) {
+        return res.status(409).send({
+          status: false,
+          message: "ชื่อและนามสกุลนี้มีผู้ใช้แล้ว",
+        });
+      }
       const user = await Customer.findOne({
         customer_username: req.body.customer_username,
       });
@@ -51,6 +70,7 @@ exports.create = async (req, res) => {
           .status(409)
           .send({ status: false, message: "username นี้มีคนใช้แล้ว" });
       }
+
       const CustomerNumber = await customernumber();
       const salt = await bcrypt.genSalt(Number(process.env.SALT));
       const hashPassword = await bcrypt.hash(req.body.customer_password, salt);
@@ -69,7 +89,7 @@ exports.create = async (req, res) => {
         customer_type: req.body.customer_type,
         customer_birthday: req.body.customer_birthday,
         customer_contact: req.body.customer_contact,
-        customer_contact_number:req.body.customer_contact_number
+        customer_contact_number: req.body.customer_contact_number,
       });
       const add = await customers.save();
       return res.status(200).send({
@@ -215,3 +235,17 @@ async function customernumber(date) {
   }
   return customer_number;
 }
+
+const checkTaxNumber = async (taxNumber) => {
+  const existingCustomerTaxNumber = await Customer.findOne({
+    customer_taxnumber: taxNumber,
+  });
+  return !!existingCustomerTaxNumber;
+};
+const checkLastName = async (name, lastName) => {
+  const existingCustomer = await Customer.findOne({
+    customer_name: name,
+    customer_lastname: lastName,
+  });
+  return !!existingCustomer;
+};
