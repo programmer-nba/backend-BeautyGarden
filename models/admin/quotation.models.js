@@ -4,12 +4,13 @@ const mongoose = require("mongoose");
 const QuotationSchema = new mongoose.Schema({
   quotation: { type: String, required: false }, //เลขที่ใบเสนอราคา
   employee_name: { type: String, required: false }, //คนทำรายการ
-  customer_branch: {//ข้อมูลธนาคาร
+  customer_branch: {
+    //ข้อมูลธนาคาร
     Branch_company_name: { type: String, required: false, default: "ไม่มี" }, //ชื่อบริษัท
     Branch_company_number: { type: String, required: false, default: "ไม่มี" }, //เลขที่บริษัท
     Branch_company_address: { type: String, required: false, default: "ไม่มี" }, //ที่อยู่บริษัท
     Branch_tel: { type: String, required: false }, //เบอร์โทรศัพท์
-    contact_name:{ type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
+    contact_name: { type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
     contact_number: { type: String, required: false, default: "ไม่มี" }, //เบอร์โทรผู้ติดต่อ
   },
   customer_detail: {

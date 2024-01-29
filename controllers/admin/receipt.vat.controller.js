@@ -37,6 +37,9 @@ exports.ReceiptVat = async (req, res) => {
 
     const total = quotationData.total;
     const ShippingCost = req.body.ShippingCost || 0;
+    const percen_deducted = req.body.percen_deducted || 0;
+    const total_deducted = req.body.total_deducted || 0;
+    const totalVat_deducted = req.body.totalVat_deducted || 0;
     const net = discount ? total - discount : total;
     const vatPercentage = 0.07; // VAT rate (7%)
 
@@ -56,6 +59,9 @@ exports.ReceiptVat = async (req, res) => {
       net: net.toFixed(2),
       vat: vatAmount.toFixed(2),
       totalvat: (vatAmount + net).toFixed(2),
+      percen_deducted:percen_deducted.toFixed(2),
+      total_deducted:total_deducted.toFixed(2),
+      totalVat_deducted:totalVat_deducted.toFixed(2),
       ShippingCost: ShippingCost,
       Shippingincluded: Shippingincluded,
       start_date: req.body.start_date,
@@ -84,6 +90,9 @@ exports.PrintReceiptVat = async (req, res) => {
       ShippingCost = 0,
       note,
       discount = 0,
+      percen_deducted = 0,
+      total_deducted = 0,
+      totalVat_deducted = 0,
       start_date,
       end_date,
       quotation,
@@ -114,6 +123,9 @@ exports.PrintReceiptVat = async (req, res) => {
       receipt: invoice1,
       discount: discount.toFixed(2),
       net: net,
+      percen_deducted:percen_deducted.toFixed(2),
+      total_deducted:total_deducted.toFixed(2),
+      totalVat_deducted:totalVat_deducted.toFixed(2),
       ShippingCost: ShippingCost,
       Shippingincluded: Shippingincluded,
       product_detail: updatedProductDetail,

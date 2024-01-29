@@ -14,7 +14,7 @@ const ReceiptVatSchema = new mongoose.Schema({
     Branch_company_number: { type: String, required: false, default: "ไม่มี" }, //เลขที่บริษัท
     Branch_company_address: { type: String, required: false, default: "ไม่มี" }, //ที่อยู่บริษัท
     Branch_tel: { type: String, required: false }, //เบอร์โทรศัพท์
-    contact_name:{ type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
+    contact_name: { type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
     contact_number: { type: String, required: false, default: "ไม่มี" }, //เบอร์โทรผู้ติดต่อ
   },
   customer_detail: {
@@ -44,6 +44,9 @@ const ReceiptVatSchema = new mongoose.Schema({
   net: { type: Number, required: false }, //ราคารวมหลังหักส่วนลด
   vat: { type: Number, required: false }, //vat 7%
   totalvat: { type: Number, required: false }, //ราคาหลังรวม vat
+  percen_deducted: { type: Number, required: false },//เลขเปอร์เซ็น ณ ที่หักจ่าย
+  total_deducted: { type: Number, required: false },//ราคารวมหลักจากหัก ณ ที่จ่าย
+  totalVat_deducted: { type: Number, required: false },// ราคารวมหลักจากเอา ราคารวม vat เเล้ว มาลบ กับ ณที่หักจ่าย
   ShippingCost: { type: Number, required: false }, //ค่าจัดส่ง
   Shippingincluded: { type: Number, required: false }, //รวมคารวมจัดส่ง
   note: { type: String, required: false }, //หมายเหตุ
@@ -51,6 +54,7 @@ const ReceiptVatSchema = new mongoose.Schema({
   status: { type: Array, required: false },
   start_date: { type: String, required: false }, //วันที่ออกบิล
   end_date: { type: String, required: false }, //วันที่ต้องจ่ายเงิน
+  pay_through: { type: String, required: false }, //ชำระผ่าน
   timestamps: { type: Date, required: false, default: Date.now() },
 });
 
