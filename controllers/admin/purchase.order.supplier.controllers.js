@@ -56,7 +56,7 @@ exports.Create = async (req, res) => {
     if (signatureID) {
       signatureData = await Signature.findOne({ _id: signatureID });
     }
-  
+
     const PurchaseOrder1 = await new PurchaseOrderSup({
       ...req.body,
       customer_detail: {

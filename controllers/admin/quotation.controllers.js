@@ -189,11 +189,11 @@ exports.Quotation = async (req, res) => {
             contact_number: branch.contact_number,
           }
         : null,
-        signature: {
-          name: signatureData.name,
-          image_signature: signatureData.image_signature,
-          position: signatureData.position,
-        },
+      signature: {
+        name: signatureData.name,
+        image_signature: signatureData.image_signature,
+        position: signatureData.position,
+      },
       customer_detail: {
         ...req.body.customer_detail,
         tax_id: customer.customer_taxnumber,
