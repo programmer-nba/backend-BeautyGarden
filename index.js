@@ -25,10 +25,16 @@ app.use(
   prefix + "/DeliveryTaxInvoice",
   require("./router/admin/Delivery.Tax.Invoice")
 ); //ใบส่งสินค้า เเละ ใบ กำกับภาษี
-app.use(prefix + "/PurchaseOrderSupllier" , require("./router/admin/purchase.order.supllier"));
+app.use(
+  prefix + "/PurchaseOrderSupllier",
+  require("./router/admin/purchase.order.supllier")
+);
 
 //สร้างพนักงานบํญชี
 app.use(prefix + "/accountant", require("./router/accountant/index"));
+
+//สร้างลายเซ็น
+app.use(prefix + "/signature", require("./router/signature/index"));
 
 //สร้างสมาชิก
 app.use(prefix + "/member", require("./router/member/index"));

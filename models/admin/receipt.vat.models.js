@@ -44,9 +44,9 @@ const ReceiptVatSchema = new mongoose.Schema({
   net: { type: Number, required: false }, //ราคารวมหลังหักส่วนลด
   vat: { type: Number, required: false }, //vat 7%
   totalvat: { type: Number, required: false }, //ราคาหลังรวม vat
-  percen_deducted: { type: Number, required: false },//เลขเปอร์เซ็น ณ ที่หักจ่าย
-  total_deducted: { type: Number, required: false },//ราคารวมหลักจากหัก ณ ที่จ่าย
-  totalVat_deducted: { type: Number, required: false },// ราคารวมหลักจากเอา ราคารวม vat เเล้ว มาลบ กับ ณที่หักจ่าย
+  percen_deducted: { type: Number, required: false }, //เลขเปอร์เซ็น ณ ที่หักจ่าย
+  total_deducted: { type: Number, required: false }, //ราคารวมหลักจากหัก ณ ที่จ่าย
+  totalVat_deducted: { type: Number, required: false }, // ราคารวมหลักจากเอา ราคารวม vat เเล้ว มาลบ กับ ณที่หักจ่าย
   ShippingCost: { type: Number, required: false }, //ค่าจัดส่ง
   Shippingincluded: { type: Number, required: false }, //รวมคารวมจัดส่ง
   note: { type: String, required: false }, //หมายเหตุ
@@ -55,6 +55,11 @@ const ReceiptVatSchema = new mongoose.Schema({
   start_date: { type: String, required: false }, //วันที่ออกบิล
   end_date: { type: String, required: false }, //วันที่ต้องจ่ายเงิน
   pay_through: { type: String, required: false }, //ชำระผ่าน
+  signature: {
+    name: { type: String, required: false, default: "-" }, //ชื่อเจ้าของลายเซ็น
+    image_signature: { type: String, required: false, default: "-" }, //รูปภาพลายเซ็น
+    position: { type: String, required: false, default: "-" }, //ตำเเหน่งเจ้าของลายเซ็น
+  }, //เก็บลายเซ็น
   timestamps: { type: Date, required: false, default: Date.now() },
 });
 

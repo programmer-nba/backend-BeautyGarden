@@ -8,6 +8,7 @@ const { Admins, validateAdmin } = require("../../models/admin/admin.models");
 const { Invoice } = require("../../models/admin/invoice.models");
 const { Quotation } = require("../../models/admin/quotation.models");
 const { ReceiptNoVat } = require("../../models/admin/receipt.no.vat.models");
+const { Signature } = require("../../models/signature/signature.models");
 const {
   Customer,
   validateCustomer,
@@ -29,6 +30,9 @@ const { admin } = require("googleapis/build/src/apis/admin");
 exports.ReceiptNoVat = async (req, res) => {
   try {
     const invoiceID = req.body.invoiceID || req.body;
+    const signature = req.body.signature || req.body;
+
+    const signatureData = await Signature.findOne({ _id: signature });
     const quotationData = await Invoice.findOne({ _id: invoiceID });
     const invoice = await invoiceNumber();
     const { _id, timestamps, net, ...receiptDataFields } =
@@ -45,9 +49,9 @@ exports.ReceiptNoVat = async (req, res) => {
       net: net,
       ShippingCost: ShippingCost,
       Shippingincluded: (net + ShippingCost).toFixed(2),
-      percen_deducted:percen_deducted.toFixed(2),
-      total_deducted:total_deducted.toFixed(2),
-      totalVat_deducted:totalVat_deducted.toFixed(2),
+      percen_deducted: percen_deducted.toFixed(2),
+      total_deducted: total_deducted.toFixed(2),
+      totalVat_deducted: totalVat_deducted.toFixed(2),
       start_date: req.body.start_date,
       end_date: req.body.end_date,
       note: req.body.note,
