@@ -17,7 +17,7 @@ const CompanySchema = new mongoose.Schema({
     remark: { type: String, required: false, default: "-" }, //อยู่ระหว่างการตรวจสอบ , ไม่ผ่านการตรวจสอบ ,ตรวจสอบสำเร็จ
   },
   //เลขที่การเสียภาษี
-  taxnumber: { type: Number, required: false, default: true },//เลขที่การเสียภาษี
+  taxnumber: { type: String, required: false, default: true },//เลขที่การเสียภาษี
   //บัตรประชาชน
   Branch_iden: { type: String, required: false, default: "-" }, // images
   Branch_iden_number: { type: String, required: false, default: "-" }, //เลขประจำตัวประชาชน
