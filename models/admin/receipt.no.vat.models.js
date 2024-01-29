@@ -56,7 +56,7 @@ const ReceiptNoVatSchema = new mongoose.Schema({
     name: { type: String, required: false, default: "-" }, //ชื่อเจ้าของลายเซ็น
     image_signature: { type: String, required: false, default: "-" }, //รูปภาพลายเซ็น
     position: { type: String, required: false, default: "-" }, //ตำเเหน่งเจ้าของลายเซ็น
-  }, 
+  },
   timestamps: { type: Date, required: false, default: Date.now() },
 });
 

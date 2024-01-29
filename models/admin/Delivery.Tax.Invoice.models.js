@@ -8,12 +8,13 @@ const DeliveryTaxInvoiceSchema = new mongoose.Schema({
   receiptNoVat: { type: String, required: false }, //เลขที่ใบเสร้จ
   quotation: { type: String, required: false }, //เลขที่ใบเสนออราคา
   employee_name: { type: String, required: false }, //คนทำรายการ
-  customer_branch: {//ข้อมูลธนาคาร
+  customer_branch: {
+    //ข้อมูลธนาคาร
     Branch_company_name: { type: String, required: false, default: "ไม่มี" }, //ชื่อบริษัท
     Branch_company_number: { type: String, required: false, default: "ไม่มี" }, //เลขที่บริษัท
     Branch_company_address: { type: String, required: false, default: "ไม่มี" }, //ที่อยู่บริษัท
     Branch_tel: { type: String, required: false }, //เบอร์โทรศัพท์
-    contact_name:{ type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
+    contact_name: { type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
     contact_number: { type: String, required: false, default: "ไม่มี" }, //เบอร์โทรผู้ติดต่อ
   },
   customer_detail: {
@@ -53,6 +54,9 @@ const DeliveryTaxInvoiceSchema = new mongoose.Schema({
   timestamps: { type: Date, required: false, default: Date.now() },
 });
 
-const DeliveryTaxInvoice = mongoose.model("DeliveryTaxInvoice", DeliveryTaxInvoiceSchema);
+const DeliveryTaxInvoice = mongoose.model(
+  "DeliveryTaxInvoice",
+  DeliveryTaxInvoiceSchema
+);
 
 module.exports = { DeliveryTaxInvoice };

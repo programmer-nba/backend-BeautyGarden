@@ -164,9 +164,7 @@ exports.deleteAllSugnature = async (req, res) => {
     const result = await Signature.deleteMany({});
 
     if (result.deletedCount > 0) {
-      return res
-        .status(200)
-        .send({ status: true, message: "ลบข้อมูลสำเร็จ" });
+      return res.status(200).send({ status: true, message: "ลบข้อมูลสำเร็จ" });
     } else {
       return res
         .status(404)
