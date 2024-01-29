@@ -7,6 +7,7 @@ const req = require("express/lib/request.js");
 const { Admins, validateAdmin } = require("../../models/admin/admin.models");
 const { Invoice } = require("../../models/admin/invoice.models");
 const { Quotation } = require("../../models/admin/quotation.models");
+const { Signature } = require("../../models/signature/signature.models");
 const { PurchaseOrder } = require("../../models/admin/purchase.order.models");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
@@ -25,6 +26,9 @@ const { admin } = require("googleapis/build/src/apis/admin");
 exports.purchaseOrder = async (req, res) => {
   try {
     const purchaseOrderID = req.body.purchaseOrderID || req.body;
+    const signatureID = req.body.signatureID || req.body;
+
+    const signatureData = await Signature.findOne({ _id: signatureID });
     const quotationData = await Quotation.findOne({ _id: purchaseOrderID });
     const purchaseOrder = await purchaseOrderNumber();
     const { _id, timestamps, vat, discount, ...receiptDataFields } =
@@ -47,6 +51,11 @@ exports.purchaseOrder = async (req, res) => {
 
     const savedReceiptData = await PurchaseOrder.create({
       ...receiptDataFields,
+      signature: {
+        name: signatureData.name,
+        image_signature: signatureData.image_signature,
+        position: signatureData.position,
+      },
       purchase_order: purchaseOrder,
       quotation: quotationData.quotation,
       discount: discount.toFixed(2),
@@ -83,6 +92,7 @@ exports.PrintPOVat = async (req, res) => {
       discount = 0,
       start_date,
       end_date,
+      signatureID,
       quotation,
       invoice,
     } = req.body;
@@ -106,6 +116,10 @@ exports.PrintPOVat = async (req, res) => {
     const vatAmount = net * vatRate;
     const totalWithVat = net + vatAmount;
     const purchaseOrder = await purchaseOrderNumber();
+    let signatureData = {};
+    if (signatureID) {
+      signatureData = await Signature.findOne({ _id: signatureID });
+    }
 
     // ใช้ค่าที่ได้จากเงื่อนไข ShippingCost ที่ถูกปรับแล้ว
     const Shippingincluded = (totalWithVat + FistShippingCost).toFixed(2);
@@ -113,6 +127,11 @@ exports.PrintPOVat = async (req, res) => {
       ...req.body,
       customer_detail: {
         ...req.body.customer_detail,
+      },
+      signature: {
+        name: signatureData.name,
+        image_signature: signatureData.image_signature,
+        position: signatureData.position,
       },
       purchase_order: purchaseOrder,
       discount: discount.toFixed(2),

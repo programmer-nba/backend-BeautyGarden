@@ -30,10 +30,11 @@ const { admin } = require("googleapis/build/src/apis/admin");
 exports.ReceiptNoVat = async (req, res) => {
   try {
     const invoiceID = req.body.invoiceID || req.body;
-    const signature = req.body.signature || req.body;
+    const signatureID = req.body.signatureID || req.body;
 
-    const signatureData = await Signature.findOne({ _id: signature });
+    const signatureData = await Signature.findOne({ _id: signatureID });
     const quotationData = await Invoice.findOne({ _id: invoiceID });
+
     const invoice = await invoiceNumber();
     const { _id, timestamps, net, ...receiptDataFields } =
       quotationData.toObject();
@@ -46,6 +47,11 @@ exports.ReceiptNoVat = async (req, res) => {
 
     const savedReceiptData = await ReceiptNoVat.create({
       ...receiptDataFields,
+      signature: {
+        name: signatureData.name,
+        image_signature: signatureData.image_signature,
+        position: signatureData.position,
+      },
       net: net,
       ShippingCost: ShippingCost,
       Shippingincluded: (net + ShippingCost).toFixed(2),
@@ -86,6 +92,7 @@ exports.PrintReceiptNoVat = async (req, res) => {
       end_date,
       quotation,
       invoice,
+      signatureID,
     } = req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -101,11 +108,21 @@ exports.PrintReceiptNoVat = async (req, res) => {
     const net = discount ? total - discount : total;
     const Shippingincluded = (total + ShippingCost).toFixed(2);
     const invoice1 = await invoiceNumber();
+    let signatureData = {};
+    if (signatureID) {
+      signatureData = await Signature.findOne({ _id: signatureID });
+    }
+
     const quotation1 = await new ReceiptNoVat({
       ...req.body,
       receipt: invoice1,
       customer_detail: {
         ...req.body.customer_detail,
+      },
+      signature: {
+        name: signatureData.name,
+        image_signature: signatureData.image_signature,
+        position: signatureData.position,
       },
       net: net,
       percen_deducted: percen_deducted.toFixed(2),

@@ -8,6 +8,7 @@ const { Admins, validateAdmin } = require("../../models/admin/admin.models");
 const { Quotation } = require("../../models/admin/quotation.models");
 const { Branch } = require("../../models/ฺฺbranch/ฺฺbranch.models");
 const { Company } = require("../../models/company/company.models");
+const { Signature } = require("../../models/signature/signature.models");
 const {
   Customer,
   validateCustomer,
@@ -36,6 +37,7 @@ exports.QuotationVat = async (req, res) => {
       discount = 0,
       start_date,
       end_date,
+      signatureID,
     } = req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -66,8 +68,12 @@ exports.QuotationVat = async (req, res) => {
     } else {
       customer = req.body.customer_detail || {};
     }
+    let signatureData = {};
+    if (signatureID) {
+      signatureData = await Signature.findOne({ _id: signatureID });
+    }
 
-    const quotation1 = await QuotationNumber()
+    const quotation1 = await QuotationNumber();
     const quotation = await new Quotation({
       ...req.body,
       quotation: quotation1, //เลขใบเสนอราคา
@@ -81,7 +87,7 @@ exports.QuotationVat = async (req, res) => {
             contact_number: branch.contact_number,
           }
         : null,
-        
+
       customer_detail: {
         ...req.body.customer_detail,
         tax_id: customer.customer_taxnumber,
@@ -91,6 +97,11 @@ exports.QuotationVat = async (req, res) => {
         customer_email: customer.customer_email,
         customer_address: customer.customer_address,
         customer_type: customer.customer_type,
+      },
+      signature: {
+        name: signatureData.name,
+        image_signature: signatureData.image_signature,
+        position: signatureData.position,
       },
       product_detail: updatedProductDetail,
       discount: discount.toFixed(2),
@@ -132,6 +143,7 @@ exports.Quotation = async (req, res) => {
       customer_number,
       discount = 0,
       ShippingCost = 0,
+      signatureID,
     } = req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -158,7 +170,10 @@ exports.Quotation = async (req, res) => {
     } else {
       customer = req.body.customer_detail || {};
     }
-    console.log(branch);
+    let signatureData = {};
+    if (signatureID) {
+      signatureData = await Signature.findOne({ _id: signatureID });
+    }
 
     const quotation1 = await QuotationNumber();
     const quotation = await new Quotation({
@@ -174,6 +189,11 @@ exports.Quotation = async (req, res) => {
             contact_number: branch.contact_number,
           }
         : null,
+        signature: {
+          name: signatureData.name,
+          image_signature: signatureData.image_signature,
+          position: signatureData.position,
+        },
       customer_detail: {
         ...req.body.customer_detail,
         tax_id: customer.customer_taxnumber,

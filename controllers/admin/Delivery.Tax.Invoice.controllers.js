@@ -9,6 +9,7 @@ const { Quotation } = require("../../models/admin/quotation.models");
 const { Invoice } = require("../../models/admin/invoice.models");
 const { ReceiptNoVat } = require("../../models/admin/receipt.no.vat.models");
 const { ReceiptVat } = require("../../models/admin/receipt.vat.models");
+const { Signature } = require("../../models/signature/signature.models");
 const {
   DeliveryTaxInvoice,
 } = require("../../models/admin/Delivery.Tax.Invoice.models");
@@ -33,6 +34,9 @@ const { admin } = require("googleapis/build/src/apis/admin");
 exports.ReceiptDTVat = async (req, res) => {
   try {
     const invoiceID = req.body.invoiceID || req.body;
+    const signatureID = req.body.signatureID || req.body;
+
+    const signatureData = await Signature.findOne({ _id: signatureID });
     const quotationData = await Invoice.findOne({ _id: invoiceID });
     const invoiceOT = await invoiceOTNumber();
     const { _id, timestamps, vat, discount, ...receiptDataFields } =
@@ -52,6 +56,11 @@ exports.ReceiptDTVat = async (req, res) => {
 
     const savedReceiptData = await DeliveryTaxInvoice.create({
       ...receiptDataFields,
+      signature: {
+        name: signatureData.name,
+        image_signature: signatureData.image_signature,
+        position: signatureData.position,
+      },
       delivery_tax_invoice: invoiceOT,
       quotation: quotationData.quotation,
       invoice: quotationData.invoice,
@@ -90,6 +99,7 @@ exports.PrintOTVat = async (req, res) => {
       start_date,
       end_date,
       quotation,
+      signatureID,
       invoice,
     } = req.body;
     let total = 0;
@@ -108,11 +118,21 @@ exports.PrintOTVat = async (req, res) => {
     const vatAmount = net * vatRate;
     const totalWithVat = net + vatAmount;
     const invoiceOT = await invoiceOTNumber();
+
+    let signatureData = {};
+    if (signatureID) {
+      signatureData = await Signature.findOne({ _id: signatureID });
+    }
     const Shippingincluded = (totalWithVat + ShippingCost).toFixed(2);
     const quotation1 = await new DeliveryTaxInvoice({
       ...req.body,
       customer_detail: {
         ...req.body.customer_detail,
+      },
+      signature: {
+        name: signatureData.name,
+        image_signature: signatureData.image_signature,
+        position: signatureData.position,
       },
       delivery_tax_invoice: invoiceOT,
       discount: discount.toFixed(2),
@@ -249,7 +269,10 @@ exports.deleteAllDT = async (req, res) => {
 };
 exports.getDTAllfilter = async (req, res) => {
   try {
-    const dt = await DeliveryTaxInvoice.find({}, { _id: 1, delivery_tax_invoice: 1 });
+    const dt = await DeliveryTaxInvoice.find(
+      {},
+      { _id: 1, delivery_tax_invoice: 1 }
+    );
     if (!dt || dt.length === 0) {
       return res
         .status(404)

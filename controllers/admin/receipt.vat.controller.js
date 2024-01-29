@@ -9,6 +9,7 @@ const { Quotation } = require("../../models/admin/quotation.models");
 const { Invoice } = require("../../models/admin/invoice.models");
 const { ReceiptNoVat } = require("../../models/admin/receipt.no.vat.models");
 const { ReceiptVat } = require("../../models/admin/receipt.vat.models");
+const { Signature } = require("../../models/signature/signature.models");
 const {
   Customer,
   validateCustomer,
@@ -30,7 +31,11 @@ const { admin } = require("googleapis/build/src/apis/admin");
 exports.ReceiptVat = async (req, res) => {
   try {
     const invoiceID = req.body.invoiceID || req.body;
+    const signatureID = req.body.signatureID || req.body;
+
+    const signatureData = await Signature.findOne({ _id: signatureID });
     const quotationData = await Invoice.findOne({ _id: invoiceID });
+
     const invoice = await invoiceNumber();
     const { _id, timestamps, vat, discount, ...receiptDataFields } =
       quotationData.toObject();
@@ -53,6 +58,11 @@ exports.ReceiptVat = async (req, res) => {
     const savedReceiptData = await ReceiptVat.create({
       ...receiptDataFields,
       receipt: invoice,
+      signature: {
+        name: signatureData.name,
+        image_signature: signatureData.image_signature,
+        position: signatureData.position,
+      },
       quotation: quotationData.quotation,
       invoice: quotationData.invoice,
       discount: discount.toFixed(2),
@@ -95,9 +105,12 @@ exports.PrintReceiptVat = async (req, res) => {
       totalVat_deducted = 0,
       start_date,
       end_date,
+      signatureID ,
       quotation,
       invoice,
     } = req.body;
+
+    
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
       const price = product.product_price;
@@ -115,10 +128,19 @@ exports.PrintReceiptVat = async (req, res) => {
     const totalWithVat = net + vatAmount;
     const invoice1 = await invoiceNumber();
     const Shippingincluded = (totalWithVat + ShippingCost).toFixed(2);
+    let signatureData = {};
+    if (signatureID) {
+      signatureData = await Signature.findOne({ _id: signatureID });
+    }
     const quotation1 = await new ReceiptVat({
       ...req.body,
       customer_detail: {
         ...req.body.customer_detail,
+      },
+      signature: {
+        name: signatureData.name,
+        image_signature: signatureData.image_signature,
+        position: signatureData.position,
       },
       receipt: invoice1,
       discount: discount.toFixed(2),

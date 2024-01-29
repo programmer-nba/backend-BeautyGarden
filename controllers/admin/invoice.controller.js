@@ -7,6 +7,7 @@ const req = require("express/lib/request.js");
 const { Admins, validateAdmin } = require("../../models/admin/admin.models");
 const { Invoice } = require("../../models/admin/invoice.models");
 const { Quotation } = require("../../models/admin/quotation.models");
+const { Signature } = require("../../models/signature/signature.models");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const storage = multer.diskStorage({
@@ -24,6 +25,9 @@ const { admin } = require("googleapis/build/src/apis/admin");
 exports.ReceiptInvoiceVat = async (req, res) => {
   try {
     const quotationID = req.body.quotationID || req.body;
+    const signatureID = req.body.signatureID || req.body;
+
+    const signatureData = await Signature.findOne({ _id: signatureID });
     const quotationData = await Quotation.findOne({ _id: quotationID });
     const invoice = await invoiceNumber();
     const { _id, timestamps, vat, discount, ...receiptDataFields } =
@@ -42,6 +46,11 @@ exports.ReceiptInvoiceVat = async (req, res) => {
 
     const savedReceiptData = await Invoice.create({
       ...receiptDataFields,
+      signature: {
+        name: signatureData.name,
+        image_signature: signatureData.image_signature,
+        position: signatureData.position,
+      },
       invoice: invoice,
       quotation: quotationData.quotation,
       discount: discount.toFixed(2),
@@ -79,6 +88,7 @@ exports.PrintInviuceVat = async (req, res) => {
       start_date,
       end_date,
       quotation,
+      signatureID,
       invoice,
     } = req.body;
     let total = 0;
@@ -98,11 +108,20 @@ exports.PrintInviuceVat = async (req, res) => {
     const vatAmount = net * vatRate;
     const totalWithVat = net + vatAmount;
     const invoice1 = await invoiceNumber();
+    let signatureData = {};
+    if (signatureID) {
+      signatureData = await Signature.findOne({ _id: signatureID });
+    }
     const Shippingincluded = (totalWithVat + ShippingCost).toFixed(2);
     const quotation1 = await new Invoice({
       ...req.body,
       customer_detail: {
         ...req.body.customer_detail,
+      },
+      signature: {
+        name: signatureData.name,
+        image_signature: signatureData.image_signature,
+        position: signatureData.position,
       },
       receipt: invoice1,
       discount: discount.toFixed(2),
