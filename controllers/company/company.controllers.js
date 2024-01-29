@@ -61,6 +61,7 @@ exports.ImportBankCompany = async (req, res) => {
         const company = await Company.findByIdAndUpdate(id, {
           ...req.body,
           "bank.name": req.body.name,
+          "bank.name_bank": req.body.name_bank,
           "bank.number": req.body.number,
           "bank.image": reqFiles[0],
         });

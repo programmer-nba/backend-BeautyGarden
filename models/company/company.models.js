@@ -9,15 +9,17 @@ const CompanySchema = new mongoose.Schema({
   Branch_postcode: { type: String, required: false }, //รหัสไปรษณีย์
   Branch_tel: { type: String, required: false }, //เบอร์โทรศัพท์
   Branch_status: { type: Boolean, required: false, default: true }, //สถานะ
-  bank: {//บัญชีธนาคาร
-    name: { type: String, required: false, default: "-" },
+  bank: {
+    //บัญชีธนาคาร
+    name: { type: String, required: false, default: "-" }, //ชื่อเจ้าของบัญชี
+    name_bank: { type: String, required: false, default: "-" }, //ชื่อธนาคาร
     number: { type: String, required: false, default: "-" },
     image: { type: String, required: false, default: "-" },
     status: { type: Boolean, required: false, default: false },
     remark: { type: String, required: false, default: "-" }, //อยู่ระหว่างการตรวจสอบ , ไม่ผ่านการตรวจสอบ ,ตรวจสอบสำเร็จ
   },
   //เลขที่การเสียภาษี
-  taxnumber: { type: String, required: false, default: true },//เลขที่การเสียภาษี
+  taxnumber: { type: String, required: false, default: true }, //เลขที่การเสียภาษี
   //บัตรประชาชน
   Branch_iden: { type: String, required: false, default: "-" }, // images
   Branch_iden_number: { type: String, required: false, default: "-" }, //เลขประจำตัวประชาชน
@@ -25,8 +27,8 @@ const CompanySchema = new mongoose.Schema({
   Branch_company_name: { type: String, required: false, default: "ไม่มี" }, //ชื่อบริษัท
   Branch_company_number: { type: String, required: false, default: "ไม่มี" }, //เลขที่บริษัท
   Branch_company_address: { type: String, required: false, default: "ไม่มี" }, //ที่อยู่บริษัท
-  
-  contact_name:{ type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
+
+  contact_name: { type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
   contact_number: { type: String, required: false, default: "ไม่มี" }, //เบอร์โทรผู้ติดต่อ
 });
 
