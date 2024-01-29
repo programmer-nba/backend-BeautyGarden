@@ -6,6 +6,7 @@ const { default: axios } = require("axios");
 const req = require("express/lib/request.js");
 const { Admins, validateAdmin } = require("../../models/admin/admin.models");
 const { CostType } = require("../../models/costtype/cost_type.models");
+const { Signature } = require("../../models/signature/signature.models");
 const mongoose = require("mongoose");
 const {
   PurchaseOrderSup,
@@ -26,7 +27,7 @@ const { admin } = require("googleapis/build/src/apis/admin");
 
 exports.Create = async (req, res) => {
   try {
-    const { product_detail, note, discount = 0 } = req.body;
+    const { product_detail, note, discount = 0, signatureID } = req.body;
 
     let total = 0;
     const productCostTypes = product_detail.map(
@@ -51,11 +52,20 @@ exports.Create = async (req, res) => {
 
     const net = discount ? total - discount : total;
     const purchaseOrder = await purchaseOrderNumber();
-
+    let signatureData = {};
+    if (signatureID) {
+      signatureData = await Signature.findOne({ _id: signatureID });
+    }
+  
     const PurchaseOrder1 = await new PurchaseOrderSup({
       ...req.body,
       customer_detail: {
         ...req.body.customer_detail,
+      },
+      signature: {
+        name: signatureData.name,
+        image_signature: signatureData.image_signature,
+        position: signatureData.position,
       },
       purchase_order: purchaseOrder,
       discount: discount.toFixed(2),
