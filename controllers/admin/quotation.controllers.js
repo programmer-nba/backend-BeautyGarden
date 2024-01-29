@@ -66,7 +66,8 @@ exports.QuotationVat = async (req, res) => {
     } else {
       customer = req.body.customer_detail || {};
     }
-    const quotation1 = await QuotationNumber();
+
+    const quotation1 = await QuotationNumber()
     const quotation = await new Quotation({
       ...req.body,
       quotation: quotation1, //เลขใบเสนอราคา
@@ -76,8 +77,11 @@ exports.QuotationVat = async (req, res) => {
             Branch_company_number: branch.Branch_company_number,
             Branch_company_address: branch.Branch_company_address,
             Branch_tel: branch.Branch_tel,
+            contact_name: branch.contact_name,
+            contact_number: branch.contact_number,
           }
         : null,
+        
       customer_detail: {
         ...req.body.customer_detail,
         tax_id: customer.customer_taxnumber,
@@ -154,6 +158,8 @@ exports.Quotation = async (req, res) => {
     } else {
       customer = req.body.customer_detail || {};
     }
+    console.log(branch);
+
     const quotation1 = await QuotationNumber();
     const quotation = await new Quotation({
       ...req.body,
@@ -164,6 +170,8 @@ exports.Quotation = async (req, res) => {
             Branch_company_number: branch.Branch_company_number,
             Branch_company_address: branch.Branch_company_address,
             Branch_tel: branch.Branch_tel,
+            contact_name: branch.contact_name,
+            contact_number: branch.contact_number,
           }
         : null,
       customer_detail: {
