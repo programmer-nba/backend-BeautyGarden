@@ -29,7 +29,7 @@ const CompanySchema = new mongoose.Schema({
   Branch_company_name: { type: String, required: false, default: "ไม่มี" }, //ชื่อบริษัท
   Branch_company_number: { type: String, required: false, default: "ไม่มี" }, //เลขที่บริษัท
   Branch_company_address: { type: String, required: false, default: "ไม่มี" }, //ที่อยู่บริษัท
-
+  company_email: { type: String, required: false, default: "ไม่มี" }, 
   contact_name: { type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
   contact_number: { type: String, required: false, default: "ไม่มี" }, //เบอร์โทรผู้ติดต่อ
   isVat: { type: Boolean, required: false},

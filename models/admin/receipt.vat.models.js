@@ -16,6 +16,7 @@ const ReceiptVatSchema = new mongoose.Schema({
     Branch_tel: { type: String, required: false }, //เบอร์โทรศัพท์
     contact_name: { type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
     contact_number: { type: String, required: false, default: "ไม่มี" }, //เบอร์โทรผู้ติดต่อ
+    company_email: { type: String, required: false, default: "ไม่มี" },
   },
   customer_detail: {
     //ข้อมูลของลูกค้า
@@ -63,9 +64,9 @@ const ReceiptVatSchema = new mongoose.Schema({
     total_all_end: { type: Number, required: false }, //ราคารวมหลังหัก ณ ที่ จ่าย
   },
   note: { type: String, required: false }, //หมายเหตุ
-  sumVat:{type: Boolean, required: false},
-  withholding:{type: Boolean, required: false},
-  isVat:{type: Boolean, required: false},
+  sumVat: { type: Boolean, required: false },
+  withholding: { type: Boolean, required: false },
+  isVat: { type: Boolean, required: false },
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
   status: { type: Array, required: false },
   start_date: { type: String, required: false }, //วันที่ออกบิล

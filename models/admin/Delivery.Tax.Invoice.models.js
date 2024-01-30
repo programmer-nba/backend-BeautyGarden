@@ -16,6 +16,7 @@ const DeliveryTaxInvoiceSchema = new mongoose.Schema({
     Branch_tel: { type: String, required: false }, //เบอร์โทรศัพท์
     contact_name: { type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
     contact_number: { type: String, required: false, default: "ไม่มี" }, //เบอร์โทรผู้ติดต่อ
+    company_email: { type: String, required: false, default: "ไม่มี" },
   },
   customer_detail: {
     //ข้อมูลของลูกค้า
