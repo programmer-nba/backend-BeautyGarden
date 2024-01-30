@@ -38,10 +38,25 @@ const QuotationSchema = new mongoose.Schema({
   discount: { type: Number, required: false }, //ส่วนลด เป็นบาท
   discount_persen: { type: Number, required: false }, //ส่วนลด เป็นเปอร์เซ็น
   net: { type: Number, required: false }, //ราคารวมหลังหักส่วนลด
-  vat: { type: Number, required: false }, //vat 7 %
-  totalvat: { type: Number, required: false }, //ราคารวมหลัง vat
-  ShippingCost: { type: Number, required: false }, //ค่าจัดส่ง
-  Shippingincluded: { type: Number, required: false }, //รวมค่าจัดส่ง
+  vat: {
+    amount_vat: { type: Number, required: false }, //vat 7%
+    totalvat: { type: Number, required: false }, //ราคาหลังรวม vat
+    ShippingCost: { type: Number, required: false }, //ค่าจัดส่ง
+    Shippingincluded: { type: Number, required: false }, //รวมคารวมจัดส่ง
+    percen_deducted: { type: Number, required: false }, //เลขเปอร์เซ็น ณ ที่หักจ่าย
+    total_deducted: { type: Number, required: false }, //ราคารวมหลักจากหัก ณ ที่จ่าย
+    totalVat_deducted: { type: Number, required: false }, // ราคารวมหลักจากเอา ราคารวม vat เเล้ว มาลบ กับ ณที่หักจ่าย
+  },
+  total_products: {
+    amount_vat: { type: Number, required: false }, //หาค่าจริงของสินค้า
+    total_product: { type: Number, required: false }, //ราคาหลังหัก
+    total_discount: { type: Number, required: false }, //เปอร์เซ็นหักจ่าย
+    ShippingCost1: { type: Number, required: false }, //ราคาขนส่ง
+    total_ShippingCost1: { type: Number, required: false }, //ราคารวมหลังจากขนส่ง
+    percen_payment: { type: Number, required: false }, //เปอร์เซ็นหักจ่าย
+    after_discoun_payment: { type: Number, required: false }, //ราคาหลังหักจ่าย
+    total_all_end: { type: Number, required: false }, //ราคารวมหลังหัก ณ ที่ จ่าย
+  },
   signature: {
     name: { type: String, required: false, default: "-" }, //ชื่อเจ้าของลายเซ็น
     image_signature: { type: String, required: false, default: "-" }, //รูปภาพลายเซ็น

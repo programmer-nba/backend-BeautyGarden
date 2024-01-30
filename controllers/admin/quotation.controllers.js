@@ -141,6 +141,8 @@ exports.Quotation = async (req, res) => {
       product_detail,
       customer_detail,
       customer_number,
+      percen_deducted = 0,
+      percen_payment = 0,
       discount = 0,
       ShippingCost = 0,
       signatureID,
@@ -158,6 +160,9 @@ exports.Quotation = async (req, res) => {
     });
     const discount_percent = discount ? (discount / total) * 100 : 0;
     const net = discount ? total - discount : total;
+    const vatRate = 0.07;
+    const vatAmount = net * vatRate;
+    const totalWithVat = net + vatAmount;
     const Shippingincluded = (
       parseFloat(net) - parseFloat(ShippingCost)
     ).toFixed(2);
@@ -174,6 +179,22 @@ exports.Quotation = async (req, res) => {
     if (signatureID) {
       signatureData = await Signature.findOne({ _id: signatureID });
     }
+
+    const deductionPercentage = parseFloat(req.body.percen_deducted) || 0;
+    const total_deducted1 = (
+      (Shippingincluded * deductionPercentage) /
+      100
+    ).toFixed(2);
+    const totalVat_deducted1 = (Shippingincluded - total_deducted1).toFixed(2);
+
+    const amount_vat = ((total * vatRate) / 1.07).toFixed(2);
+    const total_amount_product = (total - amount_vat).toFixed(2);
+    const totalAll = total_amount_product - discount;
+    const tatal_Shippingincluded = totalAll + ShippingCost;
+    const total_paymeny = (
+      (tatal_Shippingincluded * percen_payment) /
+      100
+    ).toFixed(2);
 
     const quotation1 = await QuotationNumber();
     const quotation = await new Quotation({
@@ -209,8 +230,15 @@ exports.Quotation = async (req, res) => {
       discount: discount.toFixed(2),
       discount_persen: discount_percent.toFixed(2),
       net: net,
-      ShippingCost: ShippingCost,
-      Shippingincluded: Shippingincluded,
+      vat: {
+        amount_vat: vatAmount.toFixed(2),
+        totalvat: totalWithVat.toFixed(2),
+        ShippingCost: ShippingCost,
+        Shippingincluded: Shippingincluded,
+        percen_deducted: percen_deducted,
+        total_deducted: total_deducted1,
+        totalVat_deducted: totalVat_deducted1,
+      },
       timestamps: dayjs(Date.now()).format(""),
     }).save();
     if (quotation) {
