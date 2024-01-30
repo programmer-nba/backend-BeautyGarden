@@ -86,7 +86,7 @@ exports.QuotationVat = async (req, res) => {
             Branch_tel: branch.Branch_tel,
             contact_name: branch.contact_name,
             contact_number: branch.contact_number,
-            company_email:branch.company_email,
+            company_email: branch.company_email,
           }
         : null,
 
@@ -208,7 +208,7 @@ exports.Quotation = async (req, res) => {
             Branch_tel: branch.Branch_tel,
             contact_name: branch.contact_name,
             contact_number: branch.contact_number,
-            company_email:branch.company_email,
+            company_email: branch.company_email,
           }
         : null,
       signature: {
