@@ -38,6 +38,7 @@ exports.QuotationVat = async (req, res) => {
       start_date,
       end_date,
       signatureID,
+      percen_deducted = 0,
     } = req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -50,14 +51,14 @@ exports.QuotationVat = async (req, res) => {
         product_total,
       };
     });
+
+    const percen_deducted1 = req.body.percen_deducted || 0;
     const discount_percent = discount ? (discount / total) * 100 : 0;
     const net = discount ? total - discount : total;
     const vatRate = 0.07;
     const vat = Number((net * vatRate).toFixed(2));
     const totalvat = Number((net + vat).toFixed(2));
-    const Shippingincluded = (
-      parseFloat(totalvat) + parseFloat(ShippingCost)
-    ).toFixed(2);
+    const total_deducted1 = (net * percen_deducted1) / 100;
 
     let customer = {};
     const branchId = req.body.branchId;
@@ -107,11 +108,12 @@ exports.QuotationVat = async (req, res) => {
       discount: discount.toFixed(2),
       discount_persen: discount_percent.toFixed(2),
       total: total.toFixed(2),
-      vat: vat,
       net: net,
-      ShippingCost: ShippingCost,
-      Shippingincluded: Shippingincluded,
-      totalvat: totalvat,
+      vat: {
+        percen_deducted: percen_deducted1,
+        total_deducted: total_deducted1,
+        totalVat_deducted: net - total_deducted1,
+      },
       timestamps: dayjs(Date.now()).format(""),
     }).save();
     if (quotation) {
@@ -163,9 +165,6 @@ exports.Quotation = async (req, res) => {
     const vatRate = 0.07;
     const vatAmount = net * vatRate;
     const totalWithVat = net + vatAmount;
-    const Shippingincluded = (
-      parseFloat(net) - parseFloat(ShippingCost)
-    ).toFixed(2);
     let customer = {};
     const branchId = req.body.branchId;
     const branch = branchId ? await Company.findById(branchId) : null;
@@ -182,10 +181,10 @@ exports.Quotation = async (req, res) => {
 
     const deductionPercentage = parseFloat(req.body.percen_deducted) || 0;
     const total_deducted1 = (
-      (Shippingincluded * deductionPercentage) /
+      (totalWithVat * deductionPercentage) /
       100
     ).toFixed(2);
-    const totalVat_deducted1 = (Shippingincluded - total_deducted1).toFixed(2);
+    const totalVat_deducted1 = (totalWithVat - total_deducted1).toFixed(2);
 
     const amount_vat = ((total * vatRate) / 1.07).toFixed(2);
     const total_amount_product = (total - amount_vat).toFixed(2);
@@ -234,10 +233,20 @@ exports.Quotation = async (req, res) => {
         amount_vat: vatAmount.toFixed(2),
         totalvat: totalWithVat.toFixed(2),
         ShippingCost: ShippingCost,
-        Shippingincluded: Shippingincluded,
+        // Shippingincluded: Shippingincluded,
         percen_deducted: percen_deducted,
         total_deducted: total_deducted1,
         totalVat_deducted: totalVat_deducted1,
+      },
+      total_products: {
+        amount_vat: amount_vat,
+        total_product: total_amount_product,
+        percen_payment: percen_payment,
+        total_discount: totalAll,
+        ShippingCost1: ShippingCost,
+        total_ShippingCost1: tatal_Shippingincluded,
+        after_discoun_payment: total_paymeny,
+        total_all_end: total - total_paymeny,
       },
       timestamps: dayjs(Date.now()).format(""),
     }).save();
