@@ -43,8 +43,7 @@ exports.ReceiptVat = async (req, res) => {
     const total = quotationData.total;
     const ShippingCost = req.body.ShippingCost || 0;
     const percen_deducted = req.body.percen_deducted || 0;
-    const total_deducted = req.body.total_deducted || 0;
-    const totalVat_deducted = req.body.totalVat_deducted || 0;
+    const percen_payment = req.body.percen_payment || 0;
     const net = discount ? total - discount : total;
     const vatPercentage = 0.07; // VAT rate (7%)
 
@@ -53,6 +52,19 @@ exports.ReceiptVat = async (req, res) => {
     const totalvat = (vatAmount + net).toFixed(2);
     const Shippingincluded = (
       parseFloat(totalvat) + parseFloat(ShippingCost)
+    ).toFixed(2);
+
+    const deductionPercentage = parseFloat(req.body.percen_deducted) || 0;
+    const total_deducted = ((totalvat * deductionPercentage) / 100).toFixed(2);
+    const totalVat_deducted = (Shippingincluded - total_deducted).toFixed(2);
+
+    const amount_vat = ((total * vatPercentage) / 1.07).toFixed(2);
+    const total_amount_product = (total - amount_vat).toFixed(2);
+    const totalAll = total_amount_product - discount;
+    const tatal_Shippingincluded = totalAll + ShippingCost;
+    const total_paymeny = (
+      (tatal_Shippingincluded * percen_payment) /
+      100
     ).toFixed(2);
 
     const savedReceiptData = await ReceiptVat.create({
@@ -67,18 +79,29 @@ exports.ReceiptVat = async (req, res) => {
       invoice: quotationData.invoice,
       discount: discount.toFixed(2),
       net: net.toFixed(2),
-      vat: vatAmount.toFixed(2),
-      totalvat: (vatAmount + net).toFixed(2),
-      percen_deducted: percen_deducted.toFixed(2),
-      total_deducted: total_deducted.toFixed(2),
-      totalVat_deducted: totalVat_deducted.toFixed(2),
-      ShippingCost: ShippingCost,
-      Shippingincluded: Shippingincluded,
+      vat: {
+        amount_vat: vatAmount.toFixed(2),
+        totalvat: (vatAmount + net).toFixed(2),
+        percen_deducted: deductionPercentage.toFixed(2),
+        total_deducted: total_deducted,
+        totalVat_deducted: totalVat_deducted,
+        ShippingCost: ShippingCost,
+        Shippingincluded: Shippingincluded,
+      },
+      total_products: {
+        amount_vat: amount_vat,
+        total_product: total_amount_product,
+        percen_payment: percen_payment,
+        total_discount: totalAll,
+        ShippingCost1: ShippingCost,
+        total_ShippingCost1: tatal_Shippingincluded,
+        after_discoun_payment: total_paymeny,
+        total_all_end: tatal_Shippingincluded - total_paymeny,
+      },
       start_date: req.body.start_date,
       end_date: req.body.end_date,
       note: req.body.note,
     });
-
     return res.status(200).send({
       status: true,
       message: "บันทึกข้อมูลสำเร็จ",
@@ -105,12 +128,11 @@ exports.PrintReceiptVat = async (req, res) => {
       totalVat_deducted = 0,
       start_date,
       end_date,
-      signatureID ,
+      signatureID,
       quotation,
       invoice,
     } = req.body;
 
-    
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
       const price = product.product_price;
