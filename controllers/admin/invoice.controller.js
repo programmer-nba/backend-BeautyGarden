@@ -44,6 +44,10 @@ exports.ReceiptInvoiceVat = async (req, res) => {
       parseFloat(totalvat) + parseFloat(ShippingCost)
     ).toFixed(2);
 
+    const deductionPercentage = parseFloat(req.body.percen_deducted) || 0;
+    const total_deducted = ((totalvat * deductionPercentage) / 100).toFixed(2);
+    const totalVat_deducted = (Shippingincluded - total_deducted).toFixed(2);
+
     const savedReceiptData = await Invoice.create({
       ...receiptDataFields,
       signature: {
@@ -55,10 +59,13 @@ exports.ReceiptInvoiceVat = async (req, res) => {
       quotation: quotationData.quotation,
       discount: discount.toFixed(2),
       net: net.toFixed(2),
-      vat: vatAmount.toFixed(2),
-      totalvat: (vatAmount + net).toFixed(2),
-      ShippingCost: ShippingCost,
-      Shippingincluded: Shippingincluded,
+      vat: {
+        amount_vat: vatAmount.toFixed(2),
+        totalvat: (vatAmount + net).toFixed(2),
+        percen_deducted: deductionPercentage.toFixed(2),
+        total_deducted: total_deducted,
+        totalVat_deducted: totalVat_deducted,
+      },
       start_date: req.body.start_date,
       end_date: req.body.end_date,
       note: req.body.note,
