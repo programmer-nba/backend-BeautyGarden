@@ -246,7 +246,7 @@ exports.Quotation = async (req, res) => {
         ShippingCost1: ShippingCost,
         total_ShippingCost1: tatal_Shippingincluded,
         after_discoun_payment: total_paymeny,
-        total_all_end: total - total_paymeny,
+        total_all_end: total - total_paymeny - discount,
       },
       timestamps: dayjs(Date.now()).format(""),
     }).save();

@@ -36,8 +36,15 @@ exports.ReceiptNoVat = async (req, res) => {
     const quotationData = await Invoice.findOne({ _id: invoiceID });
 
     const invoice = await invoiceNumber();
-    const { _id, timestamps, net, ...receiptDataFields } =
-      quotationData.toObject();
+    const {
+      _id,
+      timestamps,
+      net,
+      sumVat,
+      withholding,
+      isVat,
+      ...receiptDataFields
+    } = quotationData.toObject();
 
     const total = quotationData.total;
     const ShippingCost = req.body.ShippingCost || 0;
@@ -94,6 +101,9 @@ exports.PrintReceiptNoVat = async (req, res) => {
       start_date,
       end_date,
       quotation,
+      sumVat,
+      withholding,
+      isVat,
       invoice,
       signatureID,
     } = req.body;
@@ -141,6 +151,7 @@ exports.PrintReceiptNoVat = async (req, res) => {
       ShippingCost: ShippingCost,
       Shippingincluded: Shippingincluded,
       product_detail: updatedProductDetail,
+
       total: total.toFixed(2),
       timestamps: dayjs(Date.now()).format(""),
     }).save();

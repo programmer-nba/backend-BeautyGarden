@@ -63,6 +63,9 @@ const ReceiptVatSchema = new mongoose.Schema({
     total_all_end: { type: Number, required: false }, //ราคารวมหลังหัก ณ ที่ จ่าย
   },
   note: { type: String, required: false }, //หมายเหตุ
+  sumVat:{type: Boolean, required: false},
+  withholding:{type: Boolean, required: false},
+  isVat:{type: Boolean, required: false},
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
   status: { type: Array, required: false },
   start_date: { type: String, required: false }, //วันที่ออกบิล

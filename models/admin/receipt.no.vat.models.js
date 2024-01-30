@@ -48,6 +48,9 @@ const ReceiptNoVatSchema = new mongoose.Schema({
   total_deducted: { type: Number, required: false }, //ราคารวมหลักจากหัก ณ ที่จ่าย
   total_end_deducted: { type: Number, required: false }, // ราคารวมหลักจากเอา ราคารวม vat เเล้ว มาลบ กับ ณที่หักจ่าย
   note: { type: String, required: false }, //หมายเหตุ
+  sumVat: { type: Boolean, required: false },
+  withholding: { type: Boolean, required: false },
+  isVat: { type: Boolean, required: false },
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
   status: { type: Array, required: false },
   start_date: { type: String, required: false }, //วันที่ออกบิล
