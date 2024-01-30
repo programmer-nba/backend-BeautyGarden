@@ -109,7 +109,14 @@ exports.PrintReceiptNoVat = async (req, res) => {
       };
     });
     const net = discount ? total - discount : total;
-    const Shippingincluded = (total + ShippingCost).toFixed(2);
+    const Shippingincluded = (net + ShippingCost).toFixed(2);
+    const percen_deducted1 = req.body.percen_deducted || 0;
+    const total_Shippingincluded = (net + ShippingCost).toFixed(2);
+    const total_deducted1 = (total_Shippingincluded * percen_deducted) / 100;
+    const totalVat_deducted1 = (
+      total_Shippingincluded - total_deducted1
+    ).toFixed(2);
+
     const invoice1 = await invoiceNumber();
     let signatureData = {};
     if (signatureID) {
@@ -128,9 +135,9 @@ exports.PrintReceiptNoVat = async (req, res) => {
         position: signatureData.position,
       },
       net: net,
-      percen_deducted: percen_deducted.toFixed(2),
-      total_deducted: total_deducted.toFixed(2),
-      totalVat_deducted: totalVat_deducted.toFixed(2),
+      percen_deducted: percen_deducted1.toFixed(2),
+      total_deducted: total_deducted1.toFixed(2),
+      total_end_deducted: totalVat_deducted1,
       ShippingCost: ShippingCost,
       Shippingincluded: Shippingincluded,
       product_detail: updatedProductDetail,
