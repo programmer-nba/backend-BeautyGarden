@@ -24,6 +24,7 @@ const InvoiceSchema = new mongoose.Schema({
     customer_type: { type: String, required: false }, //ประเภทลุกค้า
     customer_email: { type: String, required: false }, //email ลูกค้า
     customer_contact: { type: String, required: false }, //ข้อมูลติดต่อลูกค้า
+    customer_contact_number: { type: String, required: false }, //เบอร์โทรติดต่อผู้ประสานงาน
   },
   product_detail: [
     {
