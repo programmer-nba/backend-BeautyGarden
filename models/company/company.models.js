@@ -32,6 +32,7 @@ const CompanySchema = new mongoose.Schema({
 
   contact_name: { type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
   contact_number: { type: String, required: false, default: "ไม่มี" }, //เบอร์โทรผู้ติดต่อ
+  isVat: { type: Boolean, required: false},
 });
 
 const Company = mongoose.model("Company", CompanySchema);
