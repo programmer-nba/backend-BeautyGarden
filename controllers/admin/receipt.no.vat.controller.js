@@ -42,8 +42,11 @@ exports.ReceiptNoVat = async (req, res) => {
     const total = quotationData.total;
     const ShippingCost = req.body.ShippingCost || 0;
     const percen_deducted = req.body.percen_deducted || 0;
-    const total_deducted = req.body.total_deducted || 0;
-    const totalVat_deducted = req.body.totalVat_deducted || 0;
+    const total_Shippingincluded = (net + ShippingCost).toFixed(2);
+    const total_deducted = (total_Shippingincluded * percen_deducted) / 100;
+    const totalVat_deducted = (total_Shippingincluded - total_deducted).toFixed(
+      2
+    );
 
     const savedReceiptData = await ReceiptNoVat.create({
       ...receiptDataFields,
@@ -54,10 +57,10 @@ exports.ReceiptNoVat = async (req, res) => {
       },
       net: net,
       ShippingCost: ShippingCost,
-      Shippingincluded: (net + ShippingCost).toFixed(2),
+      Shippingincluded: total_Shippingincluded,
       percen_deducted: percen_deducted.toFixed(2),
       total_deducted: total_deducted.toFixed(2),
-      totalVat_deducted: totalVat_deducted.toFixed(2),
+      total_end_deducted: totalVat_deducted,
       start_date: req.body.start_date,
       end_date: req.body.end_date,
       note: req.body.note,

@@ -41,11 +41,11 @@ const ReceiptNoVatSchema = new mongoose.Schema({
   discount: { type: Number, required: false }, //ส่วนลด
   discount_persen: { type: Number, required: false }, //ส่วนลด เป็นเปอร์เซ็น
   net: { type: Number, required: false }, //ราคารวมหลังหักส่วนลด
-  percen_deducted: { type: Number, required: false }, //เลขเปอร์เซ็น ณ ที่หักจ่าย
-  total_deducted: { type: Number, required: false }, //ราคารวมหลักจากหัก ณ ที่จ่าย
-  totalVat_deducted: { type: Number, required: false }, // ราคารวมหลักจากเอา ราคารวม vat เเล้ว มาลบ กับ ณที่หักจ่าย
   ShippingCost: { type: Number, required: false }, //ค่าจัดส่ง
   Shippingincluded: { type: Number, required: false }, //รวมค่าจัดส่ง
+  percen_deducted: { type: Number, required: false }, //เลขเปอร์เซ็น ณ ที่หักจ่าย
+  total_deducted: { type: Number, required: false }, //ราคารวมหลักจากหัก ณ ที่จ่าย
+  total_end_deducted: { type: Number, required: false }, // ราคารวมหลักจากเอา ราคารวม vat เเล้ว มาลบ กับ ณที่หักจ่าย
   note: { type: String, required: false }, //หมายเหตุ
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
   status: { type: Array, required: false },

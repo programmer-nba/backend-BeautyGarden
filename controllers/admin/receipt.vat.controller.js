@@ -96,7 +96,7 @@ exports.ReceiptVat = async (req, res) => {
         ShippingCost1: ShippingCost,
         total_ShippingCost1: tatal_Shippingincluded,
         after_discoun_payment: total_paymeny,
-        total_all_end: tatal_Shippingincluded - total_paymeny,
+        total_all_end: total - total_paymeny,
       },
       start_date: req.body.start_date,
       end_date: req.body.end_date,
@@ -204,7 +204,7 @@ exports.PrintReceiptVat = async (req, res) => {
         ShippingCost1: ShippingCost,
         total_ShippingCost1: tatal_Shippingincluded,
         after_discoun_payment: total_paymeny,
-        total_all_end: tatal_Shippingincluded - total_paymeny,
+        total_all_end: total - total_paymeny,
       },
       timestamps: dayjs(Date.now()).format(""),
     }).save();
