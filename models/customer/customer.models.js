@@ -49,4 +49,4 @@ CustomerSchema.methods.generateAuthToken = function () {
   return token;
 };
 const Customer = mongoose.model("customer", CustomerSchema);
-module.exports = { Customer, validateCustomer };
+module.exports = { Customer };

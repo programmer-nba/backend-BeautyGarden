@@ -7,7 +7,6 @@ const { Admins, validateAdmin } = require("../models/admin/admin.models");
 const { Member, validatemember } = require("../models/member/member.models");
 const {
   Customer,
-  validateCustomer,
 } = require("../models/customer/customer.models");
 const {
   Accountant,

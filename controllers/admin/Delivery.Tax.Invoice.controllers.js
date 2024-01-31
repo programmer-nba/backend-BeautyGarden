@@ -15,7 +15,6 @@ const {
 } = require("../../models/admin/Delivery.Tax.Invoice.models");
 const {
   Customer,
-  validateCustomer,
 } = require("../../models/customer/customer.models");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");

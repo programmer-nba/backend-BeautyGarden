@@ -11,7 +11,6 @@ const { Company } = require("../../models/company/company.models");
 const { Signature } = require("../../models/signature/signature.models");
 const {
   Customer,
-  validateCustomer,
 } = require("../../models/customer/customer.models");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
