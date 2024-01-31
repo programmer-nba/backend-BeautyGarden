@@ -61,18 +61,14 @@ exports.create = async (req, res) => {
       }
 
       const CustomerNumber = await customernumber();
-      const salt = await bcrypt.genSalt(Number(process.env.SALT));
-      const hashPassword = await bcrypt.hash(req.body.customer_password, salt);
       const customers = new Customer({
         customer_taxnumber: req.body.customer_taxnumber,
         customer_number: CustomerNumber,
         profile_image: profile_image,
-        customer_username: req.body.customer_username,
         customer_idcard: req.body.customer_idcard,
         customer_name: req.body.customer_name,
         customer_lastname: req.body.customer_lastname,
         customer_phone: req.body.customer_phone,
-        customer_password: hashPassword,
         customer_position: req.body.customer_position,
         customer_email: req.body.customer_email,
         customer_type: req.body.customer_type,
