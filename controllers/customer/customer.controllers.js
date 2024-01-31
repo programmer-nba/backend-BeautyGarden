@@ -43,7 +43,6 @@ exports.create = async (req, res) => {
       }
       const NameAndLastName = await checkLastName(
         req.body.customer_name,
-        req.body.customer_lastname
       );
       if (NameAndLastName) {
         return res.status(409).send({
@@ -221,7 +220,6 @@ const checkTaxNumber = async (taxNumber) => {
 const checkLastName = async (name, lastName) => {
   const existingCustomer = await Customer.findOne({
     customer_name: name,
-    customer_lastname: lastName,
   });
   return !!existingCustomer;
 };
