@@ -1,10 +1,7 @@
 const bcrypt = require("bcrypt");
 const dayjs = require("dayjs");
 const Joi = require("joi");
-const {
-  Customer,
-  validateCustomer,
-} = require("../../models/customer/customer.models");
+const { Customer } = require("../../models/customer/customer.models");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const storage = multer.diskStorage({
@@ -37,12 +34,6 @@ exports.create = async (req, res) => {
         }
         profile_image = reqFiles[0];
       }
-      const { error } = validateCustomer(req.body);
-      if (error)
-        return res
-          .status(400)
-          .send({ message: error.details[0].message, status: false });
-
       const TaxNumber = await checkTaxNumber(req.body.customer_taxnumber);
       if (TaxNumber) {
         return res.status(409).send({

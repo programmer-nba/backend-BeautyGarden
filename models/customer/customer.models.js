@@ -49,30 +49,4 @@ CustomerSchema.methods.generateAuthToken = function () {
   return token;
 };
 const Customer = mongoose.model("customer", CustomerSchema);
-
-const validateCustomer = (data) => {
-  const schema = Joi.object({
-    customer_taxnumber: Joi.string()
-      .required()
-      .label("กนุณากรอกเลขประจำตัวผู้เสียภาษี"),
-    customer_username: Joi.string().required().label("กรุณากรอกไอดี"),
-    customer_password: Joi.string().required().label("กรุณากรอกพาสเวิร์ด"),
-    customer_name: Joi.string().required().label("กรุณากรอกชื่อ"),
-    customer_lastname: Joi.string().required().label("กรุณากรอกนามสกุล"),
-    customer_phone: Joi.string().required().label("กรอกเบอร์โทรลูกค้า"),
-    customer_position: Joi.string().required().label("กรอกตำแหน่งที่อยู่"),
-    customer_idcard: Joi.string().required().label("กรอกเลขบัตรประชาชน"),
-    customer_birthday: Joi.string().required().label("กรอกวันเดือนปีเกิด"),
-    customer_email: Joi.string().required().label("กรอกอีเมล์"),
-    customer_type: Joi.string().required().label("กรอกสถานะประเภทลูกค้า"),
-    customer_contact: Joi.string().required().label("กรอกข้อมูลติดต่อลูกค้า"),
-    customer_contact_number: Joi.string()
-      .required()
-      .label("กรอกข้อมูลผู้ประสานงาน"),
-  });
-  if ("member_note" in data) {
-    delete data.member_note;
-  }
-  return schema.validate(data);
-};
 module.exports = { Customer, validateCustomer };
