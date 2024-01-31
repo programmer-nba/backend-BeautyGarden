@@ -21,12 +21,12 @@ const CustomerSchema = new mongoose.Schema({
   profile_image: { type: String, required: false },
   customer_prefix: { type: String, required: false }, //คำนำหน้า
   customer_name: { type: String, required: false },
-  customer_lastname: { type: String, required: true },
-  customer_idcard: { type: String, required: true }, //รหัสบัตรประชาชน
-  customer_birthday: { type: String, required: true }, //วันเกิด
+  customer_lastname: { type: String, required: false },
+  customer_idcard: { type: String, required: false }, //รหัสบัตรประชาชน
+  customer_birthday: { type: String, required: false }, //วันเกิด
   customer_email: { type: String, required: false },
-  customer_phone: { type: String, required: true },
-  customer_position: { type: String, required: true },
+  customer_phone: { type: String, required: false },
+  customer_position: { type: String, required: false },
   customer_role: { type: String, required: false },
   customer_contact: {
     type: String,
