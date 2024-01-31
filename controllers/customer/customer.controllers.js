@@ -41,9 +41,7 @@ exports.create = async (req, res) => {
           message: "เลขประจำตัวผู้เสียภาษีนี้มีผู้ใช้แล้ว",
         });
       }
-      const NameAndLastName = await checkLastName(
-        req.body.customer_name,
-      );
+      const NameAndLastName = await checkLastName(req.body.customer_name);
       if (NameAndLastName) {
         return res.status(409).send({
           status: false,
