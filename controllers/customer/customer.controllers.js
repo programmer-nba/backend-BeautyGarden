@@ -51,15 +51,6 @@ exports.create = async (req, res) => {
           message: "ชื่อและนามสกุลนี้มีผู้ใช้แล้ว",
         });
       }
-      const user = await Customer.findOne({
-        customer_username: req.body.customer_username,
-      });
-      if (user) {
-        return res
-          .status(409)
-          .send({ status: false, message: "username นี้มีคนใช้แล้ว" });
-      }
-
       const CustomerNumber = await customernumber();
       const customers = new Customer({
         customer_taxnumber: req.body.customer_taxnumber,
