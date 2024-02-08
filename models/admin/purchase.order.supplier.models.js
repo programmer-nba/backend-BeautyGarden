@@ -31,6 +31,7 @@ const PurchaseOrderSupSchema = new mongoose.Schema({
   product_detail: [
     {
       product_id: { type: String, required: false },
+      product_text: { type: String, required: false },
       product_name: { type: String, required: false },
       product_amount: { type: Number, required: false },
       product_price: { type: Number, required: false },
