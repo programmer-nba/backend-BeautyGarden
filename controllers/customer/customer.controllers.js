@@ -96,11 +96,6 @@ exports.EditCustomer = async (req, res) => {
       const user = await Customer.findOne({
         customer_username: req.body.customer_username,
       });
-      if (user) {
-        return res
-          .status(409)
-          .send({ status: false, message: "username นี้มีคนใช้แล้ว" });
-      }
       const id = req.params.id;
       if (!req.body.password) {
         const member = await Customer.findByIdAndUpdate(id, {
