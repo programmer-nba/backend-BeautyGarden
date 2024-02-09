@@ -9,9 +9,7 @@ const { Quotation } = require("../../models/admin/quotation.models");
 const { Branch } = require("../../models/ฺฺbranch/ฺฺbranch.models");
 const { Company } = require("../../models/company/company.models");
 const { Signature } = require("../../models/signature/signature.models");
-const {
-  Customer,
-} = require("../../models/customer/customer.models");
+const { Customer } = require("../../models/customer/customer.models");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const storage = multer.diskStorage({
@@ -27,8 +25,6 @@ const {
 const { admin } = require("googleapis/build/src/apis/admin");
 
 exports.QuotationVat = async (req, res) => {
-
-  
   try {
     const {
       product_detail,
