@@ -306,3 +306,4 @@ async function invoiceNumber(date) {
   }
   return invoice_number;
 }
+
