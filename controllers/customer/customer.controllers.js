@@ -114,11 +114,11 @@ exports.EditCustomer = async (req, res) => {
           ...req.body,
           customer_password: hashPassword,
         });
-        console.log();
-        return res
+        
+      }
+      return res
           .status(200)
           .send({ message: "แก้ไขผู้ใช้งานนี้เรียบร้อยเเล้ว", status: true });
-      }
     });
   } catch (error) {
     return res.status(500).send({ status: false, error: error.message });
