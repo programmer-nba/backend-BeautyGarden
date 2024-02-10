@@ -277,17 +277,9 @@ exports.Quotation = async (req, res) => {
 exports.EditQuotation = async (req, res) => {
   try {
     const customer_number = req.params.id;
-
-    const existingQuotation = await Quotation.findOne({ _id: customer_number });
-    if (!existingQuotation) {
-      return res.status(404).send({
-        message: "ไม่พบใบเสนอราคาที่ต้องการแก้ไข",
-        status: false,
-      });
-    }
-
+    
     const { product_detail, discount } = req.body;
-
+    
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
       const price = parseFloat(product.product_price);
@@ -299,14 +291,58 @@ exports.EditQuotation = async (req, res) => {
         product_total,
       };
     });
+    
+    const discountValue = typeof discount === "number" ? discount : 0;
+    const discount_percent = discountValue ? (discountValue / total) * 100 : 0;
+    const net = discountValue ? total - discountValue : total;
+    const vatRate = 0.07;
+    const vatAmount = net * vatRate;
+    const totalWithVat = net + vatAmount;
+    
+    const deductionPercentage = parseFloat(req.body.percen_deducted) || 0;
+    const total_deducted1 = (
+      (totalWithVat * deductionPercentage) /
+      100
+    ).toFixed(2);
+    const totalVat_deducted1 = (totalWithVat - total_deducted1).toFixed(2);
+    
+    const amount_vat = ((total * vatRate) / 1.07).toFixed(2);
+    const total_amount_product = (total - amount_vat).toFixed(2);
+    const totalAll = total_amount_product - discountValue;
+    
+    const total_payment = (
+      (totalAll * req.body.percen_payment) /
+      100
+    ).toFixed(2);
+    
+    const total_all_end = (total - total_payment - discountValue).toFixed(2);
+  
     const updatedQuotation = await Quotation.findOneAndUpdate(
       { _id: customer_number },
       {
-        $set: { product_detail: updatedProductDetail, total: total.toFixed(2) },
-        discount,
+        $set: {
+          product_detail: updatedProductDetail,
+          total: total.toFixed(2),
+          discount: discountValue.toFixed(2),
+          discount_persen: discount_percent.toFixed(2),
+          net,
+          "vat.amount_vat": vatAmount.toFixed(2),
+          "vat.totalvat": totalWithVat.toFixed(2),
+          "vat.ShippingCost": req.body.ShippingCost,
+          "vat.percen_deducted": req.body.percen_deducted,
+          "vat.total_deducted": total_deducted1,
+          "vat.totalVat_deducted": totalVat_deducted1,
+          "total_products.amount_vat": amount_vat,
+          "total_products.total_product": total_amount_product,
+          "total_products.total_discount": totalAll,
+          "total_products.percen_payment": req.body.percen_payment,
+          "total_products.after_discoun_payment": total_payment,
+          "total_products.total_all_end": total_all_end,
+        },
       },
       { new: true }
     );
+  
     if (updatedQuotation) {
       return res.status(200).send({
         status: true,
@@ -327,6 +363,7 @@ exports.EditQuotation = async (req, res) => {
       error: error.message,
     });
   }
+  
 };
 
 exports.deleteQuotation = async (req, res) => {
