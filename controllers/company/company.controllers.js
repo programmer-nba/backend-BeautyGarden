@@ -239,3 +239,21 @@ exports.getImgAll= async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+exports.deleteImgByID = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const company = await Imgs.findByIdAndDelete(id);
+    if (!company) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบบริษัทในระบบ" });
+    } else {
+      return res.status(200).send({ status: true, message: "ลบข้อมูลสำเร็จ" });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+
