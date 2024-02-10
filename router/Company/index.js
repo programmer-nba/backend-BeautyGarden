@@ -6,6 +6,7 @@ router.post("/createCompany", authAdmin, Company.create);
 router.put("/InsertImg", authAdmin, Company.InsertImg);
 router.get("/getImgAll", authAdmin, Company.getImgAll);
 router.put("/ImportBankCompany/:id", authAdmin, Company.ImportBankCompany);
+router.put("/ImportlogoCompany/:id", authAdmin, Company.ImportlogoCompany)//เพิ่มรูปภาพ logo บริษัท
 router.put("/EditCompany/:id", authAdmin, Company.EditCompany);
 router.delete("/deleteCompany/:id", authAdmin, Company.deleteCompany);
 router.delete("/deleteAllCompany", authAdmin, Company.deleteAllCompany);

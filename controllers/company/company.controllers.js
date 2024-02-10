@@ -6,7 +6,7 @@ const { google } = require("googleapis");
 const { default: axios } = require("axios");
 const req = require("express/lib/request.js");
 const { Admins, validateAdmin } = require("../../models/admin/admin.models");
-const {Imgs} = require("../../models/img/img.models")
+const { Imgs } = require("../../models/img/img.models");
 const { Company } = require("../../models/company/company.models");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
@@ -77,6 +77,42 @@ exports.ImportBankCompany = async (req, res) => {
             status: false,
           });
         }
+      }
+    });
+  } catch (error) {
+    return res.status(500).send({ status: false, error: error.message });
+  }
+};
+exports.ImportlogoCompany = async (req, res) => {
+  try {
+    let upload = multer({ storage: storage }).array("imgCollection", 20);
+    upload(req, res, async function (err) {
+      const reqFiles = [];
+      const result = [];
+      if (err) {
+        return res.status(500).send(err);
+      }
+      if (req.files) {
+        const url = req.protocol + "://" + req.get("host");
+        for (var i = 0; i < req.files.length; i++) {
+          const src = await uploadFileCreate(req.files, res, { i, reqFiles });
+          result.push(src);
+        }
+      }
+      const id = req.body.id
+      const company = await Company.findByIdAndUpdate(id, {
+        profile_image: reqFiles[0],
+      });
+      if (company) {
+        return res.status(200).send({
+          message: "เพิ่มรูปภาพสำเร็จ",
+          status: true,
+        });
+      } else {
+        return res.status(500).send({
+          message: "ไม่สามารถเพิ่มรูปภาพได้",
+          status: false,
+        });
       }
     });
   } catch (error) {
@@ -221,13 +257,11 @@ exports.InsertImg = async (req, res) => {
     return res.status(500).send({ status: false, error: error.message });
   }
 };
-exports.getImgAll= async (req, res) => {
+exports.getImgAll = async (req, res) => {
   try {
     const img = await Imgs.find();
     if (!img) {
-      return res
-        .status(404)
-        .send({ status: false, message: "ไม่พบรูกภาพ" });
+      return res.status(404).send({ status: false, message: "ไม่พบรูกภาพ" });
     } else {
       return res
         .status(200)
@@ -256,4 +290,3 @@ exports.deleteImgByID = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
-
