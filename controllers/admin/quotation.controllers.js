@@ -272,28 +272,37 @@ exports.Quotation = async (req, res) => {
 };
 exports.EditQuotation = async (req, res) => {
   try {
-    const { customer_number } = req.params;
-    const { product_detail } = req.body;
+    const customer_number = req.params.id;
+
+    const existingQuotation = await Quotation.findOne({ _id: customer_number });
+    if (!existingQuotation) {
+      return res.status(404).send({
+        message: "ไม่พบใบเสนอราคาที่ต้องการแก้ไข",
+        status: false,
+      });
+    }
+
+    const { product_detail, discount } = req.body;
+
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
       const price = parseFloat(product.product_price);
       const amount = parseInt(product.product_amount);
       const product_total = (price * amount).toFixed(2);
-      total += parseFloat(product_total); // รวม product_total เข้า total
+      total += parseFloat(product_total);
       return {
         ...product,
         product_total,
       };
     });
     const updatedQuotation = await Quotation.findOneAndUpdate(
-      { "customer_detail.customer_number": customer_number },
+      { _id: customer_number },
       {
         $set: { product_detail: updatedProductDetail, total: total.toFixed(2) },
-        discount: req.body.discount,
+        discount,
       },
       { new: true }
     );
-
     if (updatedQuotation) {
       return res.status(200).send({
         status: true,
@@ -314,7 +323,8 @@ exports.EditQuotation = async (req, res) => {
       error: error.message,
     });
   }
-};
+}
+
 exports.deleteQuotation = async (req, res) => {
   try {
     const id = req.params.id;
