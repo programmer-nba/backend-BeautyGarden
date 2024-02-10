@@ -9,9 +9,7 @@ const { Invoice } = require("../../models/admin/invoice.models");
 const { Quotation } = require("../../models/admin/quotation.models");
 const { ReceiptNoVat } = require("../../models/admin/receipt.no.vat.models");
 const { Signature } = require("../../models/signature/signature.models");
-const {
-  Customer,
-} = require("../../models/customer/customer.models");
+const { Customer } = require("../../models/customer/customer.models");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const storage = multer.diskStorage({
@@ -284,6 +282,76 @@ exports.getREBAllfilter = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+exports.EditReceipt = async (req, res) => {
+  try {
+    const customer_number = req.params.id;
+
+    const existingQuotation = await ReceiptNoVat.findOne({
+      _id: customer_number,
+    });
+    if (!existingQuotation) {
+      return res.status(404).send({
+        message: "ไม่พบใบเสนอราคาที่ต้องการแก้ไข",
+        status: false,
+      });
+    }
+
+    const { product_detail, discount, percen_deducted } = req.body;
+
+    let total = 0;
+    const updatedProductDetail = product_detail.map((product) => {
+      const price = parseFloat(product.product_price);
+      const amount = parseInt(product.product_amount);
+      const product_total = (price * amount).toFixed(2);
+      total += parseFloat(product_total);
+      return {
+        ...product,
+        product_total,
+      };
+    });
+
+    const discountValue = typeof discount === "number" ? discount : 0;
+    const discount_percent = discountValue ? (discountValue / total) * 100 : 0;
+    const net = discountValue ? total - discountValue : total;
+    const total_deducted = (net * (req.body.percen_deducted / 100));
+
+    const updatedQuotation = await ReceiptNoVat.findOneAndUpdate(
+      { _id: customer_number },
+      {
+        $set: {
+          product_detail: updatedProductDetail,
+          total: total.toFixed(2),
+          discount: discountValue,
+          net: net.toFixed(2),
+          percen_deducted,
+          total_deducted: total_deducted,
+          total_end_deducted: (net + total_deducted).toFixed(2),
+        },
+      },
+      { new: true }
+    );
+    if (updatedQuotation) {
+      return res.status(200).send({
+        status: true,
+        message: "แก้ไขข้อมูล รายละเอียดสินค้า สำเร็จ",
+        data: updatedQuotation,
+      });
+    } else {
+      return res.status(404).send({
+        message: "ไม่พบใบเสนอราคาที่ต้องการแก้ไข",
+        status: false,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      message: "มีบางอย่างผิดพลาด",
+      status: false,
+      error: error.message,
+    });
+  }
+};
+
 async function invoiceNumber(date) {
   const order = await ReceiptNoVat.find();
   let invoice_number = null;
@@ -306,4 +374,3 @@ async function invoiceNumber(date) {
   }
   return invoice_number;
 }
-
