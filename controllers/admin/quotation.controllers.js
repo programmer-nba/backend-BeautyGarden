@@ -167,6 +167,7 @@ exports.Quotation = async (req, res) => {
     const branchId = req.body.branchId;
     const branch = branchId ? await Company.findById(branchId) : null;
 
+
     if (customer_number) {
       customer = await Customer.findOne({ customer_number });
     } else {
@@ -202,6 +203,8 @@ exports.Quotation = async (req, res) => {
             Branch_company_name: branch.Branch_company_name,
             Branch_company_number: branch.Branch_company_number,
             Branch_company_address: branch.Branch_company_address,
+            taxnumber: branch.taxnumber,
+            isVat: branch.isVat,
             Branch_tel: branch.Branch_tel,
             contact_name: branch.contact_name,
             contact_number: branch.contact_number,
@@ -323,7 +326,7 @@ exports.EditQuotation = async (req, res) => {
       error: error.message,
     });
   }
-}
+};
 
 exports.deleteQuotation = async (req, res) => {
   try {

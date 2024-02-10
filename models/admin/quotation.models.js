@@ -13,6 +13,9 @@ const QuotationSchema = new mongoose.Schema({
     contact_name: { type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
     contact_number: { type: String, required: false, default: "ไม่มี" }, //เบอร์โทรผู้ติดต่อ
     company_email: { type: String, required: false, default: "ไม่มี" },
+    taxnumber: { type: String, required: false, default: "ไม่มี" },//เลขประจำตัวผู้เสียภาษี
+    isVat: { type: Boolean, required: false},
+    
   },
   customer_detail: {
     //ข้อมูลของลูกค้า
