@@ -68,6 +68,7 @@ exports.ReceiptNoVat = async (req, res) => {
       start_date: req.body.start_date,
       end_date: req.body.end_date,
       note: req.body.note,
+      remark: req.body.remark,
       receipt: invoice,
     });
 
@@ -100,6 +101,7 @@ exports.PrintReceiptNoVat = async (req, res) => {
       quotation,
       sumVat,
       withholding,
+      remark,
       isVat,
       invoice,
       signatureID,
@@ -150,6 +152,7 @@ exports.PrintReceiptNoVat = async (req, res) => {
       product_detail: updatedProductDetail,
 
       total: total.toFixed(2),
+      remark:remark,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
 

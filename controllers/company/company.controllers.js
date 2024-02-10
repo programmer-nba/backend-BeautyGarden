@@ -6,6 +6,7 @@ const { google } = require("googleapis");
 const { default: axios } = require("axios");
 const req = require("express/lib/request.js");
 const { Admins, validateAdmin } = require("../../models/admin/admin.models");
+const {Imgs} = require("../../models/img/img.models")
 const { Company } = require("../../models/company/company.models");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
@@ -176,6 +177,61 @@ exports.getCompanyById = async (req, res) => {
       return res
         .status(200)
         .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: companny });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+exports.InsertImg = async (req, res) => {
+  try {
+    let upload = multer({ storage: storage }).array("imgCollection", 20);
+
+    upload(req, res, async function (err) {
+      const reqFiles = [];
+      const result = [];
+      if (err) {
+        return res.status(500).send(err);
+      }
+      if (req.files) {
+        const url = req.protocol + "://" + req.get("host");
+        for (var i = 0; i < req.files.length; i++) {
+          const src = await uploadFileCreate(req.files, res, { i, reqFiles });
+          result.push(src);
+        }
+      }
+      const newImg = new Imgs({ profile_image: reqFiles[0] });
+      const savedImg = await newImg.save();
+
+      if (savedImg) {
+        return res.status(200).send({
+          message: "เพิ่มรูปภาพสำเร็จ",
+          status: true,
+          data: savedImg,
+        });
+      } else {
+        return res.status(500).send({
+          message: "ไม่สามารถเพิ่มรูปภาพได้",
+          status: false,
+        });
+      }
+    });
+  } catch (error) {
+    return res.status(500).send({ status: false, error: error.message });
+  }
+};
+exports.getImgAll= async (req, res) => {
+  try {
+    const img = await Imgs.find();
+    if (!img) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบรูกภาพ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: img });
     }
   } catch (err) {
     return res

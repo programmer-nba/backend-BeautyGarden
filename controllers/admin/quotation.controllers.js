@@ -34,6 +34,7 @@ exports.QuotationVat = async (req, res) => {
       discount = 0,
       start_date,
       end_date,
+      remark,
       signatureID,
       percen_deducted = 0,
     } = req.body;
@@ -114,6 +115,7 @@ exports.QuotationVat = async (req, res) => {
         total_deducted: total_deducted1,
         totalVat_deducted: net - total_deducted1,
       },
+      remark: remark,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
     if (quotation) {
@@ -147,6 +149,7 @@ exports.Quotation = async (req, res) => {
       percen_payment = 0,
       discount = 0,
       ShippingCost = 0,
+      remark,
       signatureID,
     } = req.body;
     let total = 0;
@@ -251,6 +254,7 @@ exports.Quotation = async (req, res) => {
         after_discoun_payment: total_paymeny,
         total_all_end: total - total_paymeny - discount,
       },
+      remark: remark,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
     if (quotation) {

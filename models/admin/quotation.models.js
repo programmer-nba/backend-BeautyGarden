@@ -68,6 +68,7 @@ const QuotationSchema = new mongoose.Schema({
     image_signature: { type: String, required: false, default: "-" }, //รูปภาพลายเซ็น
     position: { type: String, required: false, default: "-" }, //ตำเเหน่งเจ้าของลายเซ็น
   }, //เก็บลายเซ็น
+  remark: { type: String, required: false, default: "-" }, 
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
   status: { type: Array, required: false },
   start_date: { type: String, required: false }, //วันที่ออกบิล
