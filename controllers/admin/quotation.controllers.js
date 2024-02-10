@@ -156,7 +156,7 @@ exports.Quotation = async (req, res) => {
       discount = 0,
       ShippingCost = 0,
       remark,
-      signatureID,
+      signatureID ,
     } = req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -222,9 +222,9 @@ exports.Quotation = async (req, res) => {
           }
         : null,
       signature: {
-        name: signatureData.name,
-        image_signature: signatureData.image_signature,
-        position: signatureData.position,
+        name: signatureData.name || null,
+        image_signature: signatureData.image_signature || null,
+        position: signatureData.position || null,
       },
       customer_detail: {
         ...req.body.customer_detail,
