@@ -313,7 +313,7 @@ exports.EditReceipt = async (req, res) => {
     const discountValue = typeof discount === "number" ? discount : 0;
     const discount_percent = discountValue ? (discountValue / total) * 100 : 0;
     const net = discountValue ? total - discountValue : total;
-    const total_deducted = (net * (req.body.percen_deducted / 100));
+    const total_deducted = net * (req.body.percen_deducted / 100);
 
     const updatedQuotation = await ReceiptNoVat.findOneAndUpdate(
       { _id: customer_number },
