@@ -4,6 +4,7 @@ const authAdmin = require("../../lib/auth.admin");
 
 router.post("/Create", authAdmin, admin.ReceiptVat)//ออกใบเสร็จแบบมี vat 
 router.post("/ReceiptVat", authAdmin, admin.PrintReceiptVat)//ออกใบเสร็จแบบมี vat เเละกรอกเอง
+router.put("/EditReceiptVat/:id", authAdmin, admin.EditReceiptVat)
 router.delete("/deleteReceiptVat/:id", authAdmin, admin.deleteReceiptVat)
 router.delete("/deleteAllReceiptVat", authAdmin, admin.deleteAllReceiptVat)
 router.get("/getReceiptVatAll", authAdmin, admin.getReceiptVatAll)
