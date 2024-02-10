@@ -116,6 +116,12 @@ exports.QuotationVat = async (req, res) => {
         totalVat_deducted: net - total_deducted1,
       },
       remark: remark,
+      bank: {
+        name: req.body.bank.name,
+        img: req.body.bank.img,
+        status: req.body.bank.status,
+        remark_2: req.body.bank.remark_2,
+      },
       timestamps: dayjs(Date.now()).format(""),
     }).save();
     if (quotation) {
@@ -255,6 +261,12 @@ exports.Quotation = async (req, res) => {
         total_all_end: total - total_paymeny - discount,
       },
       remark: remark,
+      bank: {
+        name: req.body.bank.name,
+        img: req.body.bank.img,
+        status: req.body.bank.status,
+        remark_2: req.body.bank.remark_2,
+      },
       timestamps: dayjs(Date.now()).format(""),
     }).save();
     if (quotation) {

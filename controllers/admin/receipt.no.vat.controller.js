@@ -69,6 +69,12 @@ exports.ReceiptNoVat = async (req, res) => {
       end_date: req.body.end_date,
       note: req.body.note,
       remark: req.body.remark,
+      bank: {
+        name: req.body.bank.name,
+        img: req.body.bank.img,
+        status: req.body.bank.status,
+        remark_2: req.body.bank.remark_2,
+      },
       receipt: invoice,
     });
 
@@ -153,6 +159,12 @@ exports.PrintReceiptNoVat = async (req, res) => {
 
       total: total.toFixed(2),
       remark:remark,
+      bank: {
+        name: req.body.bank.name,
+        img: req.body.bank.img,
+        status: req.body.bank.status,
+        remark_2: req.body.bank.remark_2,
+      },
       timestamps: dayjs(Date.now()).format(""),
     }).save();
 

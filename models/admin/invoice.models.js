@@ -30,7 +30,7 @@ const InvoiceSchema = new mongoose.Schema({
   product_detail: [
     {
       product_id: { type: String, required: false },
-      product_text: { type: String, required: false },
+      product_text: [{ type: String, required: false }],
       product_name: { type: String, required: false },
       product_amount: { type: Number, required: false },
       product_price: { type: Number, required: false },
@@ -66,6 +66,13 @@ const InvoiceSchema = new mongoose.Schema({
     image_signature: { type: String, required: false, default: "-" }, //รูปภาพลายเซ็น
     position: { type: String, required: false, default: "-" }, //ตำเเหน่งเจ้าของลายเซ็น
   }, //เก็บลายเซ็น
+  remark: [{ type: String, required: false }],
+  bank: {
+    name: { type: String, required: false, default: "-" }, //ชื่อธนาคาร
+    img: { type: String, required: false, default: "-" }, //รูปภาพ
+    status: { type: Array, required: false },
+    remark: { type: String, required: false },
+  },
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
   status: { type: Array, required: false },
   start_date: { type: String, required: false }, //วันที่ออกบิล

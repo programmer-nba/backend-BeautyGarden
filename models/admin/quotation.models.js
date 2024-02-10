@@ -13,9 +13,8 @@ const QuotationSchema = new mongoose.Schema({
     contact_name: { type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
     contact_number: { type: String, required: false, default: "ไม่มี" }, //เบอร์โทรผู้ติดต่อ
     company_email: { type: String, required: false, default: "ไม่มี" },
-    taxnumber: { type: String, required: false, default: "ไม่มี" },//เลขประจำตัวผู้เสียภาษี
-    isVat: { type: Boolean, required: false},
-    
+    taxnumber: { type: String, required: false, default: "ไม่มี" }, //เลขประจำตัวผู้เสียภาษี
+    isVat: { type: Boolean, required: false },
   },
   customer_detail: {
     //ข้อมูลของลูกค้า
@@ -32,7 +31,7 @@ const QuotationSchema = new mongoose.Schema({
   product_detail: [
     {
       product_id: { type: String, required: false },
-      product_text: { type: String, required: false },
+      product_text: [{ type: String, required: false }],
       product_name: { type: String, required: false },
       product_amount: { type: Number, required: false },
       product_price: { type: Number, required: false },
@@ -68,7 +67,13 @@ const QuotationSchema = new mongoose.Schema({
     image_signature: { type: String, required: false, default: "-" }, //รูปภาพลายเซ็น
     position: { type: String, required: false, default: "-" }, //ตำเเหน่งเจ้าของลายเซ็น
   }, //เก็บลายเซ็น
-  remark: { type: String, required: false, default: "-" }, 
+  remark: [{ type: String, required: false }],
+  bank: {
+    name: { type: String, required: false }, //ชื่อธนาคาร
+    img: { type: String, required: false }, //รูปภาพ
+    status: { type: String, required: false },
+    remark_2: { type: String, required: false },
+  },
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
   status: { type: Array, required: false },
   start_date: { type: String, required: false }, //วันที่ออกบิล

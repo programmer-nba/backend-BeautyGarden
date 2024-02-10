@@ -68,6 +68,13 @@ exports.ReceiptInvoiceVat = async (req, res) => {
       },
       start_date: req.body.start_date,
       end_date: req.body.end_date,
+      remark:req.body.remark,
+      bank: {
+        name: req.body.bank.name,
+        img: req.body.bank.img,
+        status: req.body.bank.status,
+        remark_2: req.body.bank.remark_2,
+      },
       note: req.body.note,
     });
 
@@ -139,6 +146,13 @@ exports.PrintInviuceVat = async (req, res) => {
       total: total.toFixed(2),
       vat: vatAmount.toFixed(2),
       totalvat: totalWithVat.toFixed(2),
+      remark:req.body.remark,
+      bank: {
+        name: req.body.bank.name,
+        img: req.body.bank.img,
+        status: req.body.bank.status,
+        remark_2: req.body.bank.remark_2,
+      },
       timestamps: dayjs(Date.now()).format(""),
     }).save();
 

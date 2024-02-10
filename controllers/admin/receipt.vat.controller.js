@@ -109,6 +109,12 @@ exports.ReceiptVat = async (req, res) => {
       end_date: req.body.end_date,
       note: req.body.note,
       remark:req.body.remark,
+      bank: {
+        name: req.body.bank.name,
+        img: req.body.bank.img,
+        status: req.body.bank.status,
+        remark_2: req.body.bank.remark_2,
+      },
     });
     return res.status(200).send({
       status: true,
@@ -219,6 +225,12 @@ exports.PrintReceiptVat = async (req, res) => {
         total_all_end: total - total_paymeny - discount,
       },
       remark:remark,
+      bank: {
+        name: req.body.bank.name,
+        img: req.body.bank.img,
+        status: req.body.bank.status,
+        remark_2: req.body.bank.remark_2,
+      },
       timestamps: dayjs(Date.now()).format(""),
     }).save();
 
