@@ -156,7 +156,7 @@ exports.Quotation = async (req, res) => {
       discount = 0,
       ShippingCost = 0,
       remark,
-      signatureID ,
+      signatureID,
     } = req.body;
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
