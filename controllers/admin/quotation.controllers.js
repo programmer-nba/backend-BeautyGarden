@@ -82,6 +82,8 @@ exports.QuotationVat = async (req, res) => {
             Branch_company_address: branch.Branch_company_address,
             Branch_tel: branch.Branch_tel,
             contact_name: branch.contact_name,
+            taxnumber: branch.taxnumber,
+            isVat: branch.isVat,
             contact_number: branch.contact_number,
             company_email: branch.company_email,
           }
@@ -166,7 +168,6 @@ exports.Quotation = async (req, res) => {
     let customer = {};
     const branchId = req.body.branchId;
     const branch = branchId ? await Company.findById(branchId) : null;
-
 
     if (customer_number) {
       customer = await Customer.findOne({ customer_number });
