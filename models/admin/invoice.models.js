@@ -10,10 +10,12 @@ const InvoiceSchema = new mongoose.Schema({
     Branch_company_name: { type: String, required: false, default: "ไม่มี" }, //ชื่อบริษัท
     Branch_company_number: { type: String, required: false, default: "ไม่มี" }, //เลขที่บริษัท
     Branch_company_address: { type: String, required: false, default: "ไม่มี" }, //ที่อยู่บริษัท
+    Branch_iden_number:  { type: String, required: false }, //รูปภาพ
     Branch_tel: { type: String, required: false }, //เบอร์โทรศัพท์
     contact_name: { type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
     contact_number: { type: String, required: false, default: "ไม่มี" }, //เบอร์โทรผู้ติดต่อ
     company_email: { type: String, required: false, default: "ไม่มี" },
+    isVat: { type: Boolean, required: false },
   },
   customer_detail: {
     //ข้อมูลของลูกค้า
@@ -74,6 +76,7 @@ const InvoiceSchema = new mongoose.Schema({
     remark: { type: String, required: false },
   },
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
+  sumVat: { type: Boolean, required: false }, 
   status: { type: Array, required: false },
   start_date: { type: String, required: false }, //วันที่ออกบิล
   end_date: { type: String, required: false }, //วันที่ต้องจ่ายเงิน

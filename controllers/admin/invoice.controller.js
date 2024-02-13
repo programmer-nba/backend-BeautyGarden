@@ -75,6 +75,7 @@ exports.ReceiptInvoiceVat = async (req, res) => {
         status: req.body.bank.status,
         remark_2: req.body.bank.remark_2,
       },
+      sumVat:req.body.sumVat,
       note: req.body.note,
     });
 
@@ -102,6 +103,7 @@ exports.PrintInviuceVat = async (req, res) => {
       start_date,
       end_date,
       quotation,
+      sumVat,
       signatureID,
       invoice,
     } = req.body;
@@ -153,6 +155,7 @@ exports.PrintInviuceVat = async (req, res) => {
         status: req.body.bank.status,
         remark_2: req.body.bank.remark_2,
       },
+      sumVat:sumVat,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
 
