@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 
 const CompanySchema = new mongoose.Schema({
-  profile_image: { type: String, required: false }, //รูปภาพบริษํท
+  profile_image: { type: String, required: false, default: "-" }, //รูปภาพบริษํท
   Branch_address: { type: String, required: false }, //ที่อยู่
   Branch_subdistrict: { type: String, required: false }, //ที่อยู่ เเขวน ตำบล
   Branch_district: { type: String, required: false }, //เขต

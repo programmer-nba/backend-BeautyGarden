@@ -99,20 +99,24 @@ exports.ImportlogoCompany = async (req, res) => {
           result.push(src);
         }
       }
-      const id = req.body.id
-      const company = await Company.findByIdAndUpdate(id, {
-        profile_image: reqFiles[0],
-      });
-      if (company) {
-        return res.status(200).send({
-          message: "เพิ่มรูปภาพสำเร็จ",
-          status: true,
+      const id = req.params.id;
+      if (id && !req.body.password) {
+        const member = await Company.findByIdAndUpdate(id, {
+          ...req.body,
+          profile_image: reqFiles[0],
         });
-      } else {
-        return res.status(500).send({
-          message: "ไม่สามารถเพิ่มรูปภาพได้",
-          status: false,
-        });
+        if (member) {
+          return res.status(200).send({
+            message: "เพิ่มรูปภาพสำเร็จ",
+            status: true,
+          });
+        } else {
+          console.error(err); // Log ข้อผิดพลาดที่เกี่ยวข้องกับการอัปเดตข้อมูล
+          return res.status(500).send({
+            message: "ไม่สามารถเพิ่มรูปภาพได้",
+            status: false,
+          });
+        }
       }
     });
   } catch (error) {
