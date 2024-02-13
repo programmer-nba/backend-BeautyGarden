@@ -217,6 +217,7 @@ exports.Quotation = async (req, res) => {
             Branch_company_number: branch.Branch_company_number,
             Branch_company_address: branch.Branch_company_address,
             taxnumber: branch.taxnumber,
+            Branch_iden_number: branch.Branch_iden_number,
             isVat: branch.isVat,
             Branch_tel: branch.Branch_tel,
             contact_name: branch.contact_name,
