@@ -231,6 +231,7 @@ exports.PrintReceiptVat = async (req, res) => {
         status: req.body.bank.status,
         remark_2: req.body.bank.remark_2,
       },
+      sumVat:sumVat,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
 

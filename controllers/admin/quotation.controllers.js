@@ -32,6 +32,7 @@ exports.QuotationVat = async (req, res) => {
       customer_number,
       ShippingCost = 0,
       discount = 0,
+      sumVat,
       start_date,
       end_date,
       remark,
@@ -81,6 +82,7 @@ exports.QuotationVat = async (req, res) => {
             Branch_company_name: branch.Branch_company_name,
             Branch_company_number: branch.Branch_company_number,
             Branch_company_address: branch.Branch_company_address,
+            Branch_iden_number: branch.Branch_iden_number,
             Branch_tel: branch.Branch_tel,
             contact_name: branch.contact_name,
             taxnumber: branch.taxnumber,
@@ -122,6 +124,7 @@ exports.QuotationVat = async (req, res) => {
         status: req.body.bank.status,
         remark_2: req.body.bank.remark_2,
       },
+      sumVat:sumVat,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
     if (quotation) {
