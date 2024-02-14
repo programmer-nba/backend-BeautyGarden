@@ -128,6 +128,7 @@ exports.PrintInviuceVat = async (req, res) => {
     if (signatureID) {
       signatureData = await Signature.findOne({ _id: signatureID });
     }
+    
     const Shippingincluded = (totalWithVat + ShippingCost).toFixed(2);
     const quotation1 = await new Invoice({
       ...req.body,
@@ -139,7 +140,7 @@ exports.PrintInviuceVat = async (req, res) => {
         image_signature: signatureData.image_signature,
         position: signatureData.position,
       },
-      receipt: invoice1,
+      invoice: invoice1,
       discount: discount.toFixed(2),
       net: net,
       ShippingCost: ShippingCost,
