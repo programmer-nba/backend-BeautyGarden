@@ -357,6 +357,20 @@ exports.EditQuotation = async (req, res) => {
           "total_products.percen_payment": req.body.percen_payment,
           "total_products.after_discoun_payment": total_payment,
           "total_products.total_all_end": total_all_end,
+          start_date: req.body.start_date,
+          end_date: req.body.end_date,
+          remark: req.body.remark,
+          bank: {
+            name: req.body.bank.name,
+            img: req.body.bank.img,
+            status: req.body.bank.status,
+            remark_2: req.body.bank.remark_2,
+          },
+          signature: {
+            name: req.body.signature.name,
+            image_signature: req.body.signature.image_signature,
+            position: req.body.signature.position,
+          },
         },
       },
       { new: true }
