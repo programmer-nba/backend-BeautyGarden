@@ -10,9 +10,7 @@ const { Invoice } = require("../../models/admin/invoice.models");
 const { ReceiptNoVat } = require("../../models/admin/receipt.no.vat.models");
 const { ReceiptVat } = require("../../models/admin/receipt.vat.models");
 const { Signature } = require("../../models/signature/signature.models");
-const {
-  Customer,
-} = require("../../models/customer/customer.models");
+const { Customer } = require("../../models/customer/customer.models");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const storage = multer.diskStorage({
@@ -108,7 +106,7 @@ exports.ReceiptVat = async (req, res) => {
       start_date: req.body.start_date,
       end_date: req.body.end_date,
       note: req.body.note,
-      remark:req.body.remark,
+      remark: req.body.remark,
       bank: {
         name: req.body.bank.name,
         img: req.body.bank.img,
@@ -224,14 +222,14 @@ exports.PrintReceiptVat = async (req, res) => {
         after_discoun_payment: total_paymeny,
         total_all_end: total - total_paymeny - discount,
       },
-      remark:remark,
+      remark: remark,
       bank: {
         name: req.body.bank.name,
         img: req.body.bank.img,
         status: req.body.bank.status,
         remark_2: req.body.bank.remark_2,
       },
-      sumVat:sumVat,
+      sumVat: sumVat,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
 
@@ -367,8 +365,7 @@ exports.getREPAllfilter = async (req, res) => {
 exports.EditReceiptVat = async (req, res) => {
   try {
     const customer_number = req.params.id;
-
-    const { product_detail, discount } = req.body;
+    const { product_detail, discount, bank } = req.body;
 
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -427,6 +424,20 @@ exports.EditReceiptVat = async (req, res) => {
           "total_products.percen_payment": req.body.percen_payment,
           "total_products.after_discoun_payment": total_payment,
           "total_products.total_all_end": total_all_end,
+          start_date: req.body.start_date,
+          end_date: req.body.end_date,
+          remark: req.body.remark,
+          bank: {
+            name: req.body.bank.name,
+            img: req.body.bank.img,
+            status: req.body.bank.status,
+            remark_2: req.body.bank.remark_2,
+          },
+          signature: {
+            name: req.body.signature.name,
+            image_signature: req.body.signature.image_signature,
+            position: req.body.signature.position,
+          },
         },
       },
       { new: true }

@@ -341,6 +341,20 @@ exports.EditReceipt = async (req, res) => {
           percen_deducted,
           total_deducted: total_deducted,
           total_end_deducted: (net + total_deducted).toFixed(2),
+          start_date: req.body.start_date,
+          end_date: req.body.end_date,
+          remark: req.body.remark,
+          bank: {
+            name: req.body.bank.name,
+            img: req.body.bank.img,
+            status: req.body.bank.status,
+            remark_2: req.body.bank.remark_2,
+          },
+          signature: {
+            name: req.body.signature.name,
+            image_signature: req.body.signature.image_signature,
+            position: req.body.signature.position,
+          },
         },
       },
       { new: true }
