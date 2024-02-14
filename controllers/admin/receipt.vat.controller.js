@@ -427,17 +427,30 @@ exports.EditReceiptVat = async (req, res) => {
           start_date: req.body.start_date,
           end_date: req.body.end_date,
           remark: req.body.remark,
-          bank: {
-            name: req.body.bank.name,
-            img: req.body.bank.img,
-            status: req.body.bank.status,
-            remark_2: req.body.bank.remark_2,
-          },
-          signature: {
-            name: req.body.signature.name,
-            image_signature: req.body.signature.image_signature,
-            position: req.body.signature.position,
-          },
+          bank: req.body.bank
+          ? {
+              name: req.body.bank.name || "",
+              img: req.body.bank.img || "",
+              status: req.body.bank.status || "",
+              remark_2: req.body.bank.remark_2 || "",
+            }
+          : {
+              name: "",
+              img: "",
+              status: "",
+              remark_2: "",
+            },
+        signature: req.body.signature
+          ? {
+              name: req.body.signature.name || "",
+              image_signature: req.body.signature.image_signature || "",
+              position: req.body.signature.position || "",
+            }
+          : {
+              name: "",
+              image_signature: "",
+              position: "",
+            },
         },
       },
       { new: true }
