@@ -68,14 +68,14 @@ exports.ReceiptInvoiceVat = async (req, res) => {
       },
       start_date: req.body.start_date,
       end_date: req.body.end_date,
-      remark:req.body.remark,
+      remark: req.body.remark,
       bank: {
         name: req.body.bank.name,
         img: req.body.bank.img,
         status: req.body.bank.status,
         remark_2: req.body.bank.remark_2,
       },
-      sumVat:req.body.sumVat,
+      sumVat: req.body.sumVat,
       note: req.body.note,
     });
 
@@ -128,7 +128,7 @@ exports.PrintInviuceVat = async (req, res) => {
     if (signatureID) {
       signatureData = await Signature.findOne({ _id: signatureID });
     }
-    
+
     const Shippingincluded = (totalWithVat + ShippingCost).toFixed(2);
     const quotation1 = await new Invoice({
       ...req.body,
@@ -149,14 +149,14 @@ exports.PrintInviuceVat = async (req, res) => {
       total: total.toFixed(2),
       vat: vatAmount.toFixed(2),
       totalvat: totalWithVat.toFixed(2),
-      remark:req.body.remark,
+      remark: req.body.remark,
       bank: {
         name: req.body.bank.name,
         img: req.body.bank.img,
         status: req.body.bank.status,
         remark_2: req.body.bank.remark_2,
       },
-      sumVat:sumVat,
+      sumVat: sumVat,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
 
@@ -357,29 +357,29 @@ exports.EditInvoice = async (req, res) => {
           end_date: req.body.end_date,
           remark: req.body.remark,
           bank: req.body.bank
-          ? {
-              name: req.body.bank.name || "",
-              img: req.body.bank.img || "",
-              status: req.body.bank.status || "",
-              remark_2: req.body.bank.remark_2 || "",
-            }
-          : {
-              name: "",
-              img: "",
-              status: "",
-              remark_2: "",
-            },
-        signature: req.body.signature
-          ? {
-              name: req.body.signature.name || "",
-              image_signature: req.body.signature.image_signature || "",
-              position: req.body.signature.position || "",
-            }
-          : {
-              name: "",
-              image_signature: "",
-              position: "",
-            },
+            ? {
+                name: req.body.bank.name || "",
+                img: req.body.bank.img || "",
+                status: req.body.bank.status || "",
+                remark_2: req.body.bank.remark_2 || "",
+              }
+            : {
+                name: "",
+                img: "",
+                status: "",
+                remark_2: "",
+              },
+          signature: req.body.signature
+            ? {
+                name: req.body.signature.name || "",
+                image_signature: req.body.signature.image_signature || "",
+                position: req.body.signature.position || "",
+              }
+            : {
+                name: "",
+                image_signature: "",
+                position: "",
+              },
         },
       },
       { new: true }
@@ -406,7 +406,6 @@ exports.EditInvoice = async (req, res) => {
     });
   }
 };
-
 
 async function invoiceNumber(date) {
   const number = await Invoice.find();

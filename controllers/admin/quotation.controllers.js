@@ -373,15 +373,17 @@ exports.EditQuotation = async (req, res) => {
                 status: "",
                 remark_2: "",
               },
-          signature:req.body.signature ? {
-            name: req.body.signature.name || "",
-            image_signature: req.body.signature.image_signature || "",
-            position: req.body.signature.position || "",
-          }:{
-            name: "",
-            image_signature: "",
-            position:"",
-          },
+          signature: req.body.signature
+            ? {
+                name: req.body.signature.name || "",
+                image_signature: req.body.signature.image_signature || "",
+                position: req.body.signature.position || "",
+              }
+            : {
+                name: "",
+                image_signature: "",
+                position: "",
+              },
         },
       },
       { new: true }
