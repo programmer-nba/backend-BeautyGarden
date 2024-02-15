@@ -373,7 +373,7 @@ exports.EditQuotation = async (req, res) => {
                 status: "",
                 remark_2: "",
               },
-              signature: signatureData,
+          signature: signatureData,
         },
       },
       { new: true }
