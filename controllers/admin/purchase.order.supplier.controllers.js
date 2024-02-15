@@ -5,6 +5,7 @@ const { google } = require("googleapis");
 const { default: axios } = require("axios");
 const req = require("express/lib/request.js");
 const { Admins, validateAdmin } = require("../../models/admin/admin.models");
+const { Suppliers } = require("../../models/supplier/supplier.model");
 const { CostType } = require("../../models/costtype/cost_type.models");
 const { Signature } = require("../../models/signature/signature.models");
 const mongoose = require("mongoose");
@@ -27,45 +28,39 @@ const { admin } = require("googleapis/build/src/apis/admin");
 
 exports.Create = async (req, res) => {
   try {
-    const { product_detail, note, discount = 0, signatureID } = req.body;
+    const { product_detail, note, discount = 0, product_cost_type } = req.body;
+    const supllierID = req.body.supllierID;
+    const supllier = supllierID ? await Suppliers.findById(supllierID) : null;
 
     let total = 0;
-    const productCostTypes = product_detail.map(
-      (product) => product.product_cost_type
-    );
-    const costTypes = await CostType.find({ _id: { $in: productCostTypes } });
     const updatedProductDetail = product_detail.map((product) => {
       const price = product.product_price;
       const amount = product.product_amount;
       const product_total = (price * amount).toFixed(2);
       total += +product_total;
 
-      const costType = costTypes.find(
-        (type) => type._id.toString() === product.product_cost_type
-      );
       return {
         ...product,
         product_total,
-        product_cost_type: costType ? costType.cost_name : null,
       };
     });
 
     const net = discount ? total - discount : total;
     const purchaseOrder = await purchaseOrderNumber();
-    let signatureData = {};
-    if (signatureID) {
-      signatureData = await Signature.findOne({ _id: signatureID });
-    }
 
     const PurchaseOrder1 = await new PurchaseOrderSup({
       ...req.body,
-      customer_detail: {
-        ...req.body.customer_detail,
-      },
-      signature: {
-        name: signatureData.name,
-        image_signature: signatureData.image_signature,
-        position: signatureData.position,
+      supplier_detail: {
+        supplier_tel: supllier.supplier_tel,
+        supplier_status: supllier.supplier_status,
+        supplier_bookbank: supllier.supplier_bookbank,
+        supplier_bookbank_name: supllier.supplier_bookbank_name,
+        supplier_bookbank_number: supllier.supplier_bookbank_number,
+        supplier_iden: supllier.supplier_iden,
+        supplier_iden_number: supllier.supplier_iden_number,
+        supplier_company_name: supllier.supplier_company_name,
+        supplier_company_number: supllier.supplier_company_number,
+        supplier_company_address: supllier.supplier_company_address,
       },
       purchase_order: purchaseOrder,
       discount: discount.toFixed(2),
@@ -83,7 +78,7 @@ exports.Create = async (req, res) => {
       });
     } else {
       return res.status(500).send({
-        message: PurchaseOrder1,
+        message: "มีบางอย่างผิดพลาด",
         status: false,
       });
     }
@@ -242,6 +237,64 @@ exports.deleteAllPos = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+exports.ImportImgProduct = async (req, res) => {
+  try {
+    let upload = multer({ storage: storage }).array("imgCollection", 20);
+    upload(req, res, async function (err) {
+      const reqFiles = [];
+      const result = [];
+      if (err) {
+        return res.status(500).send(err);
+      }
+      if (req.files) {
+        const url = req.protocol + "://" + req.get("host");
+        for (var i = 0; i < req.files.length; i++) {
+          const src = await uploadFileCreate(req.files, res, { i, reqFiles });
+          result.push(src);
+        }
+      }
+      const productId = req.params.id; 
+      const PurchaseOSId = req.params.PurchaseOSId;
+      if (req.files && req.files.length > 0) {
+        const updated = await PurchaseOrderSup.findOneAndUpdate(
+          {
+            _id: PurchaseOSId,
+            "product_detail._id": productId,
+          },
+          {
+            $set: {
+              "product_detail.$[element].product_logo": reqFiles[0],
+            },
+          },
+          {
+            arrayFilters: [{ "element._id": productId }],
+            new: true,
+          }
+        );
+
+        if (updated) {
+          return res.status(200).send({
+            message: "อัปเดตรูปภาพสำเร็จ",
+            status: true,
+          });
+        } else {
+          return res.status(500).send({
+            message: "ไม่สามารถอัปเดตรูปภาพได้",
+            status: false,
+          });
+        }
+      } else {
+        return res.status(400).send({
+          message: "ไม่พบไฟล์ที่อัปโหลด",
+          status: false,
+        });
+      }
+    });
+  } catch (error) {
+    return res.status(500).send({ status: false, error: error.message });
+  }
+};
+
 async function purchaseOrderNumber(date) {
   const order = await PurchaseOrderSup.find();
   let pos_number = null;
