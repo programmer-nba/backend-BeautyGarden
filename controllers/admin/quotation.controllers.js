@@ -188,10 +188,8 @@ exports.Quotation = async (req, res) => {
     }
     let signatureData = [];
     if (signatureID && signatureID.length > 0) {
-      signatureData = await Signature.find({ _id: {$in: signatureID} });
+      signatureData = await Signature.find({ _id: { $in: signatureID } });
     }
-
-    console.log(signatureData)
 
     const deductionPercentage = parseFloat(req.body.percen_deducted) || 0;
     const total_deducted1 = (
@@ -296,7 +294,7 @@ exports.EditQuotation = async (req, res) => {
   try {
     const customer_number = req.params.id;
 
-    const { product_detail, discount } = req.body;
+    const { product_detail, discount, signatureID } = req.body;
 
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -309,6 +307,10 @@ exports.EditQuotation = async (req, res) => {
         product_total,
       };
     });
+    let signatureData = [];
+    if (signatureID && signatureID.length > 0) {
+      signatureData = await Signature.find({ _id: { $in: signatureID } });
+    }
 
     const discountValue = typeof discount === "number" ? discount : 0;
     const discount_percent = discountValue ? (discountValue / total) * 100 : 0;
@@ -371,15 +373,7 @@ exports.EditQuotation = async (req, res) => {
                 status: "",
                 remark_2: "",
               },
-          signature: req.body.signature
-            ? req.body.signature
-            : [
-                {
-                  name: "",
-                  image_signature: "",
-                  position: "",
-                },
-              ],
+              signature: signatureData,
         },
       },
       { new: true }
