@@ -17,6 +17,13 @@ const SupplierSchema = new mongoose.Schema({
   supplier_company_name: {type: String, required: false, default: "ไม่มี"}, //ชื่อบริษัท
   supplier_company_number: {type: String, required: false, default: "ไม่มี"}, //เลขที่บริษัท
   supplier_company_address: {type: String, required: false, default: "ไม่มี"}, //ที่อยู่บริษัท
+  supplier_type:{type: String, required: false},//ประเภท
+  remark:[
+    {
+      text:{type: String, required: false},
+      createdAt:{ type: Date, required: false, default: Date.now() },
+    }
+  ]
 });
 
 const Suppliers = mongoose.model("supplier", SupplierSchema);

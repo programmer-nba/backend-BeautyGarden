@@ -374,13 +374,7 @@ exports.EditInvoice = async (req, res) => {
                 remark_2: "",
               },
           signature: req.body.signature
-            ? [
-                {
-                  name: req.body.signature.name || "",
-                  image_signature: req.body.signature.image_signature || "",
-                  position: req.body.signature.position || "",
-                },
-              ]
+            ? req.body.signature
             : [
                 {
                   name: "",

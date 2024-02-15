@@ -186,10 +186,12 @@ exports.Quotation = async (req, res) => {
     } else {
       customer = req.body.customer_detail || {};
     }
-    let signatureData = {};
-    if (signatureID) {
-      signatureData = await Signature.findOne({ _id: signatureID });
+    let signatureData = [];
+    if (signatureID && signatureID.length > 0) {
+      signatureData = await Signature.find({ _id: {$in: signatureID} });
     }
+
+    console.log(signatureData)
 
     const deductionPercentage = parseFloat(req.body.percen_deducted) || 0;
     const total_deducted1 = (
@@ -225,13 +227,7 @@ exports.Quotation = async (req, res) => {
             company_email: branch.company_email,
           }
         : null,
-      signature: [
-        {
-          name: signatureData.name || null,
-          image_signature: signatureData.image_signature || null,
-          position: signatureData.position || null,
-        },
-      ],
+      signature: signatureData,
       customer_detail: {
         ...req.body.customer_detail,
         tax_id: customer.customer_taxnumber,
@@ -376,13 +372,7 @@ exports.EditQuotation = async (req, res) => {
                 remark_2: "",
               },
           signature: req.body.signature
-            ? [
-                {
-                  name: req.body.signature.name || "",
-                  image_signature: req.body.signature.image_signature || "",
-                  position: req.body.signature.position || "",
-                },
-              ]
+            ? req.body.signature
             : [
                 {
                   name: "",
