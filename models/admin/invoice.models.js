@@ -76,7 +76,7 @@ const InvoiceSchema = new mongoose.Schema({
   bank: {
     name: { type: String, required: false, default: "-" }, //ชื่อธนาคาร
     img: { type: String, required: false, default: "-" }, //รูปภาพ
-    status: { type: Array, required: false },
+    status: { type: String, required: false },
     remark_2: { type: String, required: false },
   },
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
