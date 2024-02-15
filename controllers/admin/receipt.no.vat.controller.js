@@ -54,11 +54,13 @@ exports.ReceiptNoVat = async (req, res) => {
 
     const savedReceiptData = await ReceiptNoVat.create({
       ...receiptDataFields,
-      signature: {
-        name: signatureData.name,
-        image_signature: signatureData.image_signature,
-        position: signatureData.position,
-      },
+      signature: [
+        {
+          name: signatureData.name,
+          image_signature: signatureData.image_signature,
+          position: signatureData.position,
+        },
+      ],
       net: net,
       ShippingCost: ShippingCost,
       Shippingincluded: total_Shippingincluded,
@@ -158,7 +160,7 @@ exports.PrintReceiptNoVat = async (req, res) => {
       product_detail: updatedProductDetail,
 
       total: total.toFixed(2),
-      remark:remark,
+      remark: remark,
       bank: {
         name: req.body.bank.name,
         img: req.body.bank.img,
@@ -345,29 +347,33 @@ exports.EditReceipt = async (req, res) => {
           end_date: req.body.end_date,
           remark: req.body.remark,
           bank: req.body.bank
-          ? {
-              name: req.body.bank.name || "",
-              img: req.body.bank.img || "",
-              status: req.body.bank.status || "",
-              remark_2: req.body.bank.remark_2 || "",
-            }
-          : {
-              name: "",
-              img: "",
-              status: "",
-              remark_2: "",
-            },
-        signature: req.body.signature
-          ? {
-              name: req.body.signature.name || "",
-              image_signature: req.body.signature.image_signature || "",
-              position: req.body.signature.position || "",
-            }
-          : {
-              name: "",
-              image_signature: "",
-              position: "",
-            },
+            ? {
+                name: req.body.bank.name || "",
+                img: req.body.bank.img || "",
+                status: req.body.bank.status || "",
+                remark_2: req.body.bank.remark_2 || "",
+              }
+            : {
+                name: "",
+                img: "",
+                status: "",
+                remark_2: "",
+              },
+          signature: req.body.signature
+            ? [
+                {
+                  name: req.body.signature.name || "",
+                  image_signature: req.body.signature.image_signature || "",
+                  position: req.body.signature.position || "",
+                },
+              ]
+            : [
+                {
+                  name: "",
+                  image_signature: "",
+                  position: "",
+                },
+              ],
         },
       },
       { new: true }

@@ -50,11 +50,13 @@ exports.ReceiptInvoiceVat = async (req, res) => {
 
     const savedReceiptData = await Invoice.create({
       ...receiptDataFields,
-      signature: {
-        name: signatureData.name,
-        image_signature: signatureData.image_signature,
-        position: signatureData.position,
-      },
+      signature: [
+        {
+          name: signatureData.name,
+          image_signature: signatureData.image_signature,
+          position: signatureData.position,
+        },
+      ],
       invoice: invoice,
       quotation: quotationData.quotation,
       discount: discount.toFixed(2),
@@ -135,11 +137,13 @@ exports.PrintInviuceVat = async (req, res) => {
       customer_detail: {
         ...req.body.customer_detail,
       },
-      signature: {
-        name: signatureData.name,
-        image_signature: signatureData.image_signature,
-        position: signatureData.position,
-      },
+      signature: [
+        {
+          name: signatureData.name,
+          image_signature: signatureData.image_signature,
+          position: signatureData.position,
+        },
+      ],
       invoice: invoice1,
       discount: discount.toFixed(2),
       net: net,
@@ -370,16 +374,20 @@ exports.EditInvoice = async (req, res) => {
                 remark_2: "",
               },
           signature: req.body.signature
-            ? {
-                name: req.body.signature.name || "",
-                image_signature: req.body.signature.image_signature || "",
-                position: req.body.signature.position || "",
-              }
-            : {
-                name: "",
-                image_signature: "",
-                position: "",
-              },
+            ? [
+                {
+                  name: req.body.signature.name || "",
+                  image_signature: req.body.signature.image_signature || "",
+                  position: req.body.signature.position || "",
+                },
+              ]
+            : [
+                {
+                  name: "",
+                  image_signature: "",
+                  position: "",
+                },
+              ],
         },
       },
       { new: true }

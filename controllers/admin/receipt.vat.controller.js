@@ -75,11 +75,13 @@ exports.ReceiptVat = async (req, res) => {
     const savedReceiptData = await ReceiptVat.create({
       ...receiptDataFields,
       receipt: invoice,
-      signature: {
-        name: signatureData.name,
-        image_signature: signatureData.image_signature,
-        position: signatureData.position,
-      },
+      signature: [
+        {
+          name: signatureData.name,
+          image_signature: signatureData.image_signature,
+          position: signatureData.position,
+        },
+      ],
       quotation: quotationData.quotation,
       invoice: quotationData.invoice,
       discount: discount.toFixed(2),
@@ -193,11 +195,13 @@ exports.PrintReceiptVat = async (req, res) => {
       customer_detail: {
         ...req.body.customer_detail,
       },
-      signature: {
-        name: signatureData.name,
-        image_signature: signatureData.image_signature,
-        position: signatureData.position,
-      },
+      signature: [
+        {
+          name: signatureData.name,
+          image_signature: signatureData.image_signature,
+          position: signatureData.position,
+        },
+      ],
       receipt: invoice1,
       discount: discount.toFixed(2),
       net: net,
@@ -441,16 +445,18 @@ exports.EditReceiptVat = async (req, res) => {
                 remark_2: "",
               },
           signature: req.body.signature
-            ? {
-                name: req.body.signature.name || "",
-                image_signature: req.body.signature.image_signature || "",
-                position: req.body.signature.position || "",
-              }
-            : {
+            ? [
+                {
+                  name: req.body.signature.name || "",
+                  image_signature: req.body.signature.image_signature || "",
+                  position: req.body.signature.position || "",
+                },
+              ]
+            : [{
                 name: "",
                 image_signature: "",
                 position: "",
-              },
+              }],
         },
       },
       { new: true }

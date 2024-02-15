@@ -10,7 +10,7 @@ const QuotationSchema = new mongoose.Schema({
     Branch_company_number: { type: String, required: false, default: "ไม่มี" }, //เลขที่บริษัท
     Branch_company_address: { type: String, required: false, default: "ไม่มี" }, //ที่อยู่บริษัท
     Branch_tel: { type: String, required: false }, //เบอร์โทรศัพท์
-    Branch_iden_number:  { type: String, required: false }, //รูปภาพ
+    Branch_iden_number: { type: String, required: false }, //รูปภาพ
     contact_name: { type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
     contact_number: { type: String, required: false, default: "ไม่มี" }, //เบอร์โทรผู้ติดต่อ
     company_email: { type: String, required: false, default: "ไม่มี" },
@@ -63,11 +63,13 @@ const QuotationSchema = new mongoose.Schema({
     after_discoun_payment: { type: Number, required: false }, //ราคาหลังหักจ่าย
     total_all_end: { type: Number, required: false }, //ราคารวมหลังหัก ณ ที่ จ่าย
   },
-  signature: {
-    name: { type: String, required: false, default: "-" }, //ชื่อเจ้าของลายเซ็น
-    image_signature: { type: String, required: false, default: "-" }, //รูปภาพลายเซ็น
-    position: { type: String, required: false, default: "-" }, //ตำเเหน่งเจ้าของลายเซ็น
-  }, //เก็บลายเซ็น
+  signature: [
+    {
+      name: { type: String, required: false, default: "-" }, //ชื่อเจ้าของลายเซ็น
+      image_signature: { type: String, required: false, default: "-" }, //รูปภาพลายเซ็น
+      position: { type: String, required: false, default: "-" }, //ตำเเหน่งเจ้าของลายเซ็น
+    },
+  ], //เก็บลายเซ็น
   remark: [{ type: String, required: false }],
   bank: {
     name: { type: String, required: false }, //ชื่อธนาคาร
@@ -76,7 +78,7 @@ const QuotationSchema = new mongoose.Schema({
     remark_2: { type: String, required: false },
   },
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
-  sumVat: { type: Boolean, required: false }, 
+  sumVat: { type: Boolean, required: false },
   status: { type: Array, required: false },
   start_date: { type: String, required: false }, //วันที่ออกบิล
   end_date: { type: String, required: false }, //วันที่ต้องจ่ายเงิน

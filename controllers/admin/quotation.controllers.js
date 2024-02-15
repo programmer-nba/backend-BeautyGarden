@@ -225,11 +225,13 @@ exports.Quotation = async (req, res) => {
             company_email: branch.company_email,
           }
         : null,
-      signature: {
-        name: signatureData.name || null,
-        image_signature: signatureData.image_signature || null,
-        position: signatureData.position || null,
-      },
+      signature: [
+        {
+          name: signatureData.name || null,
+          image_signature: signatureData.image_signature || null,
+          position: signatureData.position || null,
+        },
+      ],
       customer_detail: {
         ...req.body.customer_detail,
         tax_id: customer.customer_taxnumber,
@@ -374,16 +376,20 @@ exports.EditQuotation = async (req, res) => {
                 remark_2: "",
               },
           signature: req.body.signature
-            ? {
-                name: req.body.signature.name || "",
-                image_signature: req.body.signature.image_signature || "",
-                position: req.body.signature.position || "",
-              }
-            : {
-                name: "",
-                image_signature: "",
-                position: "",
-              },
+            ? [
+                {
+                  name: req.body.signature.name || "",
+                  image_signature: req.body.signature.image_signature || "",
+                  position: req.body.signature.position || "",
+                },
+              ]
+            : [
+                {
+                  name: "",
+                  image_signature: "",
+                  position: "",
+                },
+              ],
         },
       },
       { new: true }
