@@ -102,13 +102,16 @@ exports.PrintInviuceVat = async (req, res) => {
       ShippingCost = 0,
       note,
       discount = 0,
+      percen_deducted = 0,
       start_date,
       end_date,
       quotation,
       sumVat,
       signatureID,
+      percen_payment = 0,
       invoice,
     } = req.body;
+
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
       const price = product.product_price;
@@ -131,8 +134,23 @@ exports.PrintInviuceVat = async (req, res) => {
     if (signatureID && signatureID.length > 0) {
       signatureData = await Signature.find({ _id: { $in: signatureID } });
     }
-
     const Shippingincluded = (totalWithVat + ShippingCost).toFixed(2);
+
+    const deductionPercentage = parseFloat(req.body.percen_deducted) || 0;
+    const total_deducted1 = (
+      (Shippingincluded * deductionPercentage) /
+      100
+    ).toFixed(2);
+    const totalVat_deducted1 = (Shippingincluded - total_deducted1).toFixed(2);
+
+    const amount_vat = ((total * vatRate) / 1.07).toFixed(2);
+    const total_amount_product = (total - amount_vat).toFixed(2);
+    const totalAll = total_amount_product - discount;
+    const tatal_Shippingincluded = totalAll + ShippingCost;
+    const total_paymeny = (
+      (tatal_Shippingincluded * percen_payment) /
+      100
+    ).toFixed(2);
     const quotation1 = await new Invoice({
       ...req.body,
       customer_detail: {
@@ -142,12 +160,27 @@ exports.PrintInviuceVat = async (req, res) => {
       invoice: invoice1,
       discount: discount.toFixed(2),
       net: net,
-      ShippingCost: ShippingCost,
-      Shippingincluded: Shippingincluded,
       product_detail: updatedProductDetail,
       total: total.toFixed(2),
-      vat: vatAmount.toFixed(2),
-      totalvat: totalWithVat.toFixed(2),
+      vat: {
+        amount_vat: vatAmount.toFixed(2),
+        totalvat: totalWithVat.toFixed(2),
+        ShippingCost: ShippingCost,
+        Shippingincluded: Shippingincluded,
+        percen_deducted: percen_deducted,
+        total_deducted: total_deducted1,
+        totalVat_deducted: totalVat_deducted1,
+      },
+      total_products: {
+        amount_vat: amount_vat,
+        total_product: total_amount_product,
+        percen_payment: percen_payment,
+        total_discount: totalAll,
+        ShippingCost1: ShippingCost,
+        total_ShippingCost1: tatal_Shippingincluded,
+        after_discoun_payment: total_paymeny,
+        total_all_end: total - total_paymeny - discount,
+      },
       remark: req.body.remark,
       bank: {
         name: req.body.bank.name,
