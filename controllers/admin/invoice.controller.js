@@ -126,9 +126,9 @@ exports.PrintInviuceVat = async (req, res) => {
     const vatAmount = net * vatRate;
     const totalWithVat = net + vatAmount;
     const invoice1 = await invoiceNumber();
-    let signatureData = {};
-    if (signatureID) {
-      signatureData = await Signature.findOne({ _id: signatureID });
+    let signatureData = [];
+    if (signatureID && signatureID.length > 0) {
+      signatureData = await Signature.find({ _id: { $in: signatureID } });
     }
 
     const Shippingincluded = (totalWithVat + ShippingCost).toFixed(2);
@@ -137,13 +137,7 @@ exports.PrintInviuceVat = async (req, res) => {
       customer_detail: {
         ...req.body.customer_detail,
       },
-      signature: [
-        {
-          name: signatureData.name,
-          image_signature: signatureData.image_signature,
-          position: signatureData.position,
-        },
-      ],
+      signature: signatureData,
       invoice: invoice1,
       discount: discount.toFixed(2),
       net: net,
@@ -298,7 +292,7 @@ exports.getIVAllfilter = async (req, res) => {
 exports.EditInvoice = async (req, res) => {
   try {
     const customer_number = req.params.id;
-    const { product_detail, discount, bank } = req.body;
+    const { product_detail, discount, bank, signatureID } = req.body;
 
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -311,6 +305,11 @@ exports.EditInvoice = async (req, res) => {
         product_total,
       };
     });
+
+    let signatureData = [];
+    if (signatureID && signatureID.length > 0) {
+      signatureData = await Signature.find({ _id: { $in: signatureID } });
+    }
 
     const discountValue = typeof discount === "number" ? discount : 0;
     const discount_percent = discountValue ? (discountValue / total) * 100 : 0;
@@ -373,15 +372,7 @@ exports.EditInvoice = async (req, res) => {
                 status: "",
                 remark_2: "",
               },
-          signature: req.body.signature
-            ? req.body.signature
-            : [
-                {
-                  name: "",
-                  image_signature: "",
-                  position: "",
-                },
-              ],
+          signature: signatureData,
         },
       },
       { new: true }

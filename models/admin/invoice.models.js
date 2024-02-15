@@ -64,11 +64,13 @@ const InvoiceSchema = new mongoose.Schema({
     after_discoun_payment: { type: Number, required: false }, //ราคาหลังหักจ่าย
     total_all_end: { type: Number, required: false }, //ราคารวมหลังหัก ณ ที่ จ่าย
   },
-  signature: {
-    name: { type: String, required: false, default: "-" }, //ชื่อเจ้าของลายเซ็น
-    image_signature: { type: String, required: false, default: "-" }, //รูปภาพลายเซ็น
-    position: { type: String, required: false, default: "-" }, //ตำเเหน่งเจ้าของลายเซ็น
-  }, //เก็บลายเซ็น
+  signature: [
+    {
+      name: { type: String, required: false, default: "-" }, //ชื่อเจ้าของลายเซ็น
+      image_signature: { type: String, required: false, default: "-" }, //รูปภาพลายเซ็น
+      position: { type: String, required: false, default: "-" }, //ตำเเหน่งเจ้าของลายเซ็น
+    },
+  ],  //เก็บลายเซ็น
   remark: [{ type: String, required: false }],
   bank: {
     name: { type: String, required: false, default: "-" }, //ชื่อธนาคาร

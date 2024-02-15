@@ -60,11 +60,13 @@ const ReceiptNoVatSchema = new mongoose.Schema({
   start_date: { type: String, required: false }, //วันที่ออกบิล
   end_date: { type: String, required: false }, //วันที่ต้องจ่ายเงิน
   pay_through: { type: String, required: false }, //ชำระผ่าน
-  signature: {
-    name: { type: String, required: false, default: "-" }, //ชื่อเจ้าของลายเซ็น
-    image_signature: { type: String, required: false, default: "-" }, //รูปภาพลายเซ็น
-    position: { type: String, required: false, default: "-" }, //ตำเเหน่งเจ้าของลายเซ็น
-  },
+  signature: [
+    {
+      name: { type: String, required: false, default: "-" }, //ชื่อเจ้าของลายเซ็น
+      image_signature: { type: String, required: false, default: "-" }, //รูปภาพลายเซ็น
+      position: { type: String, required: false, default: "-" }, //ตำเเหน่งเจ้าของลายเซ็น
+    },
+  ], 
   remark: [{ type: String, required: false }],
   bank: {
     name: { type: String, required: false, default: "-" }, //ชื่อธนาคาร
