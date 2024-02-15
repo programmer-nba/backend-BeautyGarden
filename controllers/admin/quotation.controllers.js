@@ -162,10 +162,12 @@ exports.Quotation = async (req, res) => {
       signatureID,
     } = req.body;
     let total = 0;
+
     const updatedProductDetail = product_detail.map((product) => {
       const price = parseFloat(product.product_price);
       const amount = parseInt(product.product_amount);
-      const product_total = (price * amount).toFixed(2);
+      const vat_price = parseFloat(product.vat_price) || 0;
+      const product_total = (price * amount + vat_price).toFixed(2);
       total += parseFloat(product_total); // รวม product_total เข้า total
       return {
         ...product,
