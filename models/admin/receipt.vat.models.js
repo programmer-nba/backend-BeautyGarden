@@ -40,6 +40,7 @@ const ReceiptVatSchema = new mongoose.Schema({
       product_amount: { type: Number, required: false },
       product_price: { type: Number, required: false },
       product_logo: { type: String, required: false },
+      vat_price: { type: Number, required: false },
       product_total: { type: Number, required: false }, //ราคารวมสินค้าต่อชิ้น
     },
   ],

@@ -10,7 +10,7 @@ const InvoiceSchema = new mongoose.Schema({
     Branch_company_name: { type: String, required: false, default: "ไม่มี" }, //ชื่อบริษัท
     Branch_company_number: { type: String, required: false, default: "ไม่มี" }, //เลขที่บริษัท
     Branch_company_address: { type: String, required: false, default: "ไม่มี" }, //ที่อยู่บริษัท
-    Branch_iden_number:  { type: String, required: false }, //รูปภาพ
+    Branch_iden_number: { type: String, required: false }, //รูปภาพ
     taxnumber: { type: String, required: false, default: "ไม่มี" }, //เลขประจำตัวผู้เสียภาษี
     Branch_tel: { type: String, required: false }, //เบอร์โทรศัพท์
     contact_name: { type: String, required: false, default: "ไม่มี" }, //ที่ผู้ติดต่อ
@@ -38,6 +38,7 @@ const InvoiceSchema = new mongoose.Schema({
       product_amount: { type: Number, required: false },
       product_price: { type: Number, required: false },
       product_logo: { type: String, required: false },
+      vat_price: { type: Number, required: false },
       product_total: { type: Number, required: false }, //ราคารวมสินค้าต่อชิ้น
     },
   ],
@@ -70,7 +71,7 @@ const InvoiceSchema = new mongoose.Schema({
       image_signature: { type: String, required: false, default: "-" }, //รูปภาพลายเซ็น
       position: { type: String, required: false, default: "-" }, //ตำเเหน่งเจ้าของลายเซ็น
     },
-  ],  //เก็บลายเซ็น
+  ], //เก็บลายเซ็น
   remark: [{ type: String, required: false }],
   bank: {
     name: { type: String, required: false, default: "-" }, //ชื่อธนาคาร
@@ -79,7 +80,7 @@ const InvoiceSchema = new mongoose.Schema({
     remark_2: { type: String, required: false },
   },
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
-  sumVat: { type: Boolean, required: false }, 
+  sumVat: { type: Boolean, required: false },
   status: { type: Array, required: false },
   start_date: { type: String, required: false }, //วันที่ออกบิล
   end_date: { type: String, required: false }, //วันที่ต้องจ่ายเงิน
