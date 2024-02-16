@@ -85,6 +85,9 @@ const InvoiceSchema = new mongoose.Schema({
   start_date: { type: String, required: false }, //วันที่ออกบิล
   end_date: { type: String, required: false }, //วันที่ต้องจ่ายเงิน
   timestamps: { type: Date, required: false, default: Date.now() },
+  credit: {type: Number, required: false },
+  end_period: {type: Number, required: false },
+  cur_period: {type: Number, required: false }
 });
 
 const Invoice = mongoose.model("Invoice", InvoiceSchema);

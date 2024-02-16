@@ -10,6 +10,7 @@ const { Quotation } = require("../../models/admin/quotation.models");
 const { Signature } = require("../../models/signature/signature.models");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
+const { Company } = require("../../models/company/company.models");
 const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
@@ -95,6 +96,7 @@ exports.ReceiptInvoiceVat = async (req, res) => {
     });
   }
 };
+
 exports.PrintInviuceVat = async (req, res) => {
   try {
     const {
@@ -110,7 +112,13 @@ exports.PrintInviuceVat = async (req, res) => {
       signatureID,
       percen_payment = 0,
       invoice,
+      credit,
+      end_period,
+      cur_period
     } = req.body;
+
+    const branchId = req.body.branchId;
+    const branch = branchId ? await Company.findById(branchId) : null;
 
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -156,6 +164,20 @@ exports.PrintInviuceVat = async (req, res) => {
       customer_detail: {
         ...req.body.customer_detail,
       },
+      customer_branch: branch
+        ? {
+            Branch_company_name: branch.Branch_company_name,
+            Branch_company_number: branch.Branch_company_number,
+            Branch_company_address: branch.Branch_company_address,
+            taxnumber: branch.taxnumber,
+            Branch_iden_number: branch.Branch_iden_number,
+            isVat: branch.isVat,
+            Branch_tel: branch.Branch_tel,
+            contact_name: branch.contact_name,
+            contact_number: branch.contact_number,
+            company_email: branch.company_email,
+          }
+        : null,
       signature: signatureData,
       invoice: invoice1,
       discount: discount.toFixed(2),
@@ -189,6 +211,7 @@ exports.PrintInviuceVat = async (req, res) => {
         remark_2: req.body.bank.remark_2,
       },
       sumVat: sumVat,
+      credit: credit,
       timestamps: dayjs(Date.now()).format(""),
     }).save();
 
@@ -213,6 +236,7 @@ exports.PrintInviuceVat = async (req, res) => {
     });
   }
 };
+
 exports.deleteInvoice = async (req, res) => {
   try {
     const id = req.params.id;
@@ -232,6 +256,7 @@ exports.deleteInvoice = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+
 exports.deleteAllInvoice = async (req, res) => {
   try {
     const result = await Invoice.deleteMany({});
@@ -249,6 +274,7 @@ exports.deleteAllInvoice = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+
 exports.getInvoiceVatAll = async (req, res) => {
   try {
     const invoice = await Invoice.find();
@@ -267,6 +293,7 @@ exports.getInvoiceVatAll = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+
 exports.getInvoiceVatById = async (req, res) => {
   try {
     const id = req.params.id;
@@ -286,6 +313,7 @@ exports.getInvoiceVatById = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+
 exports.getIVVatByIdS = async (req, res) => {
   try {
     const id = req.params.id;
