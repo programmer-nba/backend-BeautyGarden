@@ -157,7 +157,7 @@ exports.PrintReceiptVat = async (req, res) => {
       const price = product.product_price;
       const amount = product.product_amount;
       const vat_price = parseFloat(product.vat_price) || 0;
-      const product_total = (price * amount + vat_price).toFixed(2);
+      const product_total = (price * amount + vat_price);
       total += +product_total;
       return {
         ...product,
@@ -170,7 +170,7 @@ exports.PrintReceiptVat = async (req, res) => {
     const totalWithVat = net + vatAmount;
 
     const invoice1 = await invoiceNumber();
-    const Shippingincluded = (totalWithVat + ShippingCost).toFixed(2);
+    const Shippingincluded = (totalWithVat + ShippingCost);
     let signatureData = [];
     if (signatureID && signatureID.length > 0) {
       signatureData = await Signature.find({ _id: { $in: signatureID } });
