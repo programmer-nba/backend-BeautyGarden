@@ -102,7 +102,7 @@ exports.PrintInviuceVat = async (req, res) => {
     const {
       product_detail,
       ShippingCost = 0,
-      note,
+      //note,
       discount = 0,
       percen_deducted = 0,
       start_date,
@@ -213,12 +213,19 @@ exports.PrintInviuceVat = async (req, res) => {
       sumVat: sumVat,
       credit: credit,
       timestamps: dayjs(Date.now()).format(""),
+      end_period: end_period || 1,
+      cur_period: cur_period || 0,
+      start_date: start_date,
+      end_date: end_date,
+      quotation: quotation,
+      status: [],
+      paid: 0
     }).save();
 
     if (quotation1) {
       return res.status(200).send({
         status: true,
-        message: "สร้างใบเสร็จรับเงินสำเร็จ",
+        message: "สร้างใบแจ้งหนี้สำเร็จ",
         data: quotation1,
       });
     } else {
@@ -354,48 +361,67 @@ exports.getIVAllfilter = async (req, res) => {
 exports.EditInvoice = async (req, res) => {
   try {
     const customer_number = req.params.id;
-    const { product_detail, discount, bank, signatureID } = req.body;
+    const {
+      product_detail,
+      ShippingCost = 0,
+      discount = 0,
+      percen_deducted = 0,
+      start_date,
+      end_date,
+      quotation,
+      sumVat,
+      signatureID,
+      percen_payment = 0,
+      invoice,
+      credit,
+      end_period,
+      cur_period,
+      bank,
+      remark,
+      branchId
+    } = req.body;
+
+    const branch = branchId ? await Company.findById(branchId) : null;
 
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
-      const price = parseFloat(product.product_price);
-      const amount = parseInt(product.product_amount);
-      const product_total = (price * amount);
-      total += parseFloat(product_total);
+      const price = product.product_price;
+      const amount = product.product_amount;
+      const vat_price = parseFloat(product.vat_price) || 0;
+      const product_total = (price * amount + vat_price);
+      total += +product_total;
       return {
         ...product,
         product_total,
       };
     });
 
+    const net = discount ? total - discount : total;
+    const vatRate = 0.07;
+    const vatAmount = net * vatRate;
+    const totalWithVat = net + vatAmount;
+    const invoice1 = await invoiceNumber();
     let signatureData = [];
     if (signatureID && signatureID.length > 0) {
       signatureData = await Signature.find({ _id: { $in: signatureID } });
     }
-
-    const discountValue = typeof discount === "number" ? discount : 0;
-    const discount_percent = discountValue ? (discountValue / total) * 100 : 0;
-    const net = discountValue ? total - discountValue : total;
-    const vatRate = 0.07;
-    const vatAmount = net * vatRate;
-    const totalWithVat = net + vatAmount;
+    const Shippingincluded = (totalWithVat + ShippingCost);
 
     const deductionPercentage = parseFloat(req.body.percen_deducted) || 0;
     const total_deducted1 = (
-      (totalWithVat * deductionPercentage) /
+      (Shippingincluded * deductionPercentage) /
       100
     );
-    const totalVat_deducted1 = (totalWithVat - total_deducted1);
+    const totalVat_deducted1 = (Shippingincluded - total_deducted1);
 
     const amount_vat = ((total * vatRate) / 1.07);
     const total_amount_product = (total - amount_vat);
-    const totalAll = total_amount_product - discountValue;
-
-    const total_payment = ((totalAll * req.body.percen_payment) / 100).toFixed(
-      2
+    const totalAll = total_amount_product - discount;
+    const tatal_Shippingincluded = totalAll + ShippingCost;
+    const total_paymeny = (
+      (tatal_Shippingincluded * percen_payment) /
+      100
     );
-
-    const total_all_end = (total - total_payment - discountValue);
 
     const updatedReceiptVat = await Invoice.findOneAndUpdate(
       { _id: customer_number },
@@ -408,25 +434,25 @@ exports.EditInvoice = async (req, res) => {
           net,
           "vat.amount_vat": vatAmount,
           "vat.totalvat": totalWithVat,
-          "vat.ShippingCost": req.body.ShippingCost,
-          "vat.percen_deducted": req.body.percen_deducted,
+          "vat.ShippingCost": ShippingCost,
+          "vat.percen_deducted": percen_deducted,
           "vat.total_deducted": total_deducted1,
           "vat.totalVat_deducted": totalVat_deducted1,
           "total_products.amount_vat": amount_vat,
           "total_products.total_product": total_amount_product,
           "total_products.total_discount": totalAll,
-          "total_products.percen_payment": req.body.percen_payment,
+          "total_products.percen_payment": percen_payment,
           "total_products.after_discoun_payment": total_payment,
           "total_products.total_all_end": total_all_end,
-          start_date: req.body.start_date,
-          end_date: req.body.end_date,
-          remark: req.body.remark,
-          bank: req.body.bank
+          start_date: start_date,
+          end_date: end_date,
+          remark: remark,
+          bank: bank
             ? {
-                name: req.body.bank.name || "",
-                img: req.body.bank.img || "",
-                status: req.body.bank.status || "",
-                remark_2: req.body.bank.remark_2 || "",
+                name: bank.name || "",
+                img: bank.img || "",
+                status: bank.status || "",
+                remark_2: bank.remark_2 || "",
               }
             : {
                 name: "",
@@ -435,7 +461,26 @@ exports.EditInvoice = async (req, res) => {
                 remark_2: "",
               },
           signature: signatureData,
-        },
+          credit: credit,
+          end_period: end_period,
+          cur_period: cur_period,
+          quotation: quotation,
+          sumVat: sumVat,
+          customer_branch: branch
+          ? {
+              Branch_company_name: branch.Branch_company_name,
+              Branch_company_number: branch.Branch_company_number,
+              Branch_company_address: branch.Branch_company_address,
+              taxnumber: branch.taxnumber,
+              Branch_iden_number: branch.Branch_iden_number,
+              isVat: branch.isVat,
+              Branch_tel: branch.Branch_tel,
+              contact_name: branch.contact_name,
+              contact_number: branch.contact_number,
+              company_email: branch.company_email,
+            }
+          : null,
+        }
       },
       { new: true }
     );
@@ -448,7 +493,7 @@ exports.EditInvoice = async (req, res) => {
       });
     } else {
       return res.status(404).send({
-        message: "ไม่พบใบเสร็จที่ต้องการแก้ไข",
+        message: "ไม่พบใบเอกสารที่ต้องการแก้ไข",
         status: false,
       });
     }

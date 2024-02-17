@@ -87,7 +87,9 @@ const InvoiceSchema = new mongoose.Schema({
   timestamps: { type: Date, required: false, default: Date.now() },
   credit: {type: Number, required: false },
   end_period: {type: Number, required: false },
-  cur_period: {type: Number, required: false }
+  cur_period: {type: Number, required: false },
+  isVat: { type: Boolean },
+  paid: Number
 });
 
 const Invoice = mongoose.model("Invoice", InvoiceSchema);
