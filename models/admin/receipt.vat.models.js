@@ -91,6 +91,14 @@ const ReceiptVatSchema = new mongoose.Schema({
     remark_2: { type: String, required: false },
   },
   timestamps: { type: Date, required: false, default: Date.now() },
+  amount_price: Number,
+  invoiceRef_detail: {
+    start_date: Date,
+    end_date: Date,
+    period: Number,
+    period_text: String,
+    paid: Number
+  }
 });
 
 const ReceiptVat = mongoose.model("ReceiptVat", ReceiptVatSchema);

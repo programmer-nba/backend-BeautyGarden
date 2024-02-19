@@ -24,6 +24,7 @@ const {
   deleteFile,
 } = require("../../funtions/uploadfilecreate");
 const { admin } = require("googleapis/build/src/apis/admin");
+const { response } = require("express");
 
 exports.ReceiptVat = async (req, res) => {
   try {
@@ -473,22 +474,110 @@ exports.EditReceiptVat = async (req, res) => {
   }
 };
 
-async function invoiceNumber(date) {
+exports.newReceiptRefInvoice = async (req, res) => {
+  try {
+    const {
+      invoiceId,
+      start_date,
+      amount_price,
+      remark
+    } = req.body
+
+    const invoice = await Invoice.findOne({
+      invoice : invoiceId
+    })
+    if ( !invoice ) {
+      return res.status(404).send({
+        message: "ไม่พบเลขที่ใบแจ้งหนี้นี้ในระบบ",
+        status: false,
+      })
+    }
+    const code = await invoiceNumber()
+    const newReceipt = {
+      receipt: code,
+      quotation: invoice.quotation || null,
+      invoice: invoice.invoice || null,
+      customer_branch: invoice.customer_branch,
+      customer_detail: invoice.customer_detail,
+      product_detail: invoice.product_detail,
+      total: invoice.total,
+      amount_price: amount_price,
+      discount: invoice.discount,
+      net: invoice.net,
+      vat: invoice.vat,
+      total_products: invoice.total_products,
+      sumVat: invoice.sumVat,
+      withholding: invoice.withholding,
+      isVat: invoice.isVat,
+      status: [
+        {
+          name: "new",
+          createdAt: new Date()
+        }
+      ],
+      start_date: start_date,
+      signature: invoice.signature,
+      remark: remark,
+      bank: invoice.bank,
+      invoiceRef_detail: {
+        start_date: invoice.start_date,
+        end_date: invoice.end_date,
+        period: invoice.cur_period + 1,
+        period_text: `${invoice.cur_period + 1}/${invoice.end_period}`,
+        paid: invoice.paid + amount_price || 0
+      }
+    }
+
+    const new_receipt = new ReceiptVat(newReceipt)
+    const saved_receipt = await new_receipt.save()
+    if ( !saved_receipt) {
+      return res.status(500).send({
+        message: "ไม่สามารถบันทึกใบเสร็จได้",
+        status: false
+      })
+    }
+
+    invoice.status.push({
+      name: `${invoice.cur_period + 1}/${invoice.end_period}`,
+      paid: amount_price,
+      period: invoice.cur_period + 1, 
+      receipt: saved_receipt.receipt,
+      createdAt: start_date
+    })
+    invoice.cur_period += 1
+    invoice.paid += amount_price
+    const updated_invoice = await invoice.save()
+    if( !updated_invoice ) {
+      return res.status(500).send({
+        message: "ไม่สามารถอัพเดทสถานะใบแจ้งหนี้",
+        status: false,
+      })
+    }
+
+    return res.status(200).send({
+      message: "สร้างใบเสร็จรับเงินสำเร็จ",
+      status: true,
+      data: saved_receipt,
+      ref_invoice: updated_invoice
+    })
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      message: "มีบางอย่างผิดพลาด",
+      status: false,
+      error: error.message,
+    })
+  }
+}
+
+async function invoiceNumber() {
+  const date = new Date()
   const order = await ReceiptVat.find();
   let invoice_number = null;
   if (order.length !== 0) {
-    let data = "";
-    let num = 0;
-    let check = null;
-    do {
-      num = num + 1;
-      data = `REP${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
-      check = await ReceiptVat.find({ receipt: data });
-      if (check.length === 0) {
-        invoice_number =
-          `REP${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
-      }
-    } while (check.length !== 0);
+    const data = `REP${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + order.length;
+    invoice_number = data
   } else {
     invoice_number =
       `REP${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
