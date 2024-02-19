@@ -43,7 +43,7 @@ exports.QuotationVat = async (req, res) => {
     const updatedProductDetail = product_detail.map((product) => {
       const price = parseFloat(product.product_price);
       const amount = parseInt(product.product_amount);
-      const product_total = (price * amount);
+      const product_total = price * amount;
       total += parseFloat(product_total); // รวม product_total เข้า total
       return {
         ...product,
@@ -55,8 +55,8 @@ exports.QuotationVat = async (req, res) => {
     const discount_percent = discount ? (discount / total) * 100 : 0;
     const net = discount ? total - discount : total;
     const vatRate = 0.07;
-    const vat = Number((net * vatRate).toFixed(2));
-    const totalvat = Number((net + vat).toFixed(2));
+    const vat = Number((net * vatRate));
+    const totalvat = Number((net + vat));
     const total_deducted1 = (net * percen_deducted1) / 100;
 
     let customer = {};
@@ -108,9 +108,9 @@ exports.QuotationVat = async (req, res) => {
         position: signatureData.position,
       },
       product_detail: updatedProductDetail,
-      discount: discount.toFixed(2),
-      discount_persen: discount_percent.toFixed(2),
-      total: total.toFixed(2),
+      discount: discount,
+      discount_persen: discount_percent,
+      total: total,
       net: net,
       vat: {
         percen_deducted: percen_deducted1,
@@ -320,18 +320,18 @@ exports.EditQuotation = async (req, res) => {
     const total_deducted1 = (
       (totalWithVat * deductionPercentage) /
       100
-    ).toFixed(2);
-    const totalVat_deducted1 = (totalWithVat - total_deducted1).toFixed(2);
+    );
+    const totalVat_deducted1 = (totalWithVat - total_deducted1);
 
-    const amount_vat = ((total * vatRate) / 1.07).toFixed(2);
-    const total_amount_product = (total - amount_vat).toFixed(2);
+    const amount_vat = ((total * vatRate) / 1.07);
+    const total_amount_product = (total - amount_vat);
     const totalAll = total_amount_product - discountValue;
 
     const total_payment = ((totalAll * req.body.percen_payment) / 100).toFixed(
       2
     );
 
-    const total_all_end = (total - total_payment - discountValue).toFixed(2);
+    const total_all_end = (total - total_payment - discountValue);
 
     const updatedQuotation = await Quotation.findOneAndUpdate(
       { _id: customer_number },

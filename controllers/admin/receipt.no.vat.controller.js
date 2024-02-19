@@ -46,7 +46,7 @@ exports.ReceiptNoVat = async (req, res) => {
     const total = quotationData.total;
     const ShippingCost = req.body.ShippingCost || 0;
     const percen_deducted = req.body.percen_deducted || 0;
-    const total_Shippingincluded = (net + ShippingCost).toFixed(2);
+    const total_Shippingincluded = (net + ShippingCost);
     const total_deducted = (total_Shippingincluded * percen_deducted) / 100;
     const totalVat_deducted = (total_Shippingincluded - total_deducted).toFixed(
       2
@@ -64,8 +64,8 @@ exports.ReceiptNoVat = async (req, res) => {
       net: net,
       ShippingCost: ShippingCost,
       Shippingincluded: total_Shippingincluded,
-      percen_deducted: percen_deducted.toFixed(2),
-      total_deducted: total_deducted.toFixed(2),
+      percen_deducted: percen_deducted,
+      total_deducted: total_deducted,
       total_end_deducted: totalVat_deducted,
       start_date: req.body.start_date,
       end_date: req.body.end_date,
@@ -118,7 +118,7 @@ exports.PrintReceiptNoVat = async (req, res) => {
     const updatedProductDetail = product_detail.map((product) => {
       const price = product.product_price;
       const amount = product.product_amount;
-      const product_total = (price * amount).toFixed(2);
+      const product_total = (price * amount);
       total += +product_total; // ให้มี + หน้าตัวแปรเพื่อแปลงเป็นตัวเลข
       return {
         ...product,
@@ -126,13 +126,13 @@ exports.PrintReceiptNoVat = async (req, res) => {
       };
     });
     const net = discount ? total - discount : total;
-    const Shippingincluded = (net + ShippingCost).toFixed(2);
+    const Shippingincluded = (net + ShippingCost);
     const percen_deducted1 = req.body.percen_deducted || 0;
-    const total_Shippingincluded = (net + ShippingCost).toFixed(2);
+    const total_Shippingincluded = (net + ShippingCost);
     const total_deducted1 = (total_Shippingincluded * percen_deducted) / 100;
     const totalVat_deducted1 = (
       total_Shippingincluded - total_deducted1
-    ).toFixed(2);
+    );
 
     const invoice1 = await invoiceNumber();
     let signatureData = {};
@@ -152,14 +152,14 @@ exports.PrintReceiptNoVat = async (req, res) => {
         position: signatureData.position,
       },
       net: net,
-      percen_deducted: percen_deducted1.toFixed(2),
-      total_deducted: total_deducted1.toFixed(2),
+      percen_deducted: percen_deducted1,
+      total_deducted: total_deducted1,
       total_end_deducted: totalVat_deducted1,
       ShippingCost: ShippingCost,
       Shippingincluded: Shippingincluded,
       product_detail: updatedProductDetail,
 
-      total: total.toFixed(2),
+      total: total,
       remark: remark,
       bank: {
         name: req.body.bank.name,
@@ -320,7 +320,7 @@ exports.EditReceipt = async (req, res) => {
       const price = parseFloat(product.product_price);
       const amount = parseInt(product.product_amount);
       const vat_price = parseFloat(product.vat_price) || 0;
-      const product_total = (price * amount + vat_price).toFixed(2);
+      const product_total = (price * amount + vat_price);
       total += parseFloat(product_total);
       return {
         ...product,
@@ -338,12 +338,12 @@ exports.EditReceipt = async (req, res) => {
       {
         $set: {
           product_detail: updatedProductDetail,
-          total: total.toFixed(2),
+          total: total,
           discount: discountValue,
-          net: net.toFixed(2),
+          net: net,
           percen_deducted,
           total_deducted: total_deducted,
-          total_end_deducted: (net + total_deducted).toFixed(2),
+          total_end_deducted: (net + total_deducted),
           start_date: req.body.start_date,
           end_date: req.body.end_date,
           remark: req.body.remark,

@@ -54,23 +54,23 @@ exports.ReceiptVat = async (req, res) => {
 
     const vatAmount = net * vatPercentage;
     const totalExcludingVAT = net - vatAmount;
-    const totalvat = (vatAmount + net).toFixed(2);
+    const totalvat = (vatAmount + net);
     const Shippingincluded = (
       parseFloat(totalvat) + parseFloat(ShippingCost)
-    ).toFixed(2);
+    );
 
     const deductionPercentage = parseFloat(req.body.percen_deducted) || 0;
-    const total_deducted = ((totalvat * deductionPercentage) / 100).toFixed(2);
-    const totalVat_deducted = (Shippingincluded - total_deducted).toFixed(2);
+    const total_deducted = ((totalvat * deductionPercentage) / 100);
+    const totalVat_deducted = (Shippingincluded - total_deducted);
 
-    const amount_vat = ((total * vatPercentage) / 1.07).toFixed(2);
-    const total_amount_product = (total - amount_vat).toFixed(2);
+    const amount_vat = ((total * vatPercentage) / 1.07);
+    const total_amount_product = (total - amount_vat);
     const totalAll = total_amount_product - discount;
     const tatal_Shippingincluded = totalAll + ShippingCost;
     const total_paymeny = (
       (tatal_Shippingincluded * percen_payment) /
       100
-    ).toFixed(2);
+    );
 
     const savedReceiptData = await ReceiptVat.create({
       ...receiptDataFields,
@@ -84,12 +84,12 @@ exports.ReceiptVat = async (req, res) => {
       ],
       quotation: quotationData.quotation,
       invoice: quotationData.invoice,
-      discount: discount.toFixed(2),
-      net: net.toFixed(2),
+      discount: discount,
+      net: net,
       vat: {
-        amount_vat: vatAmount.toFixed(2),
-        totalvat: (vatAmount + net).toFixed(2),
-        percen_deducted: deductionPercentage.toFixed(2),
+        amount_vat: vatAmount,
+        totalvat: (vatAmount + net),
+        percen_deducted: deductionPercentage,
         total_deducted: total_deducted,
         totalVat_deducted: totalVat_deducted,
         ShippingCost: ShippingCost,
@@ -157,7 +157,7 @@ exports.PrintReceiptVat = async (req, res) => {
       const price = product.product_price;
       const amount = product.product_amount;
       const vat_price = parseFloat(product.vat_price) || 0;
-      const product_total = (price * amount + vat_price);
+      const product_total = price * amount + vat_price;
       total += +product_total;
       return {
         ...product,
@@ -170,7 +170,7 @@ exports.PrintReceiptVat = async (req, res) => {
     const totalWithVat = net + vatAmount;
 
     const invoice1 = await invoiceNumber();
-    const Shippingincluded = (totalWithVat + ShippingCost);
+    const Shippingincluded = totalWithVat + ShippingCost;
     let signatureData = [];
     if (signatureID && signatureID.length > 0) {
       signatureData = await Signature.find({ _id: { $in: signatureID } });
@@ -179,17 +179,17 @@ exports.PrintReceiptVat = async (req, res) => {
     const total_deducted1 = (
       (Shippingincluded * deductionPercentage) /
       100
-    ).toFixed(2);
-    const totalVat_deducted1 = (Shippingincluded - total_deducted1).toFixed(2);
+    );
+    const totalVat_deducted1 = (Shippingincluded - total_deducted1);
 
-    const amount_vat = ((total * vatRate) / 1.07).toFixed(2);
-    const total_amount_product = (total - amount_vat).toFixed(2);
+    const amount_vat = ((total * vatRate) / 1.07);
+    const total_amount_product = (total - amount_vat);
     const totalAll = total_amount_product - discount;
     const tatal_Shippingincluded = totalAll + ShippingCost;
     const total_paymeny = (
       (tatal_Shippingincluded * percen_payment) /
       100
-    ).toFixed(2);
+    );
 
     const quotation1 = await new ReceiptVat({
       ...req.body,
@@ -198,13 +198,13 @@ exports.PrintReceiptVat = async (req, res) => {
       },
       signature: signatureData,
       receipt: invoice1,
-      discount: discount.toFixed(2),
+      discount: discount,
       net: net,
       product_detail: updatedProductDetail,
-      total: total.toFixed(2),
+      total: total,
       vat: {
         amount_vat: vatAmount,
-        totalvat: totalWithVat.toFixed(2),
+        totalvat: totalWithVat,
         ShippingCost: ShippingCost,
         Shippingincluded: Shippingincluded,
         percen_deducted: percen_deducted,
@@ -371,7 +371,7 @@ exports.EditReceiptVat = async (req, res) => {
       const price = parseFloat(product.product_price);
       const amount = parseInt(product.product_amount);
       const vat_price = parseFloat(product.vat_price) || 0;
-      const product_total = (price * amount + vat_price).toFixed(2);
+      const product_total = (price * amount + vat_price);
       total += parseFloat(product_total);
       return {
         ...product,
@@ -395,30 +395,30 @@ exports.EditReceiptVat = async (req, res) => {
     const total_deducted1 = (
       (totalWithVat * deductionPercentage) /
       100
-    ).toFixed(2);
-    const totalVat_deducted1 = (totalWithVat - total_deducted1).toFixed(2);
+    );
+    const totalVat_deducted1 = (totalWithVat - total_deducted1);
 
-    const amount_vat = ((total * vatRate) / 1.07).toFixed(2);
-    const total_amount_product = (total - amount_vat).toFixed(2);
+    const amount_vat = ((total * vatRate) / 1.07);
+    const total_amount_product = (total - amount_vat);
     const totalAll = total_amount_product - discountValue;
 
     const total_payment = ((totalAll * req.body.percen_payment) / 100).toFixed(
       2
     );
 
-    const total_all_end = (total - total_payment - discountValue).toFixed(2);
+    const total_all_end = (total - total_payment - discountValue);
 
     const updatedReceiptVat = await ReceiptVat.findOneAndUpdate(
       { _id: customer_number },
       {
         $set: {
           product_detail: updatedProductDetail,
-          total: total.toFixed(2),
-          discount: discountValue.toFixed(2),
-          discount_persen: discount_percent.toFixed(2),
+          total: total,
+          discount: discountValue,
+          discount_persen: discount_percent,
           net,
-          "vat.amount_vat": vatAmount.toFixed(2),
-          "vat.totalvat": totalWithVat.toFixed(2),
+          "vat.amount_vat": vatAmount,
+          "vat.totalvat": totalWithVat,
           "vat.ShippingCost": req.body.ShippingCost,
           "vat.percen_deducted": req.body.percen_deducted,
           "vat.total_deducted": total_deducted1,
