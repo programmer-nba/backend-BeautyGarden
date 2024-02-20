@@ -102,7 +102,7 @@ exports.PrintInviuceVat = async (req, res) => {
     const {
       product_detail,
       ShippingCost = 0,
-      //note,
+      transfer,
       discount = 0,
       percen_deducted = 0,
       start_date,
@@ -178,6 +178,7 @@ exports.PrintInviuceVat = async (req, res) => {
             company_email: branch.company_email,
           }
         : null,
+      transfer: transfer,
       signature: signatureData,
       invoice: invoice1,
       discount: discount,

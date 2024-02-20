@@ -151,6 +151,7 @@ exports.PrintReceiptVat = async (req, res) => {
       quotation,
       percen_payment = 0,
       invoice,
+      transfer
     } = req.body;
 
     let total = 0;
@@ -212,6 +213,7 @@ exports.PrintReceiptVat = async (req, res) => {
         total_deducted: total_deducted1,
         totalVat_deducted: totalVat_deducted1,
       },
+      transfer: transfer,
       total_products: {
         amount_vat: amount_vat,
         total_product: total_amount_product,
@@ -365,7 +367,7 @@ exports.getREPAllfilter = async (req, res) => {
 exports.EditReceiptVat = async (req, res) => {
   try {
     const customer_number = req.params.id;
-    const { product_detail, discount, bank, signatureID } = req.body;
+    const { product_detail, discount, bank, signatureID, transfer } = req.body;
 
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -417,6 +419,7 @@ exports.EditReceiptVat = async (req, res) => {
           total: total,
           discount: discountValue,
           discount_persen: discount_percent,
+          transfer: transfer,
           net,
           "vat.amount_vat": vatAmount,
           "vat.totalvat": totalWithVat,
@@ -480,7 +483,8 @@ exports.newReceiptRefInvoice = async (req, res) => {
       invoiceId,
       start_date,
       amount_price,
-      remark
+      remark,
+      transfer
     } = req.body
 
     const invoice = await Invoice.findOne({
@@ -502,6 +506,7 @@ exports.newReceiptRefInvoice = async (req, res) => {
       product_detail: invoice.product_detail,
       total: invoice.total,
       amount_price: amount_price,
+      transfer: transfer,
       discount: invoice.discount,
       net: invoice.net,
       vat: invoice.vat,

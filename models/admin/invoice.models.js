@@ -89,7 +89,8 @@ const InvoiceSchema = new mongoose.Schema({
   end_period: {type: Number, required: false },
   cur_period: {type: Number, required: false },
   isVat: { type: Boolean },
-  paid: Number
+  paid: Number,
+  transfer: String
 });
 
 const Invoice = mongoose.model("Invoice", InvoiceSchema);
