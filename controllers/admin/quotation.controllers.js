@@ -28,6 +28,7 @@ exports.QuotationVat = async (req, res) => {
   try {
     const {
       product_detail,
+      product_head,
       customer_detail,
       customer_number,
       ShippingCost = 0,
@@ -107,6 +108,7 @@ exports.QuotationVat = async (req, res) => {
         image_signature: signatureData.image_signature,
         position: signatureData.position,
       },
+      product_head: product_head,
       product_detail: updatedProductDetail,
       discount: discount,
       discount_persen: discount_percent,
@@ -290,7 +292,7 @@ exports.EditQuotation = async (req, res) => {
   try {
     const customer_number = req.params.id;
 
-    const { product_detail, discount, signatureID } = req.body;
+    const { product_detail, discount, signatureID, product_head } = req.body;
 
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -337,6 +339,7 @@ exports.EditQuotation = async (req, res) => {
       { _id: customer_number },
       {
         $set: {
+          product_head: product_head,
           product_detail: updatedProductDetail,
           total: total,
           discount: discountValue,

@@ -100,6 +100,7 @@ exports.ReceiptInvoiceVat = async (req, res) => {
 exports.PrintInviuceVat = async (req, res) => {
   try {
     const {
+      product_head: product_head,
       product_detail,
       ShippingCost = 0,
       transfer,
@@ -183,6 +184,7 @@ exports.PrintInviuceVat = async (req, res) => {
       invoice: invoice1,
       discount: discount,
       net: net,
+      product_head: product_head,
       product_detail: updatedProductDetail,
       total: total,
       vat: {
@@ -363,6 +365,7 @@ exports.EditInvoice = async (req, res) => {
   try {
     const customer_number = req.params.id;
     const {
+      product_head,
       product_detail,
       ShippingCost = 0,
       discount = 0,
@@ -428,6 +431,7 @@ exports.EditInvoice = async (req, res) => {
       { _id: customer_number },
       {
         $set: {
+          product_head: product_head,
           product_detail: updatedProductDetail,
           total: total,
           discount: discountValue,
