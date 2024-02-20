@@ -20,6 +20,7 @@ const ReceiptVatSchema = new mongoose.Schema({
     contact_number: { type: String, required: false, default: "ไม่มี" }, //เบอร์โทรผู้ติดต่อ
     company_email: { type: String, required: false, default: "ไม่มี" },
   },
+  transfer: String,
   customer_detail: {
     //ข้อมูลของลูกค้า
     tax_id: { type: String, required: false }, //เลขประจำตัวผู้เสียภาษี
