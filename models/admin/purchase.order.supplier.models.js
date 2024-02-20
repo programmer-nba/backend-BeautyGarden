@@ -29,6 +29,7 @@ const PurchaseOrderSupSchema = new mongoose.Schema({
       product_logo: { type: String, required: false },
       product_total: { type: Number, required: false }, //ราคารวมสินค้าต่อชิ้น
       product_cost_type: { type: String, required: false }, //เพิ่มประเภทของค่าใช้จ่าย
+      unit: String
     },
   ],
   total: { type: Number, required: false }, //ราคารวมสินค้นทั้งหมด

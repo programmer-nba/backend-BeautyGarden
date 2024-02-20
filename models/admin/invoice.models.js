@@ -40,6 +40,7 @@ const InvoiceSchema = new mongoose.Schema({
       product_logo: { type: String, required: false },
       vat_price: { type: Number, required: false },
       product_total: { type: Number, required: false }, //ราคารวมสินค้าต่อชิ้น
+      unit: String
     },
   ],
   total: { type: Number, required: false }, //ราคารวมสินค้นทั้งหมด
@@ -90,7 +91,7 @@ const InvoiceSchema = new mongoose.Schema({
   cur_period: {type: Number, required: false },
   isVat: { type: Boolean },
   paid: Number,
-  transfer: String
+  transfer: String,
 });
 
 const Invoice = mongoose.model("Invoice", InvoiceSchema);
