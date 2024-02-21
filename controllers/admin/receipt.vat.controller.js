@@ -11,6 +11,7 @@ const { ReceiptNoVat } = require("../../models/admin/receipt.no.vat.models");
 const { ReceiptVat } = require("../../models/admin/receipt.vat.models");
 const { Signature } = require("../../models/signature/signature.models");
 const { Customer } = require("../../models/customer/customer.models");
+const { Company } = require("../../models/company/company.models");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const storage = multer.diskStorage({
@@ -150,9 +151,11 @@ exports.PrintReceiptVat = async (req, res) => {
       withholding,
       isVat,
       quotation,
+      branchId,
       percen_payment = 0,
       invoice,
-      transfer
+      transfer,
+      customer_detail
     } = req.body;
 
     let total = 0;
@@ -171,6 +174,9 @@ exports.PrintReceiptVat = async (req, res) => {
     const vatRate = 0.07;
     const vatAmount = net * vatRate;
     const totalWithVat = net + vatAmount;
+    console.log(branchId)
+    const customer_branch = await Company.findById(branchId)
+    console.log(customer_branch)
 
     const invoice1 = await invoiceNumber();
     const Shippingincluded = totalWithVat + ShippingCost;
@@ -196,9 +202,8 @@ exports.PrintReceiptVat = async (req, res) => {
 
     const quotation1 = await new ReceiptVat({
       ...req.body,
-      customer_detail: {
-        ...req.body.customer_detail,
-      },
+      customer_branch: customer_branch,
+      customer_detail: customer_detail,
       signature: signatureData,
       receipt: invoice1,
       discount: discount,
