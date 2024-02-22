@@ -315,6 +315,7 @@ exports.getReceiptVatAll = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+
 exports.getReceiptVatById = async (req, res) => {
   try {
     const id = req.params.id;
@@ -334,6 +335,7 @@ exports.getReceiptVatById = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+
 exports.getReceiptVatByREP = async (req, res) => {
   try {
     const id = req.params.id;
@@ -353,6 +355,7 @@ exports.getReceiptVatByREP = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+
 exports.getREPAllfilter = async (req, res) => {
   try {
     const rep = await ReceiptVat.find({}, { _id: 1, receipt: 1 });
@@ -371,6 +374,7 @@ exports.getREPAllfilter = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+
 exports.EditReceiptVat = async (req, res) => {
   try {
     const customer_number = req.params.id;
