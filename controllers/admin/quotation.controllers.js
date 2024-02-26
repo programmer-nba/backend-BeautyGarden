@@ -400,7 +400,6 @@ exports.EditQuotation = async (req, res) => {
     });
   }
 };
-
 exports.deleteQuotation = async (req, res) => {
   try {
     const id = req.params.id;
@@ -505,12 +504,14 @@ exports.ImportImgProduct = async (req, res) => {
         return res.status(500).send(err);
       }
       if (req.files) {
+        console.log('files', req.files)
         const url = req.protocol + "://" + req.get("host");
         for (var i = 0; i < req.files.length; i++) {
           const src = await uploadFileCreate(req.files, res, { i, reqFiles });
           result.push(src);
         }
       }
+      console.log('result',result)
       const productId = req.params.id; // _id ที่อยู่ภายใน product_detail
       const quotationId = req.params.quotationId;
       if (req.files && req.files.length > 0) {
@@ -520,13 +521,7 @@ exports.ImportImgProduct = async (req, res) => {
             "product_detail._id": productId,
           },
           {
-            $set: {
-              "product_detail.$[element].product_logo": reqFiles[0],
-            },
-          },
-          {
-            arrayFilters: [{ "element._id": productId }],
-            new: true,
+            "product_detail.$.product_logo": [...result]
           }
         );
 
