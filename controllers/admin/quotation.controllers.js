@@ -504,7 +504,6 @@ exports.ImportImgProduct = async (req, res) => {
         return res.status(500).send(err);
       }
       if (req.files) {
-        console.log('files', req.files)
         const url = req.protocol + "://" + req.get("host");
         for (var i = 0; i < req.files.length; i++) {
           const src = await uploadFileCreate(req.files, res, { i, reqFiles });
@@ -514,6 +513,7 @@ exports.ImportImgProduct = async (req, res) => {
       console.log('result',result)
       const productId = req.params.id; // _id ที่อยู่ภายใน product_detail
       const quotationId = req.params.quotationId;
+
       if (req.files && req.files.length > 0) {
         const updatedQuotation = await Quotation.findOneAndUpdate(
           {
@@ -521,7 +521,10 @@ exports.ImportImgProduct = async (req, res) => {
             "product_detail._id": productId,
           },
           {
-            "product_detail.$.product_logo": [...result]
+            $push: { "product_detail.$.product_logo": { $each: result } },
+          },
+          {
+            new:true
           }
         );
 
@@ -536,6 +539,7 @@ exports.ImportImgProduct = async (req, res) => {
             status: false,
           });
         }
+
       } else {
         return res.status(400).send({
           message: "ไม่พบไฟล์ที่อัปโหลด",
