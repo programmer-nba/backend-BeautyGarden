@@ -33,6 +33,7 @@ exports.QuotationVat = async (req, res) => {
       customer_number,
       ShippingCost = 0,
       discount = 0,
+      transfer,
       sumVat,
       start_date,
       end_date,
@@ -128,6 +129,7 @@ exports.QuotationVat = async (req, res) => {
       },
       sumVat: sumVat,
       timestamps: dayjs(Date.now()).format(""),
+      transfer: transfer
     }).save();
     if (quotation) {
       return res.status(200).send({
@@ -162,6 +164,7 @@ exports.Quotation = async (req, res) => {
       ShippingCost = 0,
       remark,
       signatureID,
+      transfer
     } = req.body;
     let total = 0;
 
@@ -266,6 +269,7 @@ exports.Quotation = async (req, res) => {
         remark_2: req.body.bank.remark_2,
       },
       timestamps: dayjs(Date.now()).format(""),
+      transfer: transfer
     }).save();
     if (quotation) {
       return res.status(200).send({

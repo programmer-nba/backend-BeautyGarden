@@ -76,6 +76,7 @@ const ReceiptNoVatSchema = new mongoose.Schema({
     remark_2: { type: String, required: false },
   },
   timestamps: { type: Date, required: false, default: Date.now() },
+  transfer: String
 });
 
 const ReceiptNoVat = mongoose.model("ReceiptNoVat", ReceiptNoVatSchema);
