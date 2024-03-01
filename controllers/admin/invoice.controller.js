@@ -385,7 +385,8 @@ exports.EditInvoice = async (req, res) => {
       cur_period,
       bank,
       remark,
-      branchId
+      branchId,
+      customer_detail
     } = req.body;
 
     const branch = branchId ? await Company.findById(branchId) : null;
@@ -455,6 +456,7 @@ exports.EditInvoice = async (req, res) => {
           end_date: end_date,
           remark: remark,
           header: header,
+          customer_detail: customer_detail,
           bank: bank
             ? {
                 name: bank.name || "",
