@@ -93,6 +93,7 @@ const InvoiceSchema = new mongoose.Schema({
   isVat: { type: Boolean },
   paid: Number,
   transfer: String,
+  header: String
 });
 
 const Invoice = mongoose.model("Invoice", InvoiceSchema);

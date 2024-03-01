@@ -100,13 +100,14 @@ exports.ReceiptInvoiceVat = async (req, res) => {
 exports.PrintInviuceVat = async (req, res) => {
   try {
     const {
-      product_head: product_head,
+      product_head,
       product_detail,
       ShippingCost = 0,
       transfer,
       discount = 0,
       percen_deducted = 0,
       start_date,
+      header,
       end_date,
       quotation,
       sumVat,
@@ -165,6 +166,7 @@ exports.PrintInviuceVat = async (req, res) => {
       customer_detail: {
         ...req.body.customer_detail,
       },
+      header: header,
       customer_branch: branch
         ? {
             Branch_company_name: branch.Branch_company_name,
@@ -378,6 +380,7 @@ exports.EditInvoice = async (req, res) => {
       percen_payment = 0,
       invoice,
       credit,
+      header,
       end_period,
       cur_period,
       bank,
@@ -451,6 +454,7 @@ exports.EditInvoice = async (req, res) => {
           start_date: start_date,
           end_date: end_date,
           remark: remark,
+          header: header,
           bank: bank
             ? {
                 name: bank.name || "",
