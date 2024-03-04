@@ -600,8 +600,8 @@ exports.editReceiptRefInvoice = async (req, res) => {
   try {
     const {
       //invoiceId,
-      start_date,
-      amount_price,
+      //start_date,
+      //amount_price,
       remark,
       transfer,
       paid_detail,
@@ -610,12 +610,12 @@ exports.editReceiptRefInvoice = async (req, res) => {
 
     const receipt = await ReceiptVat.findByIdAndUpdate(id, {
       $set: {
-        paid_detail: paid_detail,
-        start_date: start_date,
-        amount_price: amount_price,
-        remark: remark,
-        transfer: transfer,
-        isSign: isSign
+        'invoiceRef_detail.paid_detail': paid_detail,
+        //start_date: start_date,
+        //amount_price: amount_price,
+        //remark: remark,
+        //transfer: transfer,
+        //isSign: isSign
       }
     })
     if ( !receipt) {
@@ -624,9 +624,10 @@ exports.editReceiptRefInvoice = async (req, res) => {
         status: false
       })
     }
-
-    let invoice = await Invoice.findById(receipt.invoice)
-
+    /* const inCode = receipt.invoice
+    let invoice = await Invoice.findOne({invoice : inCode})
+    console.log(invoice)
+    console.log(inCode)
     invoice.status.push({
       name: `edit`,
       paid: amount_price,
@@ -641,13 +642,13 @@ exports.editReceiptRefInvoice = async (req, res) => {
         message: "ไม่สามารถอัพเดทสถานะใบแจ้งหนี้",
         status: false,
       })
-    }
+    } */
 
     return res.status(200).send({
       message: "สร้างใบเสร็จรับเงินสำเร็จ",
       status: true,
-      data: saved_receipt,
-      ref_invoice: updated_invoice
+      data: receipt,
+      //ref_invoice: updated_invoice
     })
 
   } catch (error) {

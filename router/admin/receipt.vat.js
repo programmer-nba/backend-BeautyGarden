@@ -12,4 +12,5 @@ router.get("/getReceiptVatBy/:id", authAdmin, admin.getReceiptVatById)
 router.get("/getReceiptVatByREP/:id", authAdmin, admin.getReceiptVatByREP)
 router.get("/getREPAllfilter", authAdmin, admin.getREPAllfilter)
 router.post("/ReceiptRefInvoice", authAdmin, admin.newReceiptRefInvoice)
+router.put("/ReceiptRefInvoice/:id", authAdmin, admin.editReceiptRefInvoice)
 module.exports = router;
