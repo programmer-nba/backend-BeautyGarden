@@ -155,7 +155,8 @@ exports.PrintReceiptVat = async (req, res) => {
       percen_payment = 0,
       invoice,
       transfer,
-      customer_detail
+      customer_detail,
+      isSign
     } = req.body;
 
     let total = 0;
@@ -211,6 +212,7 @@ exports.PrintReceiptVat = async (req, res) => {
       product_head: product_head,
       product_detail: updatedProductDetail,
       total: total,
+      isSign: isSign,
       vat: {
         amount_vat: vatAmount,
         totalvat: totalWithVat,
@@ -378,7 +380,7 @@ exports.getREPAllfilter = async (req, res) => {
 exports.EditReceiptVat = async (req, res) => {
   try {
     const customer_number = req.params.id;
-    const { product_detail, discount, bank, signatureID, transfer, product_head, } = req.body;
+    const { product_detail, discount, bank, isSign, signatureID, transfer, product_head, } = req.body;
 
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -432,6 +434,7 @@ exports.EditReceiptVat = async (req, res) => {
           discount: discountValue,
           discount_persen: discount_percent,
           transfer: transfer,
+          isSign: isSign,
           net,
           "vat.amount_vat": vatAmount,
           "vat.totalvat": totalWithVat,
@@ -496,7 +499,9 @@ exports.newReceiptRefInvoice = async (req, res) => {
       start_date,
       amount_price,
       remark,
-      transfer
+      transfer,
+      paid_detail,
+      isSign
     } = req.body
 
     const invoice = await Invoice.findOne({
@@ -522,6 +527,7 @@ exports.newReceiptRefInvoice = async (req, res) => {
       discount: invoice.discount,
       net: invoice.net,
       vat: invoice.vat,
+      isSign: isSign,
       total_products: invoice.total_products,
       sumVat: invoice.sumVat,
       withholding: invoice.withholding,
@@ -541,7 +547,8 @@ exports.newReceiptRefInvoice = async (req, res) => {
         end_date: invoice.end_date,
         period: invoice.cur_period + 1,
         period_text: `${invoice.cur_period + 1}/${invoice.end_period}`,
-        paid: invoice.paid + amount_price || 0
+        paid: invoice.paid + amount_price || 0,
+        paid_detail: paid_detail
       }
     }
 
@@ -563,6 +570,71 @@ exports.newReceiptRefInvoice = async (req, res) => {
     })
     invoice.cur_period += 1
     invoice.paid += amount_price
+    const updated_invoice = await invoice.save()
+    if( !updated_invoice ) {
+      return res.status(500).send({
+        message: "ไม่สามารถอัพเดทสถานะใบแจ้งหนี้",
+        status: false,
+      })
+    }
+
+    return res.status(200).send({
+      message: "สร้างใบเสร็จรับเงินสำเร็จ",
+      status: true,
+      data: saved_receipt,
+      ref_invoice: updated_invoice
+    })
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      message: "มีบางอย่างผิดพลาด",
+      status: false,
+      error: error.message,
+    })
+  }
+}
+
+exports.editReceiptRefInvoice = async (req, res) => {
+  const { id } = req.params
+  try {
+    const {
+      //invoiceId,
+      start_date,
+      amount_price,
+      remark,
+      transfer,
+      paid_detail,
+      isSign
+    } = req.body
+
+    const receipt = await ReceiptVat.findByIdAndUpdate(id, {
+      $set: {
+        paid_detail: paid_detail,
+        start_date: start_date,
+        amount_price: amount_price,
+        remark: remark,
+        transfer: transfer,
+        isSign: isSign
+      }
+    })
+    if ( !receipt) {
+      return res.status(500).send({
+        message: "ไม่สามารถบันทึกใบเสร็จได้",
+        status: false
+      })
+    }
+
+    let invoice = await Invoice.findById(receipt.invoice)
+
+    invoice.status.push({
+      name: `edit`,
+      paid: amount_price,
+      period: 0, 
+      receipt: receipt.code,
+      createdAt: start_date
+    })
+
     const updated_invoice = await invoice.save()
     if( !updated_invoice ) {
       return res.status(500).send({

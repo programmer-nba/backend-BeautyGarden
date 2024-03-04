@@ -100,8 +100,10 @@ const ReceiptVatSchema = new mongoose.Schema({
     end_date: Date,
     period: Number,
     period_text: String,
-    paid: Number
-  }
+    paid: Number,
+    paid_detail: String
+  },
+  isSign: Boolean
 });
 
 const ReceiptVat = mongoose.model("ReceiptVat", ReceiptVatSchema);

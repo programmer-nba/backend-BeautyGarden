@@ -164,7 +164,8 @@ exports.Quotation = async (req, res) => {
       ShippingCost = 0,
       remark,
       signatureID,
-      transfer
+      transfer,
+      isSign
     } = req.body;
     let total = 0;
 
@@ -237,6 +238,7 @@ exports.Quotation = async (req, res) => {
         customer_address: customer.customer_address,
         customer_type: customer.customer_type,
       },
+      isSign: isSign,
       product_detail: updatedProductDetail,
       total: total, // ให้ total มีทศนิยม 2 ตำแหน่ง
       discount: discount,
@@ -296,7 +298,7 @@ exports.EditQuotation = async (req, res) => {
   try {
     const customer_number = req.params.id;
 
-    const { product_detail, discount, signatureID, product_head } = req.body;
+    const { product_detail, discount, signatureID, product_head, isSign } = req.body;
 
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -364,6 +366,7 @@ exports.EditQuotation = async (req, res) => {
           start_date: req.body.start_date,
           end_date: req.body.end_date,
           remark: req.body.remark,
+          isSign: isSign,
           bank: req.body.bank
             ? {
                 name: req.body.bank.name || "",

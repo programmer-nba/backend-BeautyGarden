@@ -45,6 +45,7 @@ const QuotationSchema = new mongoose.Schema({
       unit: String
     },
   ],
+  isSign: Boolean,
   total: { type: Number, required: false }, //ราคารวมสินค้นทั้งหมด
   discount: { type: Number, required: false }, //ส่วนลด เป็นบาท
   discount_persen: { type: Number, required: false }, //ส่วนลด เป็นเปอร์เซ็น
