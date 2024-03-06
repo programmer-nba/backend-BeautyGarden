@@ -381,6 +381,7 @@ exports.EditQuotation = async (req, res) => {
                 remark_2: "",
               },
           signature: signatureData,
+          sumVat: req.body.sumVat
         },
       },
       { new: true }
