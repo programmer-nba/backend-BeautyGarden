@@ -173,7 +173,7 @@ exports.Quotation = async (req, res) => {
       const price = parseFloat(product.product_price);
       const amount = parseInt(product.product_amount);
       const vat_price = parseFloat(product.vat_price) || 0;
-      const product_total = price * amount + vat_price;
+      const product_total = (price + vat_price)*amount;
       total += parseFloat(product_total); // รวม product_total เข้า total
       return {
         ...product,
@@ -212,7 +212,7 @@ exports.Quotation = async (req, res) => {
     const quotation1 = await QuotationNumber();
     const quotation = await new Quotation({
       ...req.body,
-      quotation: quotation1, //เลขใยเสนอราคา
+      quotation: quotation1, //เลขในเสนอราคา
       customer_branch: branch
         ? {
             Branch_company_name: branch.Branch_company_name,
