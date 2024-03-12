@@ -521,6 +521,57 @@ exports.EditInvoice = async (req, res) => {
   }
 };
 
+exports.createNextInvoice = async (req, res) => {
+  try {
+    const { id } = req.params
+    const { start_date, end_date, period } = req.body
+
+    let invoice = await Invoice.findById( id )
+    if (!invoice) {
+      return res.send({
+        message: 'ไม่พบใบแจ้งหนี้',
+        status: false,
+        data: null
+      })
+    }
+
+    const invoice_period = {
+      period: period,
+      start_date: start_date || new Date(),
+      end_date: end_date || start_date || new Date()
+    }
+
+    if (!invoice.invoice_period) {
+      invoice.invoice_period = [invoice_period]
+    } else {
+      invoice.invoice_period = [...invoice.invoice_period, invoice_period]
+    }
+
+    const saved_invoice = await invoice.save()
+    if (!saved_invoice) {
+      return res.send({
+        message: 'ไม่สามารถบันทึกใบแจ้งหนี้',
+        status: false,
+        data: null
+      })
+    }
+
+    return res.send({
+      message: 'บันทึกใบแจ้งหนี้สำเร็จ',
+      status: true,
+      data: saved_invoice
+    })
+    
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      message: "มีบางอย่างผิดพลาด",
+      status: false,
+      error: error.message,
+    });
+  }
+};
+
 async function invoiceNumber(date) {
   const number = await Invoice.find();
   let invoice_number = null;

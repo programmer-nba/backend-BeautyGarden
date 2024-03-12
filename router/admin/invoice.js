@@ -12,4 +12,5 @@ router.get("/getIVAllfilter", authAdmin, admin.getIVAllfilter)
 router.delete("/deleteInvoice/:id", authAdmin, admin.deleteInvoice)
 router.delete("/deleteAllInvoice", authAdmin, admin.deleteAllInvoice)
 router.put("/EditInvoice/:id", authAdmin, admin.EditInvoice)
+router.put("/nextInvoice/:id", authAdmin, admin.createNextInvoice)
 module.exports = router;  

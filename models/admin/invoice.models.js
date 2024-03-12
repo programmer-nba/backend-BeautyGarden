@@ -32,6 +32,11 @@ const InvoiceSchema = new mongoose.Schema({
   },
   isSign: Boolean,
   product_head: String,
+  invoice_period: [{
+    period: Number,
+    start_date: Date,
+    end_date: Date
+  }],
   product_detail: [
     {
       product_id: { type: String, required: false },
