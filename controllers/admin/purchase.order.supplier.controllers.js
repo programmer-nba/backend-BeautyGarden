@@ -35,17 +35,17 @@ exports.Create = async (req, res) => {
       total,
       net,
       code,
-      supplier
+      supplier_detail
     } = req.body
 
     const PurchaseOrder1 = await new PurchaseOrderSup({
       supplier_detail: {
-        supplier_tel: supplier.supplier_tel,
-        supplier_company_name: supplier.supplier_company_name,
-        supplier_company_number: supplier.supplier_company_number,
-        supplier_company_address: supplier.supplier_company_address,
-        supplier_type: supplier.supplier_type,
-        supplier_id: supplier.supplier_id
+        supplier_tel: supplier_detail.supplier_tel,
+        supplier_company_name: supplier_detail.supplier_company_name,
+        supplier_company_number: supplier_detail.supplier_company_number,
+        supplier_company_address: supplier_detail.supplier_company_address,
+        supplier_type: supplier_detail.supplier_type,
+        supplier_id: supplier_detail.supplier_id
       },
       code: code,
       discount: discount,
