@@ -179,7 +179,7 @@ exports.PrintReceiptVat = async (req, res) => {
     const customer_branch = await Company.findById(branchId)
     console.log(customer_branch)
 
-    const invoice1 = await invoiceNumber();
+    const invoice1 = await receiptNumber();
     const Shippingincluded = totalWithVat + ShippingCost;
     let signatureData = [];
     if (signatureID && signatureID.length > 0) {
@@ -513,7 +513,7 @@ exports.newReceiptRefInvoice = async (req, res) => {
         status: false,
       })
     }
-    const code = await invoiceNumber()
+    const code = await receiptNumber()
     const newReceipt = {
       receipt: code,
       quotation: invoice.quotation || null,
@@ -661,16 +661,28 @@ exports.editReceiptRefInvoice = async (req, res) => {
   }
 }
 
-async function invoiceNumber() {
+async function receiptNumber() {
   const date = new Date()
-  const order = await ReceiptVat.find();
-  let invoice_number = null;
-  if (order.length !== 0) {
-    const data = `REP${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + order.length;
-    invoice_number = data
-  } else {
-    invoice_number =
-      `REP${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
-  }
-  return invoice_number;
+  const formattedDate = formatDate(date)
+  const documentLength = await ReceiptVat.find().length
+  const formattedDocLength = formatDocLength(documentLength)
+  const result = `${formattedDate}${formattedDocLength}`
+  
+  return result
+}
+
+function formatDate(date) {
+  var year = date.getFullYear()
+  var month = ('0' + (date.getMonth() + 1)).slice(-2)
+  var day = ('0' + date.getDate()).slice(-2)
+  return year + month + day
+}
+
+function formatDocLength(docLength) {
+  const length = 
+    docLength < 10 ? `000${docLength}`
+    : docLength > 10 && docLength < 100 ? `00${docLength}`
+    : docLength > 100 && docLength < 1000 ? `0${docLength}`
+    : `${docLength}`
+  return length
 }

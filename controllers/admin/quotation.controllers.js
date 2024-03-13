@@ -577,26 +577,29 @@ exports.getQTAllfilter = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
-//ค้นหาและสร้างเลข invoice
-async function QuotationNumber(date) {
-  const number = await Quotation.find();
-  let quotation_number = null;
-  if (number.length !== 0) {
-    let data = "";
-    let num = 0;
-    let check = null;
-    do {
-      num = num + 1;
-      data = `QT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
-      check = await Quotation.find({ quotation: data });
-      if (check.length === 0) {
-        quotation_number =
-          `QT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
-      }
-    } while (check.length !== 0);
-  } else {
-    quotation_number =
-      `QT${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
-  }
-  return quotation_number;
+
+async function QuotationNumber() {
+  const date = new Date()
+  const formattedDate = formatDate(date)
+  const documentLength = await Quotation.find().length
+  const formattedDocLength = formatDocLength(documentLength)
+  const result = `${formattedDate}${formattedDocLength}`
+  
+  return result
+}
+
+function formatDate(date) {
+  var year = date.getFullYear()
+  var month = ('0' + (date.getMonth() + 1)).slice(-2)
+  var day = ('0' + date.getDate()).slice(-2)
+  return year + month + day
+}
+
+function formatDocLength(docLength) {
+  const length = 
+    docLength < 10 ? `000${docLength}`
+    : docLength > 10 && docLength < 100 ? `00${docLength}`
+    : docLength > 100 && docLength < 1000 ? `0${docLength}`
+    : `${docLength}`
+  return length
 }

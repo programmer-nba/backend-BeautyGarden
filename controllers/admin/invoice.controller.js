@@ -572,25 +572,28 @@ exports.createNextInvoice = async (req, res) => {
   }
 };
 
-async function invoiceNumber(date) {
-  const number = await Invoice.find();
-  let invoice_number = null;
-  if (number.length !== 0) {
-    let data = "";
-    let num = 0;
-    let check = null;
-    do {
-      num = num + 1;
-      data = `IV${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
-      check = await Invoice.find({ invoice: data });
-      if (check.length === 0) {
-        invoice_number =
-          `IV${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + num;
-      }
-    } while (check.length !== 0);
-  } else {
-    invoice_number =
-      `IV${dayjs(date).format("YYYYMMDD")}`.padEnd(15, "0") + "1";
-  }
-  return invoice_number;
+async function invoiceNumber() {
+  const date = new Date()
+  const formattedDate = formatDate(date)
+  const documentLength = await Invoice.find().length
+  const formattedDocLength = formatDocLength(documentLength)
+  const result = `${formattedDate}${formattedDocLength}`
+  
+  return result
+}
+
+function formatDate(date) {
+  var year = date.getFullYear()
+  var month = ('0' + (date.getMonth() + 1)).slice(-2)
+  var day = ('0' + date.getDate()).slice(-2)
+  return year + month + day
+}
+
+function formatDocLength(docLength) {
+  const length = 
+    docLength < 10 ? `000${docLength}`
+    : docLength > 10 && docLength < 100 ? `00${docLength}`
+    : docLength > 100 && docLength < 1000 ? `0${docLength}`
+    : `${docLength}`
+  return length
 }
