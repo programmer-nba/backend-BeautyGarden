@@ -44,7 +44,8 @@ exports.Create = async (req, res) => {
         supplier_company_name: supplier.supplier_company_name,
         supplier_company_number: supplier.supplier_company_number,
         supplier_company_address: supplier.supplier_company_address,
-        supplier_type: supplier.supplier_type
+        supplier_type: supplier.supplier_type,
+        supplier_id: supplier.supplier_id
       },
       code: code,
       discount: discount,
@@ -104,7 +105,8 @@ exports.EditPurchaseOS = async (req, res) => {
       supplier_company_name: supplier.supplier_company_name,
       supplier_company_number: supplier.supplier_company_number,
       supplier_company_address: supplier.supplier_company_address,
-      supplier_type: supplier.supplier_type
+      supplier_type: supplier.supplier_type,
+      supplier_id: supplier.supplier_id
     }
     PurchaseOrder1.code = code
     PurchaseOrder1.discount = discount

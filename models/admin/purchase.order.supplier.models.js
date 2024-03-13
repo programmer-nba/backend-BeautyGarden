@@ -8,7 +8,8 @@ const PurchaseOrderSupSchema = new mongoose.Schema({
     supplier_company_name: { type: String, required: false }, 
     supplier_company_number: { type: String, required: false }, 
     supplier_company_address: { type: String, required: false },
-    supplier_type: { type: String, required: false }
+    supplier_type: { type: String, required: false },
+    supplier_id: String
   },
   product_detail: [
     {
