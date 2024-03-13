@@ -35,6 +35,8 @@ exports.Create = async (req, res) => {
       total,
       net,
       code,
+      date,
+      bill_img,
       supplier_detail
     } = req.body
 
@@ -47,12 +49,14 @@ exports.Create = async (req, res) => {
         supplier_type: supplier_detail.supplier_type,
         supplier_id: supplier_detail.supplier_id
       },
+      date: date,
       code: code,
       discount: discount,
       net: net,
       product_detail: product_detail,
       total: total,
       note: note,
+      bill_img: bill_img,
       timestamps: new Date(),
     }).save()
 
