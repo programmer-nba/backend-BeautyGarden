@@ -28,47 +28,32 @@ const { admin } = require("googleapis/build/src/apis/admin");
 
 exports.Create = async (req, res) => {
   try {
-    const { product_detail, note, discount = 0, product_cost_type } = req.body;
-    const supllierID = req.body.supllierID;
-    const supllier = supllierID ? await Suppliers.findById(supllierID) : null;
-
-    let total = 0;
-    const updatedProductDetail = product_detail.map((product) => {
-      const price = product.product_price;
-      const amount = product.product_amount;
-      const product_total = (price * amount).toFixed(2);
-      total += +product_total;
-
-      return {
-        ...product,
-        product_total,
-      };
-    });
-
-    const net = discount ? total - discount : total;
-    const purchaseOrder = await purchaseOrderNumber();
+    const { 
+      product_detail, 
+      note, 
+      discount = 0, 
+      total,
+      net,
+      code,
+      supplier
+    } = req.body
 
     const PurchaseOrder1 = await new PurchaseOrderSup({
-      ...req.body,
       supplier_detail: {
-        supplier_tel: supllier.supplier_tel,
-        supplier_status: supllier.supplier_status,
-        supplier_bookbank: supllier.supplier_bookbank,
-        supplier_bookbank_name: supllier.supplier_bookbank_name,
-        supplier_bookbank_number: supllier.supplier_bookbank_number,
-        supplier_iden: supllier.supplier_iden,
-        supplier_iden_number: supllier.supplier_iden_number,
-        supplier_company_name: supllier.supplier_company_name,
-        supplier_company_number: supllier.supplier_company_number,
-        supplier_company_address: supllier.supplier_company_address,
+        supplier_tel: supplier.supplier_tel,
+        supplier_company_name: supplier.supplier_company_name,
+        supplier_company_number: supplier.supplier_company_number,
+        supplier_company_address: supplier.supplier_company_address,
+        supplier_type: supplier.supplier_type
       },
-      purchase_order: purchaseOrder,
-      discount: discount.toFixed(2),
+      code: code,
+      discount: discount,
       net: net,
-      product_detail: updatedProductDetail,
-      total: total.toFixed(2),
-      timestamps: dayjs(Date.now()).format(""),
-    }).save();
+      product_detail: product_detail,
+      total: total,
+      note: note,
+      timestamps: new Date(),
+    }).save()
 
     if (PurchaseOrder1) {
       return res.status(200).send({
@@ -91,57 +76,65 @@ exports.Create = async (req, res) => {
     });
   }
 };
+
 exports.EditPurchaseOS = async (req, res) => {
   try {
-    const { customer_number } = req.params;
-    const { product_detail, discount = 0 } = req.body;
-    let total = 0;
+    const { id } = req.params
+    const { 
+      product_detail, 
+      note, 
+      discount = 0, 
+      total,
+      net,
+      code,
+      supplier
+    } = req.body
 
-    const updatedProductDetail = product_detail.map((product) => {
-      const price = product.product_price;
-      const amount = product.product_amount;
-      const product_total = (price * amount).toFixed(2);
-      total += +product_total; // รวม product_total เข้า total
-      return {
-        ...product,
-        product_total,
-      };
-    });
+    let PurchaseOrder1 = await PurchaseOrderSup.findById( id )
+    if(!PurchaseOrder1) {
+      return res.send({
+        message: 'ไม่พบเอกสาร',
+        status: false,
+        data: null
+      })
+    }
+    
+    PurchaseOrder1.supplier_detail = {
+      supplier_tel: supplier.supplier_tel,
+      supplier_company_name: supplier.supplier_company_name,
+      supplier_company_number: supplier.supplier_company_number,
+      supplier_company_address: supplier.supplier_company_address,
+      supplier_type: supplier.supplier_type
+    }
+    PurchaseOrder1.code = code
+    PurchaseOrder1.discount = discount
+    PurchaseOrder1.net = net
+    PurchaseOrder1.product_detail = product_detail
+    PurchaseOrder1.total = total
+    PurchaseOrder1.note = note
+    
+    const saved_data = await PurchaseOrder1.save()
 
-    const net = total - discount;
-    const updatedQuotation = await PurchaseOrderSup.findOneAndUpdate(
-      { "customer_detail.customer_number": customer_number },
-      {
-        $set: {
-          product_detail: updatedProductDetail,
-          total: total.toFixed(2),
-          net: net.toFixed(2),
-        },
-        discount,
-      },
-      { new: true }
-    );
-    if (updatedQuotation) {
+    if (saved_data) {
       return res.status(200).send({
         status: true,
-        message: "แก้ไขข้อมูล รายละเอียดสินค้า สำเร็จ",
-        data: updatedQuotation,
-      });
+        message: "แก้ไขเอกสารสำเร็จ",
+        data: saved_data,
+      })
     } else {
-      return res.status(404).send({
-        message: "ไม่พบใบเสนอราคาที่ต้องการแก้ไข",
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
         status: false,
-      });
+        data: null
+      })
     }
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send({
-      message: "มีบางอย่างผิดพลาด",
-      status: false,
-      error: error.message,
-    });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด", data: null });
   }
 };
+
 exports.getPOSByIdPOS = async (req, res) => {
   try {
     const pos = await PurchaseOrderSup.find({}, { _id: 1, purchase_order: 1 });
