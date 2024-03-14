@@ -578,16 +578,6 @@ exports.getQTAllfilter = async (req, res) => {
   }
 };
 
-async function QuotationNumber() {
-  const date = new Date()
-  const formattedDate = formatDate(date)
-  const documentLength = await Quotation.find().length
-  const formattedDocLength = formatDocLength(documentLength)
-  const result = `${formattedDate}${formattedDocLength}`
-  
-  return result
-}
-
 function formatDate(date) {
   var year = date.getFullYear()
   var month = ('0' + (date.getMonth() + 1)).slice(-2)
@@ -603,3 +593,16 @@ function formatDocLength(docLength) {
     : `${docLength}`
   return length
 }
+
+async function QuotationNumber() {
+  const date = new Date()
+  const formattedDate = formatDate(date)
+  const document = await Quotation.find()
+  const documentLength = document.length
+  const formattedDocLength = formatDocLength(documentLength)
+  const result = `${formattedDate}${formattedDocLength}`
+  
+  return result
+}
+
+
