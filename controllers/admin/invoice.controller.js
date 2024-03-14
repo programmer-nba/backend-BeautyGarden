@@ -32,9 +32,11 @@ function formatDate(date) {
 
 function formatDocLength(docLength) {
   const length = 
-    docLength < 10 ? `000${docLength}`
-    : docLength > 10 && docLength < 100 ? `00${docLength}`
-    : docLength > 100 && docLength < 1000 ? `0${docLength}`
+    docLength < 10 ? `00000${docLength}`
+    : docLength > 10 && docLength < 100 ? `0000${docLength}`
+    : docLength > 100 && docLength < 1000 ? `000${docLength}`
+    : docLength > 1000 && docLength < 10000 ? `00${docLength}`
+    : docLength > 10000 && docLength < 100000 ? `0${docLength}`
     : `${docLength}`
   return length
 }
@@ -45,7 +47,7 @@ async function invoiceNumber() {
   const document = await Invoice.find()
   const documentLength = document.length
   const formattedDocLength = formatDocLength(documentLength)
-  const result = `${formattedDate}${formattedDocLength}`
+  const result = `IV${formattedDate}${formattedDocLength}`
   
   return result
 }
