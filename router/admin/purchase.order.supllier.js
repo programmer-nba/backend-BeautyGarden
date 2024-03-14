@@ -4,6 +4,7 @@ const authAdmin = require("../../lib/auth.admin");
 
 router.post("/Create", authAdmin, admin.Create);
 router.put("/EditPurchaseOS/:id", authAdmin, admin.EditPurchaseOS);
+router.put("/upload-pic-purchase/:id", authAdmin, admin.updatePicPurchase);
 router.get("/getPOSById", authAdmin, admin.getPOSByIdPOS);
 router.get("/getPOSBy/:id", authAdmin, admin.getPOSById);
 router.get("/getPosAll", authAdmin, admin.getPosAll);

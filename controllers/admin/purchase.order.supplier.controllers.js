@@ -145,6 +145,46 @@ exports.EditPurchaseOS = async (req, res) => {
   }
 };
 
+exports.updatePicPurchase = async (req, res) => {
+  try {
+    const { id } = req.params
+    const { 
+      bill_img,
+    } = req.body
+
+    let PurchaseOrder1 = await PurchaseOrderSup.findById( id )
+    if(!PurchaseOrder1) {
+      return res.send({
+        message: 'ไม่พบเอกสาร',
+        status: false,
+        data: null
+      })
+    }
+
+    PurchaseOrder1.bill_img = bill_img || PurchaseOrder1.bill_img
+    
+    const saved_data = await PurchaseOrder1.save()
+
+    if (saved_data) {
+      return res.status(200).send({
+        status: true,
+        message: "แก้ไขเอกสารสำเร็จ",
+        data: saved_data,
+      })
+    } else {
+      return res.status(500).send({
+        message: "มีบางอย่างผิดพลาด",
+        status: false,
+        data: null
+      })
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด", data: null });
+  }
+};
+
 exports.getPOSByIdPOS = async (req, res) => {
   try {
     const pos = await PurchaseOrderSup.find({}, { _id: 1, purchase_order: 1 });
