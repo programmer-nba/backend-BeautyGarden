@@ -92,7 +92,9 @@ exports.EditPurchaseOS = async (req, res) => {
       total,
       net,
       code,
-      supplier
+      date,
+      bill_img,
+      supplier_detail
     } = req.body
 
     let PurchaseOrder1 = await PurchaseOrderSup.findById( id )
@@ -105,19 +107,21 @@ exports.EditPurchaseOS = async (req, res) => {
     }
     
     PurchaseOrder1.supplier_detail = {
-      supplier_tel: supplier.supplier_tel,
-      supplier_company_name: supplier.supplier_company_name,
-      supplier_company_number: supplier.supplier_company_number,
-      supplier_company_address: supplier.supplier_company_address,
-      supplier_type: supplier.supplier_type,
-      supplier_id: supplier.supplier_id
+      supplier_tel: supplier_detail.supplier_tel || PurchaseOrder1.supplier_detail.supplier_tel,
+      supplier_company_name: supplier_detail.supplier_company_name || PurchaseOrder1.supplier_detail.supplier_company_name,
+      supplier_company_number: supplier_detail.supplier_company_number || PurchaseOrder1.supplier_detail.supplier_company_number,
+      supplier_company_address: supplier_detail.supplier_company_address || PurchaseOrder1.supplier_detail.supplier_company_address,
+      supplier_type: supplier_detail.supplier_type || PurchaseOrder1.supplier_detail.supplier_type,
+      supplier_id: supplier_detail.supplier_id || PurchaseOrder1.supplier_detail.supplier_id
     }
-    PurchaseOrder1.code = code
+    PurchaseOrder1.code = code || PurchaseOrder1.code
     PurchaseOrder1.discount = discount
     PurchaseOrder1.net = net
     PurchaseOrder1.product_detail = product_detail
     PurchaseOrder1.total = total
-    PurchaseOrder1.note = note
+    PurchaseOrder1.note = note || PurchaseOrder1.note
+    PurchaseOrder1.date = date
+    PurchaseOrder1.bill_img = bill_img || PurchaseOrder1.bill_img
     
     const saved_data = await PurchaseOrder1.save()
 
