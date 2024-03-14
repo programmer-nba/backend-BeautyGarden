@@ -23,6 +23,33 @@ const {
 } = require("../../funtions/uploadfilecreate");
 const { admin } = require("googleapis/build/src/apis/admin");
 
+function formatDate(date) {
+  var year = date.getFullYear()
+  var month = ('0' + (date.getMonth() + 1)).slice(-2)
+  var day = ('0' + date.getDate()).slice(-2)
+  return year + month + day
+}
+
+function formatDocLength(docLength) {
+  const length = 
+    docLength < 10 ? `000${docLength}`
+    : docLength > 10 && docLength < 100 ? `00${docLength}`
+    : docLength > 100 && docLength < 1000 ? `0${docLength}`
+    : `${docLength}`
+  return length
+}
+
+async function invoiceNumber() {
+  const date = new Date()
+  const formattedDate = formatDate(date)
+  const document = await Invoice.find()
+  const documentLength = document.length
+  const formattedDocLength = formatDocLength(documentLength)
+  const result = `${formattedDate}${formattedDocLength}`
+  
+  return result
+}
+
 exports.ReceiptInvoiceVat = async (req, res) => {
   try {
     const quotationID = req.body.quotationID || req.body;
@@ -571,29 +598,3 @@ exports.createNextInvoice = async (req, res) => {
     });
   }
 };
-
-async function invoiceNumber() {
-  const date = new Date()
-  const formattedDate = formatDate(date)
-  const documentLength = await Invoice.find().length
-  const formattedDocLength = formatDocLength(documentLength)
-  const result = `${formattedDate}${formattedDocLength}`
-  
-  return result
-}
-
-function formatDate(date) {
-  var year = date.getFullYear()
-  var month = ('0' + (date.getMonth() + 1)).slice(-2)
-  var day = ('0' + date.getDate()).slice(-2)
-  return year + month + day
-}
-
-function formatDocLength(docLength) {
-  const length = 
-    docLength < 10 ? `000${docLength}`
-    : docLength > 10 && docLength < 100 ? `00${docLength}`
-    : docLength > 100 && docLength < 1000 ? `0${docLength}`
-    : `${docLength}`
-  return length
-}
