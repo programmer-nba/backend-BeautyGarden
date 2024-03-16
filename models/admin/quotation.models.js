@@ -30,8 +30,36 @@ const QuotationSchema = new mongoose.Schema({
     customer_contact_number: { type: String, required: false }, //เบอร์โทรติดต่อผู้ประสานงาน
   },
   product_head: String,
+  project: {
+    name: { type: String, required: false },
+    amount: { type: Number, required: false },
+    price: { type: Number, required: false },
+    isVat: Boolean,
+    sumVat: Boolean,
+    vat_price: Number,
+    total: Number,
+    total_sumVat: Number,
+    total_notsumVat: Number,
+    unit: String,
+    logo: [{ type: String, required: false }],
+  },
   product_detail: [
     {
+      product_sub: [
+        {
+          name: { type: String, required: false },
+          amount: { type: Number, required: false },
+          price: { type: Number, required: false },
+          isVat: Boolean,
+          sumVat: Boolean,
+          vat_price: Number,
+          total: Number,
+          total_sumVat: Number,
+          total_notsumVat: Number,
+          unit: String,
+          logo: [{ type: String, required: false }],
+        }
+      ],
       product_id: { type: String, required: false },
       product_text: [{ type: String, required: false }],
       product_name: { type: String, required: false },
