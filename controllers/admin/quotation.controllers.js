@@ -187,6 +187,7 @@ exports.Quotation = async (req, res) => {
       product_detail,
       customer_detail,
       customer_number,
+      project,
       percen_deducted = 0,
       percen_payment = 0,
       discount = 0,
@@ -241,6 +242,7 @@ exports.Quotation = async (req, res) => {
     const quotation1 = await QuotationNumber();
     const quotation = await new Quotation({
       ...req.body,
+      project: project,
       quotation: quotation1, //เลขใยเสนอราคา
       customer_branch: branch
         ? {
@@ -324,11 +326,53 @@ exports.Quotation = async (req, res) => {
   }
 };
 
+exports.uploadPictureQuotation = async (req, res) => {
+  const { qtId, productId } = req.params
+  const { pic } = req.body
+  try {
+    let quotation = await Quotation.findById(qtId)
+    if (!quotation) {
+      return res.send({
+        message: 'not found',
+        status: false,
+        data: null
+      })
+    }
+    let productIndex = quotation.product_detail.findIndex(prod=>prod._id === productId)
+    if (productIndex === -1) {
+      return res.send({
+        message: 'not found',
+        status: false,
+        data: null
+      })
+    }
+
+    quotation.product_detail[productIndex].product_logo.push(pic)
+    
+    await quotation.save()
+
+    return res.send({
+      message: 'upload success!',
+      status: true,
+      data: quotation
+    })
+
+  }
+  catch (err) {
+    console.log(err)
+    return res.send({
+      message: err.message,
+      status: false,
+      data: null
+    })
+  }
+}
+
 exports.EditQuotation = async (req, res) => {
   try {
     const customer_number = req.params.id;
 
-    const { product_detail, discount, signatureID, product_head, isSign } = req.body;
+    const { product_detail, discount, project, signatureID, product_head, isSign } = req.body;
 
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -378,6 +422,7 @@ exports.EditQuotation = async (req, res) => {
           product_head: product_head,
           product_detail: updatedProductDetail,
           total: total,
+          project: project,
           discount: discountValue,
           discount_persen: discount_percent,
           net,

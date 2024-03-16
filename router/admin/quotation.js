@@ -12,5 +12,6 @@ router.get("/getQuotationBy/:id",authAdmin,admin.getQuotationById)
 router.get("/getQTAllfilter",authAdmin,admin.getQTAllfilter)
 router.get("/getQuotationByQT/:id",authAdmin,admin.getQuotationByQT)
 router.put("/ImportImgProduct/:id/:quotationId",authAdmin,admin.ImportImgProduct)
+router.put("/uploadPicProduct/:qtId/:productId",authAdmin,admin.uploadPictureQuotation)
 
 module.exports = router;  
