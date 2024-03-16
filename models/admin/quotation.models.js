@@ -37,6 +37,7 @@ const QuotationSchema = new mongoose.Schema({
       product_name: { type: String, required: false },
       product_amount: { type: Number, required: false },
       product_price: { type: Number, required: false },
+      product_head: String,
       product_logo: [
         { type: String, required: false }
       ],
