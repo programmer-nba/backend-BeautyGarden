@@ -413,7 +413,7 @@ exports.EditQuotation = async (req, res) => {
       2
     );
 
-    const total_all_end = (total - total_payment - discountValue);
+    const total_all_end = (total - total_payment - discountValue) || 0;
 
     const updatedQuotation = await Quotation.findOneAndUpdate(
       { _id: customer_number },
