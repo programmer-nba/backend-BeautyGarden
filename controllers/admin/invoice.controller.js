@@ -134,6 +134,7 @@ exports.PrintInviuceVat = async (req, res) => {
       ShippingCost = 0,
       transfer,
       discount = 0,
+      project,
       percen_deducted = 0,
       start_date,
       header,
@@ -212,6 +213,7 @@ exports.PrintInviuceVat = async (req, res) => {
           }
         : null,
       transfer: transfer,
+      project: project,
       signature: signatureData,
       invoice: invoice1,
       discount: discount,
@@ -407,6 +409,7 @@ exports.EditInvoice = async (req, res) => {
       start_date,
       end_date,
       quotation,
+      project,
       sumVat,
       signatureID,
       percen_payment = 0,
@@ -488,6 +491,7 @@ exports.EditInvoice = async (req, res) => {
           end_date: end_date,
           remark: remark,
           header: header,
+          project: project,
           customer_detail: customer_detail,
           bank: bank
             ? {

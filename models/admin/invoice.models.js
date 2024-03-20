@@ -37,6 +37,19 @@ const InvoiceSchema = new mongoose.Schema({
     start_date: Date,
     end_date: Date
   }],
+  project: {
+    name: { type: String, required: false },
+    amount: { type: Number, required: false },
+    price: { type: Number, required: false },
+    isVat: Boolean,
+    sumVat: Boolean,
+    vat_price: Number,
+    total: Number,
+    total_sumVat: Number,
+    total_notsumVat: Number,
+    unit: String,
+    logo: [{ type: String, required: false }],
+  },
   product_detail: [
     {
       product_id: { type: String, required: false },
@@ -47,7 +60,9 @@ const InvoiceSchema = new mongoose.Schema({
       product_logo: [{ type: String, required: false }],
       vat_price: { type: Number, required: false },
       product_total: { type: Number, required: false }, //ราคารวมสินค้าต่อชิ้น
-      unit: String
+      unit: String,
+      product_no: Number,
+      product_text_no: Number
     },
   ],
   total: { type: Number, required: false }, //ราคารวมสินค้นทั้งหมด
