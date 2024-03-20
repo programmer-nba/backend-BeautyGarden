@@ -8,6 +8,7 @@ router.put("/upload-pic-purchase/:id", authAdmin, admin.updatePicPurchase);
 router.get("/getPOSById", authAdmin, admin.getPOSByIdPOS);
 router.get("/getPOSBy/:id", authAdmin, admin.getPOSById);
 router.get("/getPosAll", authAdmin, admin.getPosAll);
+router.get("/getBySup/:supName", authAdmin, admin.getPosAllBySup);
 router.delete("/getPOSBy/:id", authAdmin, admin.deletePosByid);
 router.delete("/deleteAllPos", authAdmin, admin.deleteAllPos);
 router.put(

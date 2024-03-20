@@ -338,6 +338,26 @@ exports.ImportImgProduct = async (req, res) => {
   }
 };
 
+exports.getPosAllBySup = async (req, res) => {
+  const { supName } = req.params
+  try {
+    const pos = await PurchaseOrderSup.find({'supplier_detail.supplier_company_name' : supName});
+    if (!pos) {
+      return res
+        .status(404)
+        .send({ status: false, message: "ไม่พบใบสั่งชื้อ" });
+    } else {
+      return res
+        .status(200)
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: pos });
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+  }
+};
+
 async function purchaseOrderNumber(date) {
   const order = await PurchaseOrderSup.find();
   let pos_number = null;
