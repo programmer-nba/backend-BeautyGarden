@@ -24,6 +24,14 @@ const {
 } = require("../../funtions/uploadfilecreate");
 const { admin } = require("googleapis/build/src/apis/admin");
 
+
+function formatDate(date) {
+  var year = date.getFullYear()
+  var month = ('0' + (date.getMonth() + 1)).slice(-2)
+  var day = ('0' + date.getDate()).slice(-2)
+  return year + month + day
+}
+
 function formatDocLength(docLength) {
   const length = 
     docLength < 10 ? `00000${docLength}`
@@ -35,18 +43,11 @@ function formatDocLength(docLength) {
   return length
 }
 
-function formatDate(date) {
-  var year = date.getFullYear()
-  var month = ('0' + (date.getMonth() + 1)).slice(-2)
-  var day = ('0' + date.getDate()).slice(-2)
-  return year + month + day
-}
-
 async function QuotationNumber() {
   const date = new Date()
   const formattedDate = formatDate(date)
   const document = await Quotation.find()
-  const documentLength = document.length
+  const documentLength = document.length+1
   const formattedDocLength = formatDocLength(documentLength)
   const result = `QT${formattedDate}${formattedDocLength}`
   
