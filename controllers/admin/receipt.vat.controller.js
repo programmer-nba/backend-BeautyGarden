@@ -178,6 +178,7 @@ exports.PrintReceiptVat = async (req, res) => {
       remark,
       sumVat,
       withholding,
+      project,
       isVat,
       quotation,
       branchId,
@@ -242,6 +243,7 @@ exports.PrintReceiptVat = async (req, res) => {
       product_detail: updatedProductDetail,
       total: total,
       isSign: isSign,
+      project: project,
       vat: {
         amount_vat: vatAmount,
         totalvat: totalWithVat,
@@ -409,7 +411,7 @@ exports.getREPAllfilter = async (req, res) => {
 exports.EditReceiptVat = async (req, res) => {
   try {
     const customer_number = req.params.id;
-    const { product_detail, discount, bank, isSign, signatureID, transfer, product_head, } = req.body;
+    const { product_detail, discount, bank, isSign, signatureID, transfer, product_head, project } = req.body;
 
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -480,6 +482,7 @@ exports.EditReceiptVat = async (req, res) => {
           start_date: req.body.start_date,
           end_date: req.body.end_date,
           remark: req.body.remark,
+          project: project,
           bank: req.body.bank
             ? {
                 name: req.body.bank.name || "",
@@ -528,6 +531,7 @@ exports.newReceiptRefInvoice = async (req, res) => {
       start_date,
       amount_price,
       remark,
+      project,
       transfer,
       paid_detail,
       isSign
@@ -561,6 +565,7 @@ exports.newReceiptRefInvoice = async (req, res) => {
       sumVat: invoice.sumVat,
       withholding: invoice.withholding,
       isVat: invoice.isVat,
+      project: project,
       status: [
         {
           name: "new",
@@ -634,7 +639,8 @@ exports.editReceiptRefInvoice = async (req, res) => {
       remark,
       transfer,
       paid_detail,
-      isSign
+      isSign,
+      project
     } = req.body
 
     const receipt = await ReceiptVat.findByIdAndUpdate(id, {
