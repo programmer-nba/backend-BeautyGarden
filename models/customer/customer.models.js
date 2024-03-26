@@ -28,6 +28,7 @@ const CustomerSchema = new mongoose.Schema({
   customer_phone: { type: String, required: false },
   customer_position: { type: String, required: false },
   customer_role: { type: String, required: false },
+  customer_map: String,
   customer_contact: {
     type: String,
     required: false,
