@@ -165,6 +165,7 @@ exports.PrintReceiptVat = async (req, res) => {
   try {
     const {
       product_head,
+      amount_price,
       product_detail,
       ShippingCost = 0,
       note,
@@ -243,6 +244,7 @@ exports.PrintReceiptVat = async (req, res) => {
       product_detail: updatedProductDetail,
       total: total,
       isSign: isSign,
+      amount_price: amount_price,
       project: project,
       vat: {
         amount_vat: vatAmount,
@@ -411,7 +413,7 @@ exports.getREPAllfilter = async (req, res) => {
 exports.EditReceiptVat = async (req, res) => {
   try {
     const customer_number = req.params.id;
-    const { product_detail, discount, bank, isSign, signatureID, transfer, product_head, project } = req.body;
+    const { product_detail, discount, bank, isSign, signatureID, transfer, product_head, project, amount_price } = req.body;
 
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -466,6 +468,7 @@ exports.EditReceiptVat = async (req, res) => {
           discount_persen: discount_percent,
           transfer: transfer,
           isSign: isSign,
+          amount_price: amount_price,
           net,
           "vat.amount_vat": vatAmount,
           "vat.totalvat": totalWithVat,
