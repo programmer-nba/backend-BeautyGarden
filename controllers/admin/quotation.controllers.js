@@ -441,6 +441,7 @@ exports.EditQuotation = async (req, res) => {
           "total_products.total_all_end": total_all_end || 0,
           start_date: req.body.start_date,
           end_date: req.body.end_date,
+          customer_detail: {...req.body.customer_detail},
           remark: req.body.remark,
           isSign: isSign,
           bank: req.body.bank
