@@ -437,7 +437,7 @@ exports.EditQuotation = async (req, res) => {
           "total_products.total_product": total_amount_product,
           "total_products.total_discount": totalAll,
           "total_products.percen_payment": req.body.percen_payment,
-          "total_products.after_discoun_payment": total_payment || 0,
+          //"total_products.after_discoun_payment": total_payment || 0,
           "total_products.total_all_end": total_all_end || 0,
           start_date: req.body.start_date,
           end_date: req.body.end_date,
