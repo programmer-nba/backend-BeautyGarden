@@ -373,7 +373,7 @@ exports.EditQuotation = async (req, res) => {
   try {
     const customer_number = req.params.id;
 
-    const { product_detail, discount, project, signatureID, product_head, isSign } = req.body;
+    const { product_detail, discount, project, signatureID, product_head, isSign, customer_detail } = req.body;
 
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -441,7 +441,13 @@ exports.EditQuotation = async (req, res) => {
           "total_products.total_all_end": total_all_end || 0,
           start_date: req.body.start_date,
           end_date: req.body.end_date,
-          customer_detail: {...req.body.customer_detail},
+          "customer_detail.customer_name": customer_detail.customer_name || "-",
+          "customer_detail.customer_address": customer_detail.customer_address || "-",
+          "customer_detail.customer_email": customer_detail.customer_email || null,
+          "customer_detail.customer_lastname": customer_detail.customer_lastname || null,
+          "customer_detail.customer_phone": customer_detail.customer_phone || null,
+          "customer_detail.customer_type": customer_detail.customer_type || "Normal",
+          "customer_detail.tax_id": customer_detail.tax_id || null,
           remark: req.body.remark,
           isSign: isSign,
           bank: req.body.bank
@@ -469,6 +475,7 @@ exports.EditQuotation = async (req, res) => {
         status: true,
         message: "แก้ไขข้อมูล รายละเอียดสินค้า สำเร็จ",
         data: updatedQuotation,
+        customer: customer_detail
       });
     } else {
       return res.status(404).send({
