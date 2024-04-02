@@ -416,10 +416,27 @@ exports.EditQuotation = async (req, res) => {
 
     const total_all_end = (total - total_payment - discountValue) || 0;
 
+    const branchId = req.body.branchId;
+    const branch = branchId ? await Company.findById(branchId) : null;
+
     const updatedQuotation = await Quotation.findOneAndUpdate(
       { _id: customer_number },
       {
         $set: {
+          customer_branch: branch
+        ? {
+            Branch_company_name: branch.Branch_company_name,
+            Branch_company_number: branch.Branch_company_number,
+            Branch_company_address: branch.Branch_company_address,
+            taxnumber: branch.taxnumber,
+            Branch_iden_number: branch.Branch_iden_number,
+            isVat: branch.isVat,
+            Branch_tel: branch.Branch_tel,
+            contact_name: branch.contact_name,
+            contact_number: branch.contact_number,
+            company_email: branch.company_email,
+          }
+        : null,
           product_head: product_head,
           product_detail: updatedProductDetail,
           total: total,
