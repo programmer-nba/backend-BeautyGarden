@@ -620,6 +620,8 @@ exports.newReceiptRefInvoice = async (req, res) => {
       paid: amount_price,
       period: invoice.cur_period + 1, 
       receipt: saved_receipt.receipt,
+      receiptVat: saved_receipt.receiptVat,
+      isBillVat: saved_receipt.isBillVat,
       createdAt: start_date
     })
     invoice.cur_period += 1
