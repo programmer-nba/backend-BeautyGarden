@@ -564,8 +564,11 @@ exports.newReceiptRefInvoice = async (req, res) => {
       })
     }
     const code = await receiptNumber()
+    const codeVat = await receiptVatNumber()
     const newReceipt = {
       receipt: code,
+      isBillVat: invoice.isVat,
+      receiptVat: codeVat,
       quotation: invoice.quotation || null,
       invoice: invoice.invoice || null,
       customer_branch: invoice.customer_branch,
