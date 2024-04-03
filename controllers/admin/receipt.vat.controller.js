@@ -56,6 +56,17 @@ async function receiptNumber() {
   return result
 }
 
+async function receiptVatNumber() {
+  const date = new Date()
+  const formattedDate = formatDate(date)
+  const document = await ReceiptVat.find({ isBillVat: true })
+  const documentLength = document.length
+  const formattedDocLength = formatDocLength(documentLength)
+  const result = `RV${formattedDate}${formattedDocLength}`
+  
+  return result
+}
+
 exports.ReceiptVat = async (req, res) => {
   try {
     const invoiceID = req.body.invoiceID || req.body;
@@ -211,6 +222,7 @@ exports.PrintReceiptVat = async (req, res) => {
     console.log(customer_branch)
 
     const invoice1 = await receiptNumber();
+    const receipt2 = await receiptVatNumber();
     const Shippingincluded = totalWithVat + ShippingCost;
     let signatureData = [];
     if (signatureID && signatureID.length > 0) {
@@ -238,6 +250,8 @@ exports.PrintReceiptVat = async (req, res) => {
       customer_detail: customer_detail,
       signature: signatureData,
       receipt: invoice1,
+      receiptVat: receipt2,
+      isBillVat: req.body.isVat,
       discount: discount,
       net: net,
       product_head: product_head,

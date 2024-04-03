@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 
 const ReceiptVatSchema = new mongoose.Schema({
   receipt: { type: String, required: false }, //เลขที่ใบเสร้จ
+  receiptVat: String,
   quotation: { type: String, required: false }, //เลขที่ใบเสนอราคา
   invoice: { type: String, required: false }, //เลขที่ใบเเเจ้งหนี้
   receiptNoVat: { type: String, required: false }, //เลขที่ใบเสร้จ
@@ -89,6 +90,7 @@ const ReceiptVatSchema = new mongoose.Schema({
   sumVat: { type: Boolean, required: false },
   withholding: { type: Boolean, required: false },
   isVat: { type: Boolean, required: false },
+  isBillVat: Boolean,
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
   status: { type: Array, required: false },
   start_date: { type: String, required: false }, //วันที่ออกบิล
