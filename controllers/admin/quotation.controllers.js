@@ -47,11 +47,18 @@ async function QuotationNumber() {
   const date = new Date()
   const formattedDate = formatDate(date)
   const document = await Quotation.find()
-  const documentLength = document.length+1
-  const formattedDocLength = formatDocLength(documentLength)
-  const result = `QT${formattedDate}${formattedDocLength}`
-  
+  const lastQuotation = document[document.length-1].quotation
+  //const documentLength = document.length+1
+  //const formattedDocLength = formatDocLength(documentLength)
+  //const result = `QT${formattedDate}${formattedDocLength}`
+  const result = incrementNumericPart(lastQuotation)
   return result
+}
+
+function incrementNumericPart(inputString) {
+  const numericPart = inputString.match(/\d+$/)[0]; // Extract the numeric part using regex
+  const incrementedNumericPart = String(Number(numericPart) + 1).padStart(numericPart.length, '0'); // Increment and pad with leading zeros
+  return inputString.replace(/\d+$/, incrementedNumericPart); // Replace the numeric part with the incremented value
 }
 
 exports.QuotationVat = async (req, res) => {
