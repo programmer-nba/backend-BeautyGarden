@@ -45,23 +45,23 @@ function formatDocLength(docLength) {
   return length
 }
 
-async function receiptNumber() {
-  const date = new Date()
+async function receiptNumber(inputdate) {
+  const date = inputdate ? inputdate : new Date()
   const formattedDate = formatDate(date)
   const document = await ReceiptVat.find()
   const documentLength = document.length
-  const formattedDocLength = formatDocLength(documentLength)
+  const formattedDocLength = formatDocLength(documentLength+1)
   const result = `REP${formattedDate}${formattedDocLength}`
   
   return result
 }
 
-async function receiptVatNumber() {
-  const date = new Date()
+async function receiptVatNumber(inputdate) {
+  const date = inputdate ? inputdate : new Date()
   const formattedDate = formatDate(date)
   const document = await ReceiptVat.find({ isBillVat: true })
   const documentLength = document.length
-  const formattedDocLength = formatDocLength(documentLength)
+  const formattedDocLength = formatDocLength(documentLength+1)
   const result = `RV${formattedDate}${formattedDocLength}`
   
   return result
@@ -221,8 +221,8 @@ exports.PrintReceiptVat = async (req, res) => {
     const customer_branch = await Company.findById(branchId)
     console.log(customer_branch)
 
-    const invoice1 = await receiptNumber();
-    const receipt2 = await receiptVatNumber();
+    const invoice1 = await receiptNumber(start_date);
+    const receipt2 = await receiptVatNumber(start_date);
     const Shippingincluded = totalWithVat + ShippingCost;
     let signatureData = [];
     if (signatureID && signatureID.length > 0) {
@@ -563,8 +563,8 @@ exports.newReceiptRefInvoice = async (req, res) => {
         status: false,
       })
     }
-    const code = await receiptNumber()
-    const codeVat = await receiptVatNumber()
+    const code = await receiptNumber(start_date)
+    const codeVat = await receiptVatNumber(start_date)
     const newReceipt = {
       receipt: code,
       isBillVat: invoice.isVat,
