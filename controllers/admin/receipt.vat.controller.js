@@ -47,7 +47,7 @@ function formatDocLength(docLength) {
 
 async function receiptNumber(inputdate) {
   const date = inputdate ? inputdate : new Date()
-  const formattedDate = formatDate(date)
+  const formattedDate = formatDate(new Date(date))
   const document = await ReceiptVat.find()
   const documentLength = document.length
   const formattedDocLength = formatDocLength(documentLength+1)
@@ -58,7 +58,7 @@ async function receiptNumber(inputdate) {
 
 async function receiptVatNumber(inputdate) {
   const date = inputdate ? inputdate : new Date()
-  const formattedDate = formatDate(date)
+  const formattedDate = formatDate(new Date(date))
   const document = await ReceiptVat.find({ isBillVat: true })
   const documentLength = document.length
   const formattedDocLength = formatDocLength(documentLength+1)
