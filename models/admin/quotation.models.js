@@ -120,8 +120,13 @@ const QuotationSchema = new mongoose.Schema({
   start_date: { type: String, required: false }, //วันที่ออกบิล
   end_date: { type: String, required: false }, //วันที่ต้องจ่ายเงิน
   timestamps: { type: Date, required: false, default: Date.now() },
-  transfer: String
-});
+  transfer: String,
+
+},{
+  timestamps: true
+}
+
+);
 
 const Quotation = mongoose.model("Quotation", QuotationSchema);
 

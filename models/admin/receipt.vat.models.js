@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const ReceiptVatSchema = new mongoose.Schema({
   receipt: { type: String, required: false }, //เลขที่ใบเสร้จ
   receiptVat: String,
+  receiptNoVat: String,
   quotation: { type: String, required: false }, //เลขที่ใบเสนอราคา
   invoice: { type: String, required: false }, //เลขที่ใบเเเจ้งหนี้
   receiptNoVat: { type: String, required: false }, //เลขที่ใบเสร้จ
@@ -121,7 +122,10 @@ const ReceiptVatSchema = new mongoose.Schema({
     paid_detail: String
   },
   isSign: Boolean
-});
+}, {
+  timestamps: true
+}
+);
 
 const ReceiptVat = mongoose.model("ReceiptVat", ReceiptVatSchema);
 

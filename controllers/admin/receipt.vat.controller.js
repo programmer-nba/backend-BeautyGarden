@@ -56,7 +56,39 @@ async function receiptNumber(inputdate) {
   return result
 }
 
-async function receiptVatNumber(inputdate) {
+async function receiptNoVatNumber(date) {
+  const currentDate = date ? new Date(date) : new Date();
+  const year = currentDate.getFullYear();
+  const month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+
+  // Find the maximum run number for the current year and month
+  const maxRunNumberDoc = await ReceiptVat.findOne({
+    isBillVat: false,
+    createdAt: {
+      $gte: new Date(year, currentDate.getMonth(), 1),
+      $lt: new Date(year, currentDate.getMonth() + 1, 1)
+    }
+  }).sort({ receiptNoVat: -1 });
+
+  let maxRunNumber = 0;
+  if (maxRunNumberDoc && maxRunNumberDoc.receiptNoVat) {
+    // Extract the numerical part and convert it to a number
+    maxRunNumber = parseInt(maxRunNumberDoc.receiptNoVat.slice(-4));
+  }
+
+  // Increment the maximum run number by 1
+  const nextRunNumber = maxRunNumber + 1;
+
+  // Format the run number with leading zeros
+  const formattedRunNumber = ('0000' + nextRunNumber).slice(-4);
+
+  // Generate the code
+  const code = `RN${year}${month}${formattedRunNumber}`;
+
+  return code;
+}
+
+/* async function receiptVatNumber(inputdate) {
   const date = inputdate ? inputdate : new Date()
   const formattedDate = formatDate(new Date(date))
   const document = await ReceiptVat.find({ isBillVat: true })
@@ -65,6 +97,38 @@ async function receiptVatNumber(inputdate) {
   const result = `RV${formattedDate}${formattedDocLength}`
   
   return result
+} */
+
+async function receiptVatNumber(date) {
+  const currentDate = date ? new Date(date) : new Date();
+  const year = currentDate.getFullYear();
+  const month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+
+  // Find the maximum run number for the current year and month
+  const maxRunNumberDoc = await ReceiptVat.findOne({
+    isBillVat: true,
+    createdAt: {
+      $gte: new Date(year, currentDate.getMonth(), 1),
+      $lt: new Date(year, currentDate.getMonth() + 1, 1)
+    }
+  }).sort({ receiptVat: -1 });
+
+  let maxRunNumber = 0;
+  if (maxRunNumberDoc && maxRunNumberDoc.receiptVat) {
+    // Extract the numerical part and convert it to a number
+    maxRunNumber = parseInt(maxRunNumberDoc.receiptVat.slice(-4));
+  }
+
+  // Increment the maximum run number by 1
+  const nextRunNumber = maxRunNumber + 1;
+
+  // Format the run number with leading zeros
+  const formattedRunNumber = ('0000' + nextRunNumber).slice(-4);
+
+  // Generate the code
+  const code = `RV${year}${month}${formattedRunNumber}`;
+
+  return code;
 }
 
 exports.ReceiptVat = async (req, res) => {
@@ -222,6 +286,7 @@ exports.PrintReceiptVat = async (req, res) => {
     console.log(customer_branch)
 
     const invoice1 = await receiptNumber(start_date);
+    const receipt1 = await receiptNoVatNumber(start_date);
     const receipt2 = await receiptVatNumber(start_date);
     const Shippingincluded = totalWithVat + ShippingCost;
     let signatureData = [];
@@ -250,6 +315,7 @@ exports.PrintReceiptVat = async (req, res) => {
       customer_detail: customer_detail,
       signature: signatureData,
       receipt: invoice1,
+      receiptNoVat: receipt1,
       receiptVat: receipt2,
       isBillVat: req.body.isVat,
       discount: discount,
@@ -564,10 +630,12 @@ exports.newReceiptRefInvoice = async (req, res) => {
       })
     }
     const code = await receiptNumber(start_date)
+    const codeNoVat = await receiptNoVatNumber(start_date)
     const codeVat = await receiptVatNumber(start_date)
     const newReceipt = {
       receipt: code,
       isBillVat: invoice.isVat,
+      receiptNoVat: codeNoVat,
       receiptVat: codeVat,
       quotation: invoice.quotation || null,
       invoice: invoice.invoice || null,
@@ -618,9 +686,10 @@ exports.newReceiptRefInvoice = async (req, res) => {
     invoice.status.push({
       name: `${invoice.cur_period + 1}/${invoice.end_period}`,
       paid: amount_price,
-      period: invoice.cur_period + 1, 
+      period: invoice.cur_period + 1,
       receipt: saved_receipt.receipt,
       receiptVat: saved_receipt.receiptVat,
+      receiptNoVat: saved_receipt.receiptNoVat,
       isBillVat: saved_receipt.isBillVat,
       createdAt: start_date
     })

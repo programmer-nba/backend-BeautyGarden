@@ -115,7 +115,10 @@ const InvoiceSchema = new mongoose.Schema({
   paid: Number,
   transfer: String,
   header: String
-});
+}, {
+  timestamps: true
+}
+);
 
 const Invoice = mongoose.model("Invoice", InvoiceSchema);
 
