@@ -158,8 +158,8 @@ exports.PrintInviuceVat = async (req, res) => {
       const price = product.product_price;
       const amount = product.product_amount;
       const vat_price = parseFloat(product.vat_price) || 0;
-      const product_total = (price * amount + vat_price);
-      total += +product_total;
+      const product_total = (price * amount);
+      total += product_total+(amount*vat_price);
       return {
         ...product,
         product_total,
