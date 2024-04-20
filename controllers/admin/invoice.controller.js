@@ -260,6 +260,26 @@ exports.PrintInviuceVat = async (req, res) => {
       isSign: isSign
     }).save();
 
+    if (quotation) {
+      const quotation_to_update = await Quotation.findOneAndUpdate(
+        {
+          quotation: quotation
+        }, 
+        { 
+          $set: {
+            status : 'invoiced' 
+          }
+        }, { new : true })
+
+        if (!quotation_to_update) {
+          return res.status(404).send({
+            status: false,
+            message: "ไม่พบใบเสนอราคาที่อ้างอิง",
+            data: null,
+          });
+        }
+    }
+
     if (quotation1) {
       return res.status(200).send({
         status: true,
@@ -291,6 +311,25 @@ exports.deleteInvoice = async (req, res) => {
         .status(404)
         .send({ status: false, message: "ไม่พบใบเเจ้งหนี้" });
     } else {
+      if (receipt.quotation) {
+        const quotation_to_update = await Quotation.findOneAndUpdate(
+          {
+            quotation: receipt.quotation
+          }, 
+          { 
+            $set: {
+              status : null 
+            }
+          }, { new : true })
+  
+          if (!quotation_to_update) {
+            return res.status(404).send({
+              status: false,
+              message: "ไม่พบใบเสนอราคาที่อ้างอิง",
+              data: null,
+            });
+          }
+      }
       return res
         .status(200)
         .send({ status: true, message: "ลบข้อมูลใบเสร็จสำเร็จ" });
