@@ -11,6 +11,7 @@ const { Company } = require("../../models/company/company.models");
 const { Signature } = require("../../models/signature/signature.models");
 const { Customer } = require("../../models/customer/customer.models");
 const multer = require("multer");
+const { Invoice } = require("../../models/admin/invoice.models");
 const jwt = require("jsonwebtoken");
 const storage = multer.diskStorage({
   filename: function (req, file, cb) {
@@ -560,16 +561,18 @@ exports.deleteAllQuotation = async (req, res) => {
 };
 exports.getQuotationAll = async (req, res) => {
   try {
+    const invoices = await Invoice.find();
+    const filteredQt = invoices.map(inv => inv.quotation);
+    await Quotation.updateMany(
+      { quotation: { $in: filteredQt } },
+      { status: 'invoiced' }
+    );
+
     const quotation = await Quotation.find();
-    if (!quotation) {
-      return res
-        .status(404)
-        .send({ status: false, message: "ไม่พบข้อมูลใบเสนอราคา" });
-    } else {
-      return res
-        .status(200)
-        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: quotation });
-    }
+
+    return res
+      .status(200)
+      .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: quotation });
   } catch (err) {
     return res
       .status(500)
