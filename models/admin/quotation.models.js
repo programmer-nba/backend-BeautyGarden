@@ -116,7 +116,7 @@ const QuotationSchema = new mongoose.Schema({
   },
   processed: { type: String, required: false }, //ใช้เก็บข้อมูลเลขว่าใช้ซ้ำได้มั้ย
   sumVat: { type: Boolean, required: false },
-  status: { type: Array, required: false },
+  status: { type: String, required: false },
   start_date: { type: String, required: false }, //วันที่ออกบิล
   end_date: { type: String, required: false }, //วันที่ต้องจ่ายเงิน
   timestamps: { type: Date, required: false, default: Date.now() },
