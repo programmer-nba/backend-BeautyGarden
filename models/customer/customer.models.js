@@ -32,9 +32,9 @@ const CustomerSchema = new mongoose.Schema({
   customer_contact: {
     type: String,
     required: false,
-    default: "เพิ่มข้อมูลติดต่อลูกค้า",
   }, //ที่ติดต่อลูกค้า
   customer_contact_number: { type: String, required: false }, //เบอร์โทรติดต่อผู้ประสานงาน
+  customer_contact_sign: { type: String, required: false },
   status: { type: Array, required: false },
   customer_note: { type: String, default: "ไม่มี" }, //หมายเหตุ
   customer_type: { type: String, required: false, default: "ไม่มี" }, //รายปี  (รายเดือน ทำเสร็จจ่าย / จ่ายล่วงหน้า 3เดือน /6 เดือน)

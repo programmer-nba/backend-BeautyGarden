@@ -64,6 +64,7 @@ exports.create = async (req, res) => {
         customer_contact: req.body.customer_contact,
         customer_map: req.body.customer_map,
         customer_contact_number: req.body.customer_contact_number,
+        customer_contact_sign: req.body.customer_contact_sign,
       });
       const add = await customers.save();
       return res.status(200).send({
