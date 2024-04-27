@@ -13,6 +13,6 @@ router.get("/getQTAllfilter",authAdmin,admin.getQTAllfilter)
 router.get("/getQuotationByQT/:id",authAdmin,admin.getQuotationByQT)
 router.put("/ImportImgProduct/:id/:quotationId",authAdmin,admin.ImportImgProduct)
 router.put("/uploadPicProduct/:qtId/:productId",authAdmin,admin.uploadPictureQuotation)
-router.put("updateQuotationStatus/:id", authAdmin, admin.updateStatusQuotation)
+router.put("/updateQuotationStatus/:id", authAdmin, admin.updateStatusQuotation)
 
 module.exports = router;  
