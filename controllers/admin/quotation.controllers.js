@@ -317,7 +317,7 @@ exports.Quotation = async (req, res) => {
       },
       timestamps: dayjs(Date.now()).format(""),
       transfer: transfer,
-      status: status
+      status: null
     }).save();
     if (quotation) {
       return res.status(200).send({
@@ -697,6 +697,53 @@ exports.getQTAllfilter = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+
+exports.updateStatusQuotation = async (req, res) => {
+  const { id } = req.params
+  const { status } = req.body
+  try {
+    if (!status) {
+      return res.status(404).json({
+        message: 'not found status on payload',
+        status: false,
+        data: null
+      })
+    }
+
+    let quotation = await Quotation.findById( id )
+    if (!quotation) {
+      return res.status(404).json({
+        message: 'not found',
+        status: false,
+        data: null
+      })
+    }
+
+    quotation.status = status || quotation.status
+    const updated_quotation = await quotation.save()
+    if (!updated_quotation) {
+      return res.json({
+        message: 'can not updated status',
+        status: false,
+        data: null
+      })
+    }
+
+    return res.json({
+      message: 'update status success',
+      status: true,
+      data: updated_quotation
+    })
+  }
+  catch (err) {
+    console.log(err)
+    return res.status(500).json({
+      message: err.message,
+      status: false,
+      data: err
+    })
+  }
+}
 
 
 
