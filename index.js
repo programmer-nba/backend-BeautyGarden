@@ -17,6 +17,7 @@ app.use(prefix + "/", require("./router/index"));
 
 //สร้างเเอดมิน
 app.use(prefix + "/admin", require("./router/admin"));
+app.use(prefix + "/project", require("./router/admin/project.route"));
 app.use(prefix + "/quotation", require("./router/admin/quotation")); //ใบเสนอราคา
 app.use(prefix + "/invoice", require("./router/admin/invoice")); //ใบเเจ้งหนี้
 app.use(prefix + "/receiptNoVat", require("./router/admin/receipt.no.vat")); //ใบเสร็จแบบไม่มี vat
