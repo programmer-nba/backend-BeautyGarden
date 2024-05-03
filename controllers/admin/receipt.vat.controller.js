@@ -12,6 +12,7 @@ const { ReceiptVat } = require("../../models/admin/receipt.vat.models");
 const { Signature } = require("../../models/signature/signature.models");
 const { Customer } = require("../../models/customer/customer.models");
 const { Company } = require("../../models/company/company.models");
+const Child = require("../../models/admin/childInvoice.model")
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const storage = multer.diskStorage({
@@ -236,6 +237,7 @@ exports.ReceiptVat = async (req, res) => {
     });
   }
 };
+
 exports.PrintReceiptVat = async (req, res) => {
   try {
     const {
@@ -378,23 +380,53 @@ exports.PrintReceiptVat = async (req, res) => {
     });
   }
 };
+
 exports.deleteReceiptVat = async (req, res) => {
   try {
     const id = req.params.id;
-    const receipt = await ReceiptVat.findByIdAndDelete(id);
-    if (!receipt) {
-      return res.status(404).send({ status: false, message: "ไม่พบใบเสร็จ" });
-    } else {
-      return res
-        .status(200)
-        .send({ status: true, message: "ลบข้อมูลใบเสร็จสำเร็จ" });
+    const receipt = await ReceiptVat.findById( id )
+    let invoice = await Invoice.findOne( {invoice: receipt.invoice} )
+    if (!invoice) {
+      return res.status(404).send({ status: false, message: "ไม่พบใบแจ้งหนี้" });
     }
+
+    const deleted_receipt = await ReceiptVat.findByIdAndDelete(id);
+    if (!deleted_receipt) {
+      return res.status(404).send({ status: false, message: "ไม่พบใบเสร็จ" });
+    }
+
+    console.log(invoice.paid)
+    console.log(receipt.amount_price)
+    if (invoice.paid && invoice.paid > 0) {
+      invoice.paid -= receipt.amount_price
+    } else {
+      invoice.paid = 0
+    }
+    
+    const index = invoice.status.findIndex(i => i.receipt_id === id || i.receipt === receipt.receipt)
+    if (index === -1) {
+      return res.status(404).send({ status: false, message: "ไม่พบใบเสร็จในใบแจ้งหนี้" });
+    }
+    invoice.status.splice(index, 1)
+    invoice.cur_period -= 1
+
+    const saved_invoice = await invoice.save()
+    if(!saved_invoice) {
+      return res.status(500).send({ status: false, message: "ไม่สามารถบันทึกใบแจ้งหนี้" });
+    }
+
+    return res
+      .status(200)
+      .send({ status: true, message: "ลบข้อมูลใบเสร็จสำเร็จ" });
+    
   } catch (err) {
+    console.log(err)
     return res
       .status(500)
-      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
+      .send({ status: false, message: err.message });
   }
 };
+
 exports.deleteAllReceiptVat = async (req, res) => {
   try {
     const result = await ReceiptVat.deleteMany({});
@@ -412,6 +444,7 @@ exports.deleteAllReceiptVat = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+
 exports.getReceiptVatAll = async (req, res) => {
   try {
     const receipt = await ReceiptVat.find();
@@ -685,6 +718,7 @@ exports.newReceiptRefInvoice = async (req, res) => {
 
     invoice.status.push({
       name: `${invoice.cur_period + 1}/${invoice.end_period}`,
+      receipt_id: saved_receipt._id,
       paid: amount_price,
       period: invoice.cur_period + 1,
       receipt: saved_receipt.receipt,
@@ -786,3 +820,27 @@ exports.editReceiptRefInvoice = async (req, res) => {
     })
   }
 }
+
+/* exports.reconcileChild = async (req, res) => {
+  const { receipt_id, childInvoice_id } = req.body
+  try {
+    let receipt = await ReceiptVat.findById( receipt_id )
+    if (!receipt) {
+      return res.status(404).json({
+        message: "not found receipt"
+      })
+    }
+
+    let childInvoice = await Child.findById( childInvoice_id )
+    if (!childInvoice) {
+      return res.status(404).json({
+        message: "not found child invoice"
+      })
+    }
+
+
+  }
+  catch(err) {
+
+  }
+} */

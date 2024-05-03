@@ -147,7 +147,7 @@ exports.PrintInviuceVat = async (req, res) => {
       credit,
       end_period,
       cur_period,
-      isSign
+      isSign,
     } = req.body;
 
     const branchId = req.body.branchId;
