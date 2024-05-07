@@ -557,7 +557,7 @@ exports.EditInvoice = async (req, res) => {
           cur_period: cur_period,
           quotation: quotation,
           sumVat: sumVat,
-          fooer1: footer1,
+          footer1: footer1,
           footer2: footer2,
           isSign: isSign,
           customer_branch: branch
