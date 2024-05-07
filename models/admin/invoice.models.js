@@ -117,7 +117,9 @@ const InvoiceSchema = new mongoose.Schema({
   isVat: { type: Boolean },
   paid: Number,
   transfer: String,
-  header: String
+  header: String,
+  footer1: String,
+  footer2: String
 }, {
   timestamps: true
 }

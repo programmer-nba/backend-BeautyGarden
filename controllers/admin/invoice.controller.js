@@ -148,6 +148,8 @@ exports.PrintInviuceVat = async (req, res) => {
       end_period,
       cur_period,
       isSign,
+      footer1,
+      footer2
     } = req.body;
 
     const branchId = req.body.branchId;
@@ -257,7 +259,9 @@ exports.PrintInviuceVat = async (req, res) => {
       quotation: quotation,
       status: [],
       paid: 0,
-      isSign: isSign
+      isSign: isSign,
+      footer1: footer1,
+      footer2: footer2
     }).save();
 
     if (quotation) {
@@ -460,7 +464,9 @@ exports.EditInvoice = async (req, res) => {
       bank,
       remark,
       branchId,
-      customer_detail
+      customer_detail,
+      footer1,
+      footer2
     } = req.body;
 
     const branch = branchId ? await Company.findById(branchId) : null;
@@ -551,6 +557,8 @@ exports.EditInvoice = async (req, res) => {
           cur_period: cur_period,
           quotation: quotation,
           sumVat: sumVat,
+          fooer1: footer1,
+          footer2: footer2,
           isSign: isSign,
           customer_branch: branch
           ? {
