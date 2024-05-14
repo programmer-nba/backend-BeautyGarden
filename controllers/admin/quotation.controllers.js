@@ -48,7 +48,7 @@ async function QuotationNumber() {
   const date = new Date()
   const formattedDate = formatDate(date)
   const document = await Quotation.find()
-  const lastQuotation = document[document.length-1].quotation
+  const lastQuotation = document[document.length-1]?.quotation || 'QT2024050000'
   //const documentLength = document.length+1
   //const formattedDocLength = formatDocLength(documentLength)
   //const result = `QT${formattedDate}${formattedDocLength}`
