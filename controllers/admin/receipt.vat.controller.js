@@ -650,7 +650,8 @@ exports.newReceiptRefInvoice = async (req, res) => {
       project,
       transfer,
       paid_detail,
-      isSign
+      isSign,
+      cur_period
     } = req.body
 
     const invoice = await Invoice.findOne({
@@ -700,8 +701,8 @@ exports.newReceiptRefInvoice = async (req, res) => {
       invoiceRef_detail: {
         start_date: invoice.start_date,
         end_date: invoice.end_date,
-        period: invoice.cur_period + 1,
-        period_text: `${invoice.cur_period + 1}/${invoice.end_period}`,
+        period: cur_period,
+        period_text: `${cur_period}/${invoice.end_period}`,
         paid: invoice.paid + amount_price || 0,
         paid_detail: paid_detail
       }
@@ -765,12 +766,14 @@ exports.editReceiptRefInvoice = async (req, res) => {
       transfer,
       paid_detail,
       isSign,
-      project
+      project,
+      cur_period
     } = req.body
 
     const receipt = await ReceiptVat.findByIdAndUpdate(id, {
       $set: {
         'invoiceRef_detail.paid_detail': paid_detail,
+        'invoiceRef_detail.cur_period': cur_period,
         //start_date: start_date,
         //amount_price: amount_price,
         //remark: remark,
