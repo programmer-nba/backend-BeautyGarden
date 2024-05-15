@@ -4,10 +4,12 @@ const ChildInvoice = require("../../models/admin/childInvoice.model")
 exports.createChildInvoice = async (req, res) => {
     const {
         refInvoice,
+        header,
         price,
         start_date,
         end_date,
-        remark
+        remark,
+        period
     } = req.body
 
     try {
@@ -18,12 +20,13 @@ exports.createChildInvoice = async (req, res) => {
             })
         }
 
-        const period = invoice.cur_period ? invoice.cur_period + 1 : 1
+        //const period = invoice.cur_period ? invoice.cur_period + 1 : 1
         const code = invoice.invoice + "-" + `${period}`
 
         const data = {
             refInvoice: refInvoice,
             code: code,
+            header: header,
             price: price,
             period: period,
             start_date: start_date,
@@ -39,7 +42,10 @@ exports.createChildInvoice = async (req, res) => {
             })
         }
 
-        invoice.cur_period = period
+        const childs = ChildInvoice.find( { refInvoice: refInvoice } )
+        const cur_period = invoice.end_period > 1 ? childs.length : 1
+
+        invoice.cur_period = cur_period
         invoice.invoice_period.push({
             child_id: saved_child._id,
             period: period,
@@ -75,7 +81,8 @@ exports.updateChildInvoice = async (req, res) => {
         start_date,
         end_date,
         remark,
-        receipt_ref
+        receipt_ref,
+        header
     } = req.body
 
     const { id } = req.params
@@ -100,6 +107,7 @@ exports.updateChildInvoice = async (req, res) => {
         child.end_date = end_date || child.end_date
         child.remark = remark || child.remark
         child.receipt_ref = receipt_ref || child.receipt_ref
+        child.header = header || child.header
         
         const saved_child = await child.save()
         if (!saved_child) {
@@ -215,7 +223,7 @@ exports.deleteChildInvoice = async (req, res) => {
         }
 
         invoice.invoice_period.splice(index, 1)
-        invoice.cur_period -= 1
+        invoice.cur_period > 0 ? invoice.cur_period -= 1 : invoice.cur_period -= 0
 
         const saved_invoice = await invoice.save()
         if (!saved_invoice) {

@@ -11,6 +11,10 @@ const childInvoiceSchema = new Schema(
             type: String,
             require: true
         },
+        header: {
+            type: String,
+            default: "ใบแจ้งหนี้"
+        },
         price:  {
             type: Number,
             require: true
