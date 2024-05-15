@@ -29,7 +29,7 @@ AdminSchema.methods.generateAuthToken = function () {
     { _id: this._id, name: this.admin_name, row: "admin" },
     process.env.JWTPRIVATEKEY,
     {
-      expiresIn: "90d",
+      expiresIn: "1y",
     }
   );
   return token;
