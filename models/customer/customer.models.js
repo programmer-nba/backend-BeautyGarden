@@ -12,32 +12,29 @@ const complexityOptions = {
   requirementCount: 2,
 };
 const CustomerSchema = new mongoose.Schema({
-  profile_image: { type: String, required: false },
-  customer_taxnumber: { type: String, required: false }, //เลขปรพจำตัวผู้เสียภาษี
-  customer_number: { type: String, required: false },
-  customer_username: { type: String, required: false }, // ไอดีสมาชิก
-  customer_password: { type: String, required: false }, //รหัสผ่าน
+  profile_image: { type: String },
+  customer_taxnumber: { type: String, default: null }, //เลขปรพจำตัวผู้เสียภาษี
+  customer_number: { type: String, default: "" },
+  customer_username: { type: String, default: "" }, // ไอดีสมาชิก
+  customer_password: { type: String, default: "" }, //รหัสผ่าน
   // customer_id: { type: String, required: false }, //รหัสสมาชิก
-  profile_image: { type: String, required: false },
-  customer_prefix: { type: String, required: false }, //คำนำหน้า
+  profile_image: { type: String, default: "" },
+  customer_prefix: { type: String, default: "" }, //คำนำหน้า
   customer_name: { type: String, required: false },
-  customer_lastname: { type: String, required: false },
-  customer_idcard: { type: String, required: false }, //รหัสบัตรประชาชน
-  customer_birthday: { type: String, required: false }, //วันเกิด
-  customer_email: { type: String, required: false },
-  customer_phone: { type: String, required: false },
-  customer_position: { type: String, required: false },
-  customer_role: { type: String, required: false },
-  customer_map: String,
-  customer_contact: {
-    type: String,
-    required: false,
-  }, //ที่ติดต่อลูกค้า
-  customer_contact_number: { type: String, required: false }, //เบอร์โทรติดต่อผู้ประสานงาน
-  customer_contact_sign: { type: String, required: false },
-  status: { type: Array, required: false },
-  customer_note: { type: String, default: "ไม่มี" }, //หมายเหตุ
-  customer_type: { type: String, required: false, default: "ไม่มี" }, //รายปี  (รายเดือน ทำเสร็จจ่าย / จ่ายล่วงหน้า 3เดือน /6 เดือน)
+  customer_lastname: { type: String, default: "" },
+  customer_idcard: { type: String, default: "" }, //รหัสบัตรประชาชน
+  customer_birthday: { type: String, default: "" }, //วันเกิด
+  customer_email: { type: String, default: "" },
+  customer_phone: { type: String, default: "" },
+  customer_position: { type: String, default: "" },
+  customer_role: { type: String, default: "" },
+  customer_map: { type: String, default: "" },
+  customer_contact: { type: String, default: "" },
+  customer_contact_number: { type: String, default: "" }, //เบอร์โทรติดต่อผู้ประสานงาน
+  customer_contact_sign: { type: String, default: "" },
+  status: { type: Array, required: false, default: [] },
+  customer_note: { type: String, default: "" },
+  customer_type: { type: String, required: false, default: "Normal" }, //รายปี  (รายเดือน ทำเสร็จจ่าย / จ่ายล่วงหน้า 3เดือน /6 เดือน)
 });
 CustomerSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(

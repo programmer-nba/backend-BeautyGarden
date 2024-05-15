@@ -34,20 +34,6 @@ exports.create = async (req, res) => {
         }
         profile_image = reqFiles[0];
       }
-      /* const TaxNumber = await checkTaxNumber(req.body.customer_taxnumber);
-      if (TaxNumber) {
-        return res.status(409).send({
-          status: false,
-          message: "เลขประจำตัวผู้เสียภาษีนี้มีผู้ใช้แล้ว",
-        });
-      } */
-      /* const NameAndLastName = await checkLastName(req.body.customer_name);
-      if (NameAndLastName) {
-        return res.status(409).send({
-          status: false,
-          message: "ชื่อและนามสกุลนี้มีผู้ใช้แล้ว",
-        });
-      } */
       const CustomerNumber = await customernumber();
       const customers = new Customer({
         customer_taxnumber: req.body.customer_taxnumber,
