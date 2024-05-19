@@ -566,12 +566,12 @@ exports.deleteAllQuotation = async (req, res) => {
 };
 exports.getQuotationAll = async (req, res) => {
   try {
-    const invoices = await Invoice.find();
-    const filteredQt = invoices.map(inv => inv.quotation);
-    await Quotation.updateMany(
+    //const invoices = await Invoice.find();
+    //const filteredQt = invoices.map(inv => inv.quotation);
+    /* await Quotation.updateMany(
       { quotation: { $in: filteredQt } },
       { status: 'invoiced' }
-    );
+    ); */
 
     const quotation = await Quotation.find();
 
