@@ -575,6 +575,12 @@ exports.getQuotationAll = async (req, res) => {
 
     const quotation = await Quotation.find();
 
+    quotation.forEach((qt) => {
+      qt.product_detail.forEach((prod) => {
+        prod.product_logo = []
+      })
+    })
+
     return res
       .status(200)
       .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: quotation });
@@ -595,7 +601,7 @@ exports.getQuotationById = async (req, res) => {
     } else {
       return res
         .status(200)
-        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: quotation });
+        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: quotation, product_detail: quotation.product_detail});
     }
   } catch (err) {
     return res
