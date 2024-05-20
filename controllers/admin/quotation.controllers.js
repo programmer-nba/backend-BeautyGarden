@@ -13,6 +13,7 @@ const { Customer } = require("../../models/customer/customer.models");
 const multer = require("multer");
 const { Invoice } = require("../../models/admin/invoice.models");
 const jwt = require("jsonwebtoken");
+const Picture64 = require("../../models/admin/picture64.model")
 const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
@@ -525,7 +526,8 @@ exports.EditQuotation = async (req, res) => {
       error: error.message,
     });
   }
-};
+}
+
 exports.deleteQuotation = async (req, res) => {
   try {
     const id = req.params.id;
@@ -544,7 +546,8 @@ exports.deleteQuotation = async (req, res) => {
       .status(500)
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
-};
+}
+
 exports.deleteAllQuotation = async (req, res) => {
   try {
     const result = await Quotation.deleteMany({});
@@ -563,7 +566,8 @@ exports.deleteAllQuotation = async (req, res) => {
       .status(500)
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
-};
+}
+
 exports.getQuotationAll = async (req, res) => {
   try {
     //const invoices = await Invoice.find();
@@ -589,26 +593,53 @@ exports.getQuotationAll = async (req, res) => {
       .status(500)
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
-};
+}
+
 exports.getQuotationById = async (req, res) => {
   try {
-    const id = req.params.id;
-    const quotation = await Quotation.findById(id);
+    const id = req.params.id
+    let quotation = await Quotation.findById(id)
     if (!quotation) {
       return res
         .status(404)
         .send({ status: false, message: "ไม่พบใบเสนอราคา" });
-    } else {
-      return res
+    } 
+      
+    const pictures64Promises = quotation.product_detail.map( async (prod) => {
+        try {
+          const pictures = await Picture64.find({ refId: prod._id })
+          if(!pictures.length) {
+            console.log('picture no found')
+          }
+          const base64s = pictures.map(b64 => b64.base64)
+          return {
+            ...prod._doc, // Spread operator to clone the prod object
+            product_logo: base64s
+          }
+        }
+        catch (err) {
+          console.error('Error getting picture:', err)
+          return {
+            ...prod._doc,
+            product_logo: []
+          }
+        }
+    })
+
+    const resolvedPictures64 = await Promise.all(pictures64Promises)
+    quotation.product_detail = resolvedPictures64
+    
+    return res
         .status(200)
         .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: quotation, product_detail: quotation.product_detail});
-    }
+    
   } catch (err) {
     return res
       .status(500)
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
-};
+}
+
 exports.getQuotationByQT = async (req, res) => {
   try {
     const id = req.params.id;
