@@ -605,7 +605,7 @@ exports.getQuotationById = async (req, res) => {
         .send({ status: false, message: "ไม่พบใบเสนอราคา" });
     } 
       
-    const pictures64Promises = quotation.product_detail.map( async (prod) => {
+    /* const pictures64Promises = quotation.product_detail.map( async (prod) => {
         try {
           const pictures = await Picture64.find({ refId: prod._id })
           if(!pictures.length) {
@@ -627,7 +627,7 @@ exports.getQuotationById = async (req, res) => {
     })
 
     const resolvedPictures64 = await Promise.all(pictures64Promises)
-    quotation.product_detail = resolvedPictures64
+    quotation.product_detail = resolvedPictures64 */
     
     return res
         .status(200)
@@ -659,6 +659,7 @@ exports.getQuotationByQT = async (req, res) => {
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
   }
 };
+
 exports.ImportImgProduct = async (req, res) => {
   try {
     let upload = multer({ storage: storage }).array("imgCollection", 20);
@@ -716,6 +717,7 @@ exports.ImportImgProduct = async (req, res) => {
     return res.status(500).send({ status: false, error: error.message });
   }
 };
+
 exports.getQTAllfilter = async (req, res) => {
   try {
     const quotations = await Quotation.find({}, { _id: 1, quotation: 1 });

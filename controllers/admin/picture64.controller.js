@@ -5,7 +5,7 @@ exports.uploadPictures = async (req, res) => {
     const { quotationId } = req.body;
     try {
         let quotation = await Quotation.findById(quotationId)
-        let mainQuotation = await Quotation.findById(quotationId)
+        //let mainQuotation = await Quotation.findById(quotationId)
         if (!quotation) {
             return res.status(404).json({ message: "Quotation not found!" });
         }
@@ -40,17 +40,17 @@ exports.uploadPictures = async (req, res) => {
 
         const uploadedPictures = await Promise.all(uploadPictures)
 
-        mainQuotation.product_detail.forEach(prod => prod.product_logo = [])
+        /* mainQuotation.product_detail.forEach(prod => prod.product_logo = [])
         const saved_quotation = await mainQuotation.save()
         if(!saved_quotation) {
             return res.json({message: 'can not saved quotation!'})
-        }
+        } */
 
         return res.status(200).json({
             message: 'Success!',
             status: true,
             data: uploadedPictures,
-            mainData: mainQuotation
+            //mainData: mainQuotation
         });
     } catch (err) {
         console.error(err);
