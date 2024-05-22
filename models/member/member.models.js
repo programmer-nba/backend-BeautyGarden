@@ -15,19 +15,19 @@ const MemberSchema = new mongoose.Schema({
   member_taxnumber: { type: String, required: false }, //เลขปรพจำตัวผู้เสียภาษี
   member_number: { type: String, required: false },
   profile_image: { type: String, required: false },
-  member_username: { type: String, required: false }, // ไอดีสมาชิก
-  member_password: { type: String, required: false }, //รหัสผ่าน
+  member_username: { type: String, required: true }, // ไอดีสมาชิก
+  member_password: { type: String, required: true }, //รหัสผ่าน
   member_id: { type: String, required: false }, //รหัสสมาชิก
   member_prefix: { type: String, required: false }, //คำนำหน้า
-  member_name: { type: String, required: true },
-  member_lastname: { type: String, required: true },
-  member_idcard: { type: Number, required: true }, //รหัสบัตรประชาชน
-  member_birthday: { type: String, required: true }, //วันเกิด
+  member_name: { type: String, required: false },
+  member_lastname: { type: String, required: false },
+  member_idcard: { type: Number, required: false }, //รหัสบัตรประชาชน
+  member_birthday: { type: String, required: false }, //วันเกิด
   member_taxnumber: { type: String, required: false }, //เลขที่ภาษี
   member_email: { type: String, required: false },
   member_expirationdate: { type: String, required: false, default: "-" }, //วันหมดอายุ
-  member_phone: { type: String, required: true },
-  member_position: { type: String, required: true },
+  member_phone: { type: String, required: false },
+  member_position: { type: String, required: false },
   member_role: { type: String, required: false },
   member_note: { type: String, default: "ไม่มี" }, //หมายเหตุ
   member_type: { type: String, required: false, default: "ไม่มี" }, //รายปี  (รายเดือน ทำเสร็จจ่าย / จ่ายล่วงหน้า 3เดือน /6 เดือน)
