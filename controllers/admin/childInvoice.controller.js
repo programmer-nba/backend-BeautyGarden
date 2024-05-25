@@ -19,9 +19,9 @@ exports.createChildInvoice = async (req, res) => {
                 message: "invoice parent not found!"
             })
         }
-
+        
         //const period = invoice.cur_period ? invoice.cur_period + 1 : 1
-        const code = invoice.invoice + "-" + `${period}`
+        const code = invoice.invoice + "-" + `${period || 1}`
 
         const data = {
             refInvoice: refInvoice,
@@ -42,7 +42,7 @@ exports.createChildInvoice = async (req, res) => {
             })
         }
 
-        const childs = ChildInvoice.find( { refInvoice: refInvoice } )
+        /* const childs = ChildInvoice.find( { refInvoice: refInvoice } )
         const cur_period = invoice.end_period > 1 ? childs.length : 1
 
         invoice.cur_period = cur_period
@@ -59,7 +59,7 @@ exports.createChildInvoice = async (req, res) => {
             return res.status(500).json({
                 message: "can not saved invoice parent"
             })
-        }
+        } */
 
         return res.status(200).json({
             message: "success!",
@@ -215,22 +215,22 @@ exports.deleteChildInvoice = async (req, res) => {
             })
         }
 
-        const index = invoice.invoice_period.findIndex(val => val.child_id === child._id.toString())
+        /* const index = invoice.invoice_period.findIndex(val => val.child_id === child._id.toString())
         if (index === -1) {
             return res.status(404).json({
                 message: "not found invoice_period"
             })
         }
 
-        invoice.invoice_period.splice(index, 1)
-        invoice.cur_period > 0 ? invoice.cur_period -= 1 : invoice.cur_period -= 0
+        invoice.invoice_period.splice(index, 1) */
+        //invoice.cur_period > 0 ? invoice.cur_period -= 1 : invoice.cur_period -= 0
 
-        const saved_invoice = await invoice.save()
+        /* const saved_invoice = await invoice.save()
         if (!saved_invoice) {
             return res.status(500).json({
                 message: "can not save invoice parent"
             })
-        }
+        } */
 
         return res.status(200).json({
             message: "delete success!",

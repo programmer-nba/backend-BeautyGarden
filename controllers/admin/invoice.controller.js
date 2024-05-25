@@ -10,6 +10,8 @@ const { Quotation } = require("../../models/admin/quotation.models");
 const { Signature } = require("../../models/signature/signature.models");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
+const { ReceiptVat } = require("../../models/admin/receipt.vat.models");
+const ChildInvoice = require("../../models/admin/childInvoice.model")
 const { Company } = require("../../models/company/company.models");
 const storage = multer.diskStorage({
   filename: function (req, file, cb) {
@@ -365,17 +367,61 @@ exports.deleteAllInvoice = async (req, res) => {
 
 exports.getInvoiceVatAll = async (req, res) => {
   try {
-    const invoice = await Invoice.find();
-    if (!invoice) {
-      return res
-        .status(404)
-        .send({ status: false, message: "ไม่พบใบเเจ้งหนี้" });
-    } else {
-      return res
-        .status(200)
-        .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: invoice });
+    let invoices = await Invoice.find();
+    const receipts = await ReceiptVat.find();
+    const childs = await ChildInvoice.find();
+
+    const formattedInvoices = invoices.map(async invoice => {
+      const receiptRefs = receipts.filter(rec => rec.invoice === invoice.invoice)
+      const childRefs = childs.filter(cr => cr.refInvoice === invoice._id)
+      if (!receiptRefs.length) return
+      const amount_prices = receiptRefs.map(rep => rep.amount_price || 0)
+      const invoice_periods = childRefs.map(inp => {
+        const result = {
+          child_id: inp._id,
+          period: inp.period,
+          start_date: inp.start_date,
+          end_date: inp.end_date,
+          price: inp.price
+        }
+        return result
+      })
+      const formatReceiptRefs = receiptRefs.map((ref,index) => {
+        const result = {
+          name: `${index + 1}/${invoice.end_period}`,
+          receipt_id: ref._id,
+          paid: ref.amount_price,
+          period: index + 1,
+          receipt: ref.receipt,
+          receiptVat: ref.receiptVat,
+          receiptNoVat: ref.receiptNoVat,
+          isBillVat: ref.isBillVat,
+          createdAt: ref.createdAt
+        }
+        return result
+      })
+      invoice.status = [...formatReceiptRefs]
+      invoice.invoice_period = [...invoice_periods]
+      invoice.cur_period = receiptRefs.length
+      invoice.paid = amount_prices.reduce((a,b) => a+b,0)
+
+      await invoice.save()
+    })
+    
+    const updated_invoices = await Promise.all(formattedInvoices)
+    if( !updated_invoices ) {
+      return res.status(500).send({
+        message: "ไม่สามารถอัพเดทสถานะใบแจ้งหนี้",
+        status: false,
+      })
     }
+    
+    return res
+      .status(200)
+      .send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: invoices });
+    
   } catch (err) {
+    console.log(err)
     return res
       .status(500)
       .send({ status: false, message: "มีบางอย่างผิดพลาด" });
