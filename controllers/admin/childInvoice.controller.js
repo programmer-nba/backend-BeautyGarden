@@ -82,7 +82,8 @@ exports.updateChildInvoice = async (req, res) => {
         end_date,
         remark,
         receipt_ref,
-        header
+        header,
+        period
     } = req.body
 
     const { id } = req.params
@@ -108,6 +109,7 @@ exports.updateChildInvoice = async (req, res) => {
         child.remark = remark || child.remark
         child.receipt_ref = receipt_ref || child.receipt_ref
         child.header = header || child.header
+        child.period = period || child.period
         
         const saved_child = await child.save()
         if (!saved_child) {
