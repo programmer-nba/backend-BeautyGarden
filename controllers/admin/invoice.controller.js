@@ -365,7 +365,7 @@ exports.deleteAllInvoice = async (req, res) => {
   }
 };
 
-/* exports.getInvoiceVatAll = async (req, res) => {
+exports.getInvoiceVatAll = async (req, res) => {
   try {
     let invoices = await Invoice.find();
     const receipts = await ReceiptVat.find();
@@ -424,77 +424,9 @@ exports.deleteAllInvoice = async (req, res) => {
     console.log(err)
     return res
       .status(500)
-      .send({ status: false, message: "มีบางอย่างผิดพลาด" });
-  }
-}; */
-
-exports.getInvoiceVatAll = async (req, res) => {
-  try {
-    let invoices = await Invoice.find();
-    const receipts = await ReceiptVat.find();
-    const childs = await ChildInvoice.find();
-
-    const batchUpdates = [];
-    const batchSize = 100; // Choose an appropriate batch size based on your requirements
-
-    for (let i = 0; i < invoices.length; i += batchSize) {
-      const batch = invoices.slice(i, i + batchSize);
-      const formattedInvoices = batch.map(invoice => {
-        const receiptRefs = receipts.filter(rec => rec.invoice === invoice.invoice);
-        const childRefs = childs.filter(cr => cr.refInvoice === invoice._id);
-        
-        if (!receiptRefs.length) return;
-
-        const amount_prices = receiptRefs.map(rep => rep.amount_price || 0);
-        const invoice_periods = childRefs.map(inp => ({
-          child_id: inp._id,
-          period: inp.period,
-          start_date: inp.start_date,
-          end_date: inp.end_date,
-          price: inp.price
-        }));
-
-        const formatReceiptRefs = receiptRefs.map((ref, index) => ({
-          name: `${index + 1}/${invoice.end_period}`,
-          receipt_id: ref._id,
-          paid: ref.amount_price,
-          period: index + 1,
-          receipt: ref.receipt,
-          receiptVat: ref.receiptVat,
-          receiptNoVat: ref.receiptNoVat,
-          isBillVat: ref.isBillVat,
-          createdAt: ref.createdAt
-        }));
-
-        invoice.status = [...formatReceiptRefs];
-        invoice.invoice_period = [...invoice_periods];
-        invoice.cur_period = receiptRefs.length;
-        invoice.paid = amount_prices.reduce((a, b) => a + b, 0);
-
-        return invoice.save(); // Return the promise of save operation
-      });
-
-      batchUpdates.push(...formattedInvoices);
-    }
-
-    // Wait for all batch updates to complete
-    const updated_invoices = await Promise.all(batchUpdates);
-
-    if (!updated_invoices) {
-      return res.status(500).send({
-        message: "ไม่สามารถอัพเดทสถานะใบแจ้งหนี้",
-        status: false,
-      });
-    }
-
-    return res.status(200).send({ status: true, message: "ดึงข้อมูลสำเร็จ", data: invoices });
-
-  } catch (err) {
-    console.log(err);
-    return res.status(500).send({ status: false, message: "มีบางอย่างผิดพลาด" });
+      .send({ status: false, message: err });
   }
 };
-
 
 exports.getInvoiceVatById = async (req, res) => {
   try {
