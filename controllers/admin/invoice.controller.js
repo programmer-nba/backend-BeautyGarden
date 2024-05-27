@@ -400,7 +400,7 @@ exports.getInvoiceVatAll = async (req, res) => {
         }
         return result
       })
-      invoice.status = [...formatReceiptRefs]
+      //invoice.status = [...formatReceiptRefs]
       invoice.invoice_period = [...invoice_periods]
       invoice.cur_period = receiptRefs.length
       invoice.paid = amount_prices.reduce((a,b) => a+b,0)
