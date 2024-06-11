@@ -386,33 +386,32 @@ exports.deleteReceiptVat = async (req, res) => {
     const id = req.params.id;
     const receipt = await ReceiptVat.findById( id )
     let invoice = await Invoice.findOne( {invoice: receipt.invoice} )
-    if (!invoice) {
-      return res.status(404).send({ status: false, message: "ไม่พบใบแจ้งหนี้" });
-    }
 
     const deleted_receipt = await ReceiptVat.findByIdAndDelete(id);
     if (!deleted_receipt) {
       return res.status(404).send({ status: false, message: "ไม่พบใบเสร็จ" });
     }
 
-    console.log(invoice.paid)
-    console.log(receipt.amount_price)
-    if (invoice.paid && invoice.paid > 0) {
-      invoice.paid -= receipt.amount_price
-    } else {
-      invoice.paid = 0
-    }
-    
-    const index = invoice.status.findIndex(i => i.receipt_id === id || i.receipt === receipt.receipt)
-    if (index === -1) {
-      return res.status(404).send({ status: false, message: "ไม่พบใบเสร็จในใบแจ้งหนี้" });
-    }
-    invoice.status.splice(index, 1)
-    invoice.cur_period -= 1
-
-    const saved_invoice = await invoice.save()
-    if(!saved_invoice) {
-      return res.status(500).send({ status: false, message: "ไม่สามารถบันทึกใบแจ้งหนี้" });
+    if (invoice) {
+      console.log(invoice.paid)
+      console.log(receipt.amount_price)
+      if (invoice.paid && invoice.paid > 0) {
+        invoice.paid -= receipt.amount_price
+      } else {
+        invoice.paid = 0
+      }
+      
+      const index = invoice.status.findIndex(i => i.receipt_id === id || i.receipt === receipt.receipt)
+      if (index === -1) {
+        return res.status(404).send({ status: false, message: "ไม่พบใบเสร็จในใบแจ้งหนี้" });
+      }
+      invoice.status.splice(index, 1)
+      invoice.cur_period -= 1
+  
+      const saved_invoice = await invoice.save()
+      if(!saved_invoice) {
+        return res.status(500).send({ status: false, message: "ไม่สามารถบันทึกใบแจ้งหนี้" });
+      }
     }
 
     return res
