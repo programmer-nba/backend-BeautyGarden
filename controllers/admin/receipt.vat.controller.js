@@ -35,6 +35,22 @@ function formatDate(date) {
   return year + month + day
 }
 
+function plusStartDate (date) {
+  let initialDate = new Date();
+  if (!date) {
+    initialDate = new Date();
+  } else {
+    initialDate = new Date(date);
+  }
+  // Add one day (24 hours) to the initial date
+  initialDate.setDate(initialDate.getDate() + 1);
+
+  // Convert the updated date back to the ISO string format
+  let newDate = initialDate.toISOString();
+
+  return newDate
+}
+
 function formatDocLength(docLength) {
   const length = 
     docLength < 10 ? `00000${docLength}`
@@ -313,6 +329,7 @@ exports.PrintReceiptVat = async (req, res) => {
 
     const quotation1 = await new ReceiptVat({
       ...req.body,
+      start_date: plusStartDate(start_date),
       customer_branch: customer_branch,
       customer_detail: customer_detail,
       signature: signatureData,
@@ -594,7 +611,8 @@ exports.EditReceiptVat = async (req, res) => {
           "total_products.percen_payment": req.body.percen_payment,
           "total_products.after_discoun_payment": total_payment,
           "total_products.total_all_end": total_all_end,
-          start_date: req.body.start_date,
+          //start_date: req.body.start_date,
+          start_date: plusStartDate(req.body.start_date),
           end_date: req.body.end_date,
           remark: req.body.remark,
           project: project,
