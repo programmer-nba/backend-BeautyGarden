@@ -542,7 +542,7 @@ exports.getREPAllfilter = async (req, res) => {
 exports.EditReceiptVat = async (req, res) => {
   try {
     const customer_number = req.params.id;
-    const { product_detail, discount, bank, isSign, signatureID, transfer, product_head, project, amount_price } = req.body;
+    const { product_detail, discount, bank, isSign, isVat, signatureID, sumVat, transfer, product_head, project, amount_price } = req.body;
 
     let total = 0;
     const updatedProductDetail = product_detail.map((product) => {
@@ -590,6 +590,7 @@ exports.EditReceiptVat = async (req, res) => {
       { _id: customer_number },
       {
         $set: {
+          sumVat: sumVat,
           product_head: product_head,
           product_detail: updatedProductDetail,
           total: total,
@@ -631,6 +632,7 @@ exports.EditReceiptVat = async (req, res) => {
               },
           signature: signatureData,
         },
+        isVat: isVat
       },
       { new: true }
     );

@@ -119,7 +119,7 @@ exports.updateChildInvoice = async (req, res) => {
             })
         }
 
-        const index = invoice.invoice_period.findIndex(val => val.child_id === saved_child._id.toString())
+        /* const index = invoice.invoice_period.findIndex(val => val.child_id === saved_child._id.toString())
         
         if (index === -1) {
             return res.status(404).json({
@@ -136,7 +136,7 @@ exports.updateChildInvoice = async (req, res) => {
             return res.status(500).json({
                 message: "can not save invoice parent"
             })
-        }
+        } */
 
         return res.status(200).json({
             message: "success!",
