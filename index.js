@@ -13,6 +13,11 @@ const prefix = "/beautygraden";
 
 app.use(prefix + "/", require("./router/index"));
 
+app.use(prefix + "/", require("./router/document"));
+app.use(prefix + "/", require("./router/order"));
+app.use(prefix + "/", require("./router/product"));
+app.use(prefix + "/", require("./router/client"));
+
 // app.use(prefix+'/log',require("./router/index"))
 
 //สร้างเเอดมิน
