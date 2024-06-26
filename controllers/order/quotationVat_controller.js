@@ -13,7 +13,7 @@ exports.createQuotationVat = async (req, res) => {
         customer,
         products,
         summary,
-        header,
+        from,
         head,
         head_eng,
         date,
@@ -25,6 +25,9 @@ exports.createQuotationVat = async (req, res) => {
         color,
         doc_type,
         signation,
+        isWithholding,
+        withholding_percent,
+        withholding_price
     } = req.body
     try {
         const currentDate = dayjs(new Date()).format("BBMM")
@@ -34,7 +37,7 @@ exports.createQuotationVat = async (req, res) => {
             order: order,
             customer: customer,
             products: products,
-            header: header,
+            from: from,
             head: head,
             head_eng: head_eng,
             no : no,
@@ -48,6 +51,9 @@ exports.createQuotationVat = async (req, res) => {
             color: color,
             doc_type: doc_type,
             signation: signation,
+            isWithholding: isWithholding,
+            withholding_percent: withholding_percent,
+            withholding_price: withholding_price,
         }
         const quotationVat = await QuotationVat.create(newData)
         if (!quotationVat) {
@@ -76,7 +82,7 @@ exports.updateQuotationVat = async (req, res) => {
         customer,
         products,
         summary,
-        header,
+        from,
         head,
         head_eng,
         date,
@@ -98,7 +104,7 @@ exports.updateQuotationVat = async (req, res) => {
                 order: order,
                 customer: customer,
                 products: products,
-                header: header,
+                frpm: from,
                 head: head,
                 head_eng: head_eng,
                 no : no,

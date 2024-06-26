@@ -11,12 +11,14 @@ exports.createOrder = async (req, res) => {
     const {
         customer,
         products,
-        header,
+        from,
         products_price,
         net_price,
         vat_price,
         discount,
-        withholding_price
+        withholding_price,
+        isWithholding,
+        withholding_percent
     } = req.body
     try {
         const currentDate = dayjs(new Date()).format("BBMM")
@@ -26,12 +28,14 @@ exports.createOrder = async (req, res) => {
             no: no,
             customer: customer, // _id
             products: products, // [_id]
-            header: header, // _id
+            from: from, // _id
             products_price: products_price,
             net_price: net_price,
             vat_price: vat_price,
             discount: discount,
             withholding_price: withholding_price,
+            withholding_percent: withholding_percent,
+            isWithholding: isWithholding,
             status: [
                 {
                     name: "กำลังดำเนินการ",

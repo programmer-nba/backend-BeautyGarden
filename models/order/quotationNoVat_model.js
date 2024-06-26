@@ -6,7 +6,7 @@ const quotationNoVatSchema = new Schema(
         order: { type: mongoose.Schema.Types.ObjectId, ref: "Order" },
         customer: { type: Object },
         products: { type: Array, default: [] },
-        header: { type: Object },
+        from: { type: Object },
         head: { type: String, default: "ใบเสนอราคา" },
         head_eng: { type: String, default: "Quotation" },
         no : { type: String },
