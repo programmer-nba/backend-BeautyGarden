@@ -27,7 +27,8 @@ exports.createQuotationVat = async (req, res) => {
         signation,
         isWithholding,
         withholding_percent,
-        withholding_price
+        withholding_price,
+        dueDateChecked
     } = req.body
     try {
         const currentDate = dayjs(new Date()).format("BBMM")
@@ -43,6 +44,7 @@ exports.createQuotationVat = async (req, res) => {
             no : no,
             date: date,
             due_date: due_date,
+            dueDateChecked: dueDateChecked,
             payment_term: payment_term,
             credit: credit,
             summary: summary,
@@ -94,6 +96,7 @@ exports.updateQuotationVat = async (req, res) => {
         color,
         doc_type,
         signation,
+        dueDateChecked,
         no
     } = req.body
     const { id } = req.params
@@ -110,6 +113,7 @@ exports.updateQuotationVat = async (req, res) => {
                 no : no,
                 date: date,
                 due_date: due_date,
+                dueDateChecked: dueDateChecked,
                 payment_term: payment_term,
                 credit: credit,
                 summary: summary,

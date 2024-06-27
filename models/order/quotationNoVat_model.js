@@ -12,6 +12,7 @@ const quotationNoVatSchema = new Schema(
         no : { type: String },
         date: { type: String, default: "" },
         due_date: { type: String, default: "" },
+        dueDateChecked: { type: Boolean, default: false },
         payment_term: { type: String, default: "" },
         credit: { type: Number, default: 0 },
         summary: { type: Array, default: [] },
