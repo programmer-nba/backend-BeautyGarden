@@ -23,7 +23,8 @@ const quotationVatSchema = new Schema(
         signation: { type: Object },
         isWithholding: { type: Boolean, defailt: false },
         withholding_percent: { type: Number, default: null },
-        withholding_price: { type: Number, default: 0 }
+        withholding_price: { type: Number, default: 0 },
+        status: { type: Array, default: [] }
     },
     {
         timestamps: true

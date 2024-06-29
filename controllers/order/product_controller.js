@@ -1,4 +1,4 @@
-const Product = require("../../models/order/order_model")
+const Product = require("../../models/order/product_model")
 
 function padString(value, targetLength, padChar = '0') {
     return value.toString().padStart(targetLength, padChar);
@@ -31,7 +31,7 @@ exports.createProduct = async (req, res) => {
         }
 
         return res.status(200).json({
-            message: "success",
+            message: "created product success",
             status: true,
             data: product
         })

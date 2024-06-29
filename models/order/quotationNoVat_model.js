@@ -21,6 +21,10 @@ const quotationNoVatSchema = new Schema(
         color: { type: String, default: "bg-yellow-200" },
         doc_type: { type: String, default: "ฉบับร่าง" },
         signation: { type: Object },
+        isWithholding: { type: Boolean, defailt: false },
+        withholding_percent: { type: Number, default: null },
+        withholding_price: { type: Number, default: 0 },
+        status: { type: Array, default: [] }
     },
     {
         timestamps: true

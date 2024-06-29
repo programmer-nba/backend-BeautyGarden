@@ -7,6 +7,24 @@ function padString(value, targetLength, padChar = '0') {
     return value.toString().padStart(targetLength, padChar);
 }
 
+exports.getNextQuotationVatNo = async (req, res) => {
+    try {
+        const currentDate = dayjs(new Date()).format("BBMM")
+        const allQuotationVats = await QuotationVat.find()
+        const no = "QT" + currentDate + padString(allQuotationVats.length, 3)
+        return res.status(200).json({
+            status: true,
+            data: no
+        })
+    }
+    catch(err) {
+        console.log(err)
+        return res.status(500).json({
+            message: err.message
+        })
+    }
+}
+
 exports.createQuotationVat = async (req, res) => {
     const {
         order,
@@ -56,6 +74,7 @@ exports.createQuotationVat = async (req, res) => {
             isWithholding: isWithholding,
             withholding_percent: withholding_percent,
             withholding_price: withholding_price,
+            status: [ { name: "pending", createdAt: new Date() } ]
         }
         const quotationVat = await QuotationVat.create(newData)
         if (!quotationVat) {
@@ -97,10 +116,20 @@ exports.updateQuotationVat = async (req, res) => {
         doc_type,
         signation,
         dueDateChecked,
-        no
+        no,
+        isWithholding,
+        withholding_percent,
+        withholding_price,
+        status
     } = req.body
     const { id } = req.params
     try {
+        const existquotationVat = await QuotationVat.findById(id)
+        if (!existquotationVat) {
+            return res.status(404).json({
+                message: "data not found"
+            })
+        }
         const quotationVat = await QuotationVat.findByIdAndUpdate(id, {
             $set: {
                 no: no,
@@ -122,13 +151,14 @@ exports.updateQuotationVat = async (req, res) => {
                 color: color,
                 doc_type: doc_type,
                 signation: signation,
+                isWithholding: isWithholding,
+                withholding_percent: withholding_percent,
+                withholding_price: withholding_price,
+            },
+            $push: {
+                status: { name: status || existquotationVat.status[existquotationVat.status.length-1].name, createdAt: new Date() }
             }
         }, { new: true })
-        if (!quotationVat) {
-            return res.status(404).json({
-                message: "data not found"
-            })
-        }
 
         return res.status(201).json({
             message: "success",
@@ -169,6 +199,81 @@ exports.getQuotationVat = async (req, res) => {
 }
 
 exports.getQuotationsVat = async (req, res) => {
+    const { order } = req.query
+    try {
+        let quotationVats = []
+        if (order) {
+            quotationVats = await QuotationVat.aggregate([
+                { $match: { order: order } },
+                {
+                    $addFields: {
+                        lastStatus: { $arrayElemAt: ["$status", -1] }
+                    }
+                },
+                {
+                    $match: {
+                        "lastStatus.name": { $ne: 'hide' }
+                    }
+                }
+            ])
+        } else {
+            quotationVats = await QuotationVat.aggregate([
+                {
+                    $addFields: {
+                        lastStatus: { $arrayElemAt: ["$status", -1] }
+                    }
+                },
+                {
+                    $match: {
+                        "lastStatus.name": { $ne: 'hide' }
+                    }
+                }
+            ])
+        }
+        return res.status(200).json({
+            message: "success",
+            status: true,
+            data: quotationVats
+        })
+    }
+    catch(err) {
+        console.log(err)
+        return res.status(500).json({
+            message: err.message
+        })
+    }
+}
+
+exports.getQuotationsVatHide = async (req, res) => {
+    try {
+        const quotationVats = await QuotationVat.aggregate([
+            {
+                $addFields: {
+                    lastStatus: { $arrayElemAt: ["$status", -1] }
+                }
+            },
+            {
+                $match: {
+                    "lastStatus.name": 'hide'
+                }
+            }
+        ])
+        
+        return res.status(200).json({
+            message: "success",
+            status: true,
+            data: quotationVats
+        })
+    }
+    catch(err) {
+        console.log(err)
+        return res.status(500).json({
+            message: err.message
+        })
+    }
+}
+
+exports.getQuotationsVatAll = async (req, res) => {
     const { order } = req.query
     try {
         let quotationVats = []

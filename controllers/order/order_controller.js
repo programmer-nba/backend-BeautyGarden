@@ -38,8 +38,8 @@ exports.createOrder = async (req, res) => {
             isWithholding: isWithholding,
             status: [
                 {
-                    name: "กำลังดำเนินการ",
-                    createdAt: dayjs(new Date()).format("dd/mm/BBBB HH:mm")
+                    name: "pending",
+                    createdAt: new Date()
                 }
             ],
         }
@@ -112,14 +112,14 @@ exports.updateOrder = async (req, res) => {
 }
 
 exports.updateOrderStatus = async (req, res) => {
-    const { status_name } = req.body
+    const { status } = req.body
     const { id } = req.params
     try {
         const order = await Order.findByIdAndUpdate(id, {
             $push: { 
                 status: {
-                    name: status_name,
-                    createdAt: dayjs(new Date()).format("dd/mm/BBBB HH:mm")
+                    name: status,
+                    createdAt: new Date()
                 } 
             }
         }, { new: true })
