@@ -120,7 +120,8 @@ exports.updateQuotationVat = async (req, res) => {
         isWithholding,
         withholding_percent,
         withholding_price,
-        status
+        status,
+        refer
     } = req.body
     const { id } = req.params
     try {
@@ -156,7 +157,8 @@ exports.updateQuotationVat = async (req, res) => {
                 withholding_price: withholding_price,
             },
             $push: {
-                status: { name: status || existquotationVat.status[existquotationVat.status.length-1].name, createdAt: new Date() }
+                status: { name: status || existquotationVat.status[existquotationVat.status.length-1].name, createdAt: new Date() },
+                refer: refer
             }
         }, { new: true })
 

@@ -46,7 +46,8 @@ exports.createInvoiceVat = async (req, res) => {
         isWithholding,
         withholding_percent,
         withholding_price,
-        dueDateChecked
+        dueDateChecked,
+        refer
     } = req.body
     try {
         const currentDate = dayjs(new Date()).format("BBMM")
@@ -74,7 +75,8 @@ exports.createInvoiceVat = async (req, res) => {
             isWithholding: isWithholding,
             withholding_percent: withholding_percent,
             withholding_price: withholding_price,
-            status: [ { name: "pending", createdAt: new Date() } ]
+            status: [ { name: "pending", createdAt: new Date() } ],
+            refer: [ refer ]
         }
         const invoiceVat = await InvoiceVat.create(newData)
         if (!invoiceVat) {
@@ -120,7 +122,8 @@ exports.updateInvoiceVat = async (req, res) => {
         isWithholding,
         withholding_percent,
         withholding_price,
-        status
+        status,
+        refer
     } = req.body
     const { id } = req.params
     try {
@@ -156,7 +159,8 @@ exports.updateInvoiceVat = async (req, res) => {
                 withholding_price: withholding_price,
             },
             $push: {
-                status: { name: status || existinvoiceVat.status[existinvoiceVat.status.length-1].name, createdAt: new Date() }
+                status: { name: status || existinvoiceVat.status[existinvoiceVat.status.length-1].name, createdAt: new Date() },
+                refer: refer
             }
         }, { new: true })
 

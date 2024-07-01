@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 const { Schema } = mongoose
 
-const quotationVatSchema = new Schema(
+const receiptVatSchema = new Schema(
     {
         order: { type: mongoose.Schema.Types.ObjectId, ref: "Order" },
         customer: { type: Object },
@@ -18,20 +18,20 @@ const quotationVatSchema = new Schema(
         summary: { type: Array, default: [] },
         remark: { type: String, default: "" },
         payment: { type: String, default: "" },
-        color: { type: String, default: "bg-yellow-200" },
+        color: { type: String, default: "bg-green-200" },
         doc_type: { type: String, default: "ฉบับร่าง" },
-        type: { type: String, default: "quotation" },
         signation: { type: Object },
         isWithholding: { type: Boolean, defailt: false },
         withholding_percent: { type: Number, default: null },
         withholding_price: { type: Number, default: 0 },
         status: { type: Array, default: [] },
-        refer: { type: Array, default: [] }
+        refer: { type: Array, default: [] },
+        type: { type: String, default: "receipt" }
     },
     {
         timestamps: true
     }
 )
 
-const QuotationVat = mongoose.model("QuotationVat", quotationVatSchema)
-module.exports = QuotationVat
+const ReceiptVat = mongoose.model("Receiptvat", receiptVatSchema)
+module.exports = ReceiptVat

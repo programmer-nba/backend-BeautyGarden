@@ -2,6 +2,7 @@ const router = require("express").Router()
 const QuotationVat = require("../../controllers/order/quotationVat_controller.js")
 const QuotationNoVat = require("../../controllers/order/quotationNoVat_controller.js")
 const InvoiceVat = require("../../controllers/order/invoiceVat_controller.js")
+const ReceiptVat = require("../../controllers/order/receiptVat_controller.js")
 
 router.post("/quotation-vat", QuotationVat.createQuotationVat)
 router.put("/quotation-vat/:id", QuotationVat.updateQuotationVat)
@@ -27,5 +28,14 @@ router.get("/invoices-vat-hide", InvoiceVat.getInvoicesVatHide)
 router.get("/invoices-vat-all", InvoiceVat.getInvoicesVatAll)
 router.get("/invoice-vat-nextno", InvoiceVat.getNextInvoiceVatNo)
 router.delete("/invoice-vat/:id", InvoiceVat.deleteInvoiceVat)
+
+router.post("/receipt-vat", ReceiptVat.createReceiptVat)
+router.put("/receipt-vat/:id", ReceiptVat.updateReceiptVat)
+router.get("/receipt-vat/:id", ReceiptVat.getReceiptVat)
+router.get("/receipts-vat", ReceiptVat.getReceiptsVat)
+router.get("/receipts-vat-hide", ReceiptVat.getReceiptsVatHide)
+router.get("/receipts-vat-all", ReceiptVat.getReceiptsVatAll)
+router.get("/receipt-vat-nextno", ReceiptVat.getNextReceiptVatNo)
+router.delete("/receipt-vat/:id", ReceiptVat.deleteReceiptVat)
 
 module.exports = router

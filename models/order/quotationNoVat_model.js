@@ -24,7 +24,9 @@ const quotationNoVatSchema = new Schema(
         isWithholding: { type: Boolean, defailt: false },
         withholding_percent: { type: Number, default: null },
         withholding_price: { type: Number, default: 0 },
-        status: { type: Array, default: [] }
+        status: { type: Array, default: [] },
+        refer: { type: Array, default: [] },
+        type: { type: String, default: "quotation" }
     },
     {
         timestamps: true
