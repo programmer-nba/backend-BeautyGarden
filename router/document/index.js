@@ -1,6 +1,7 @@
 const router = require("express").Router()
 const QuotationVat = require("../../controllers/order/quotationVat_controller.js")
 const QuotationNoVat = require("../../controllers/order/quotationNoVat_controller.js")
+const InvoiceVat = require("../../controllers/order/invoiceVat_controller.js")
 
 router.post("/quotation-vat", QuotationVat.createQuotationVat)
 router.put("/quotation-vat/:id", QuotationVat.updateQuotationVat)
@@ -17,5 +18,14 @@ router.get("/quotation-novat/:id", QuotationNoVat.getQuotationNoVat)
 router.get("/quotations-novat", QuotationNoVat.getQuotationsNoVat)
 router.get("/quotation-novat-nextno", QuotationNoVat.getNextQuotationNoVatNo)
 router.delete("/quotation-novat/:id", QuotationNoVat.deleteQuotationNoVat)
+
+router.post("/invoice-vat", InvoiceVat.createInvoiceVat)
+router.put("/invoice-vat/:id", InvoiceVat.updateInvoiceVat)
+router.get("/invoice-vat/:id", InvoiceVat.getInvoiceVat)
+router.get("/invoices-vat", InvoiceVat.getInvoicesVat)
+router.get("/invoices-vat-hide", InvoiceVat.getInvoicesVatHide)
+router.get("/invoices-vat-all", InvoiceVat.getInvoicesVatAll)
+router.get("/invoice-vat-nextno", InvoiceVat.getNextInvoiceVatNo)
+router.delete("/invoice-vat/:id", InvoiceVat.deleteInvoiceVat)
 
 module.exports = router

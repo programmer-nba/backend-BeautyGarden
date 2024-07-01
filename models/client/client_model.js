@@ -8,6 +8,11 @@ const clientSchema = new Schema(
         tax_no: { type: String, default: "" },
         address: { type: String, default: "" },
         email: { type: String, default: "" },
+        map_url: { type: String, default: "" },
+        contact_person: { type: String, default: "" },
+        tel: { type: String, default: "" },
+        customer_type: { type: String, default: "" },
+        sign_name: { type: String, default: "" },
     },
     {
         timestamps: true

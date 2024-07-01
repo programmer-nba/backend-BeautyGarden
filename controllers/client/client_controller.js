@@ -1,20 +1,35 @@
 const Client = require("../../models/client/client_model")
 
+function padString(value, targetLength, padChar = '0') {
+    return value.toString().padStart(targetLength, padChar);
+}
+
 exports.createClient = async (req, res) => {
     const {
         name,
-        address,
         tax_no,
-        email
+        address,
+        email,
+        map_url,
+        contact_person,
+        tel,
+        customer_type,
+        sign_name,
     } = req.body
     try {
-        const code = "CS"
+        const allClients = await Client.find()
+        const code = "CS" + padString(allClients.length+1, 4)
         const newData = {
             name: name,
-            address: address,
-            tax_no: tax_no,
             code: code,
-            email: email
+            tax_no: tax_no,
+            address: address,
+            email: email,
+            map_url: map_url,
+            contact_person: contact_person,
+            tel: tel,
+            customer_type: customer_type,
+            sign_name: sign_name,
         }
         const client = await Client.create(newData)
         if (!client) {
@@ -40,20 +55,30 @@ exports.createClient = async (req, res) => {
 exports.updateClient = async (req, res) => {
     const {
         name,
-        address,
+        code,
         tax_no,
+        address,
         email,
-        code
+        map_url,
+        contact_person,
+        tel,
+        customer_type,
+        sign_name,
     } = req.body
     const { id } = req.params
     try {
         const client = await Client.findByIdAndUpdate(id, {
             $set: {
                 name: name,
-                address: address,
-                tax_no: tax_no,
                 code: code,
+                tax_no: tax_no,
+                address: address,
                 email: email,
+                map_url: map_url,
+                contact_person: contact_person,
+                tel: tel,
+                customer_type: customer_type,
+                sign_name: sign_name,
             }
         }, { new: true })
         if (!client) {
