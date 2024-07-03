@@ -28,6 +28,7 @@ router.get("/invoices-vat-hide", InvoiceVat.getInvoicesVatHide)
 router.get("/invoices-vat-all", InvoiceVat.getInvoicesVatAll)
 router.get("/invoice-vat-nextno", InvoiceVat.getNextInvoiceVatNo)
 router.delete("/invoice-vat/:id", InvoiceVat.deleteInvoiceVat)
+router.get("/invoice-vat-checkpaid/:id", InvoiceVat.checkPaidStatus)
 
 router.post("/receipt-vat", ReceiptVat.createReceiptVat)
 router.put("/receipt-vat/:id", ReceiptVat.updateReceiptVat)

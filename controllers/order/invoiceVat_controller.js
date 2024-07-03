@@ -1,4 +1,5 @@
 const InvoiceVat = require("../../models/order/invoiceVat_model")
+const ReceiptVat = require("../../models/order/receiptVat_model")
 const dayjs = require("dayjs")
 const buddhistEra = require("dayjs/plugin/buddhistEra");
 dayjs.extend(buddhistEra);
@@ -313,6 +314,47 @@ exports.deleteInvoiceVat = async (req, res) => {
         return res.status(200).json({
             message: "success",
             status: true,
+        })
+    }
+    catch(err) {
+        console.log(err)
+        return res.status(500).json({
+            message: err.message
+        })
+    }
+}
+
+exports.checkPaidStatus = async(req, res) => {
+    const { id } = req.params
+    try {
+        const invoice = await InvoiceVat.findById(id)
+        if (!invoice) {
+            return res.status(404).json({
+                message: "not found"
+            })
+        }
+        const receipt = await ReceiptVat.findOne({ 'refer.refer_id': id })
+        if (!receipt) {
+            return res.status(200).json({
+                data: {
+                    status_name: "pending",
+                    receipt: {}
+                },
+                status: true
+            })
+        }
+
+        return res.status(200).json({
+            data: {
+                status_name: "paid",
+                receipt: {
+                    no: receipt.no,
+                    date: receipt.date,
+                    price: receipt.summary[4]?.show ? receipt.summary[4]?.value : receipt.summary[5]?.show ? receipt.summary[5]?.value : 0,
+                    _id: receipt._id
+                }
+            },
+            status: true
         })
     }
     catch(err) {
