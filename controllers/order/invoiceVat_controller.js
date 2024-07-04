@@ -333,8 +333,8 @@ exports.checkPaidStatus = async(req, res) => {
                 message: "not found"
             })
         }
-        const receipt = await ReceiptVat.findOne({ 'refer.refer_id': id })
-        if (!receipt) {
+        const receipt = await ReceiptVat.findOne({ 'refer.refer_id': id }).sort({ createdAt: -1 })
+        if (!receipt || receipt?.status[receipt?.status?.length-1]?.name === 'hide') {
             return res.status(200).json({
                 data: {
                     status_name: "pending",
