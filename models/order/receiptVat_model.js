@@ -33,5 +33,5 @@ const receiptVatSchema = new Schema(
     }
 )
 
-const ReceiptVat = mongoose.model("Receiptvat", receiptVatSchema)
+const ReceiptVat = mongoose.model("ReceiptVatNew", receiptVatSchema)
 module.exports = ReceiptVat
