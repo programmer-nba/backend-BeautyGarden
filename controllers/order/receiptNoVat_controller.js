@@ -202,7 +202,7 @@ exports.getReceiptNoVat = async (req, res) => {
     }
 }
 
-exports.getReceiptsVat = async (req, res) => {
+exports.getReceiptsNoVat = async (req, res) => {
     const { order } = req.query
     try {
         let receiptNoVats = []
@@ -248,7 +248,7 @@ exports.getReceiptsVat = async (req, res) => {
     }
 }
 
-exports.getReceiptsVatHide = async (req, res) => {
+exports.getReceiptsNoVatHide = async (req, res) => {
     try {
         const receiptNoVats = await ReceiptNoVat.aggregate([
             {
@@ -277,7 +277,7 @@ exports.getReceiptsVatHide = async (req, res) => {
     }
 }
 
-exports.getReceiptsVatAll = async (req, res) => {
+exports.getReceiptsNoVatAll = async (req, res) => {
     const { order } = req.query
     try {
         let receiptNoVats = []
