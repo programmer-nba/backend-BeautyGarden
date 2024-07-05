@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 const { Schema } = mongoose
 
-const receiptVatSchema = new Schema(
+const receiptNoVatSchema = new Schema(
     {
         order: { type: mongoose.Schema.Types.ObjectId, ref: "Order" },
         customer: { type: Object },
@@ -33,5 +33,5 @@ const receiptVatSchema = new Schema(
     }
 )
 
-const ReceiptVat = mongoose.model("ReceiptVatNew", receiptVatSchema)
-module.exports = ReceiptVat
+const ReceiptNoVat = mongoose.model("ReceiptNoVatNew", receiptNoVatSchema)
+module.exports = ReceiptNoVat

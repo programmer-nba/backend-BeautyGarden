@@ -1,4 +1,5 @@
-const QuotationNoVat = require("../../models/order/quotationNoVat_model")
+const InvoiceNoVat = require("../../models/order/invoiceNoVat_model")
+const ReceiptNoVat = require("../../models/order/receiptNoVat_model")
 const dayjs = require("dayjs")
 const buddhistEra = require("dayjs/plugin/buddhistEra");
 dayjs.extend(buddhistEra);
@@ -7,11 +8,11 @@ function padString(value, targetLength, padChar = '0') {
     return value.toString().padStart(targetLength, padChar);
 }
 
-exports.getNextQuotationNoVatNo = async (req, res) => {
+exports.getNextInvoiceNoVatNo = async (req, res) => {
     try {
         const currentDate = dayjs(new Date()).format("BBMM")
-        const allQuotationVats = await QuotationNoVat.find()
-        const no = "QT" + currentDate + padString(allQuotationVats.length, 3)
+        const allInvoiceNoVats = await InvoiceNoVat.find()
+        const no = "IN" + currentDate + padString(allInvoiceNoVats.length+1, 3)
         return res.status(200).json({
             status: true,
             data: no
@@ -25,7 +26,7 @@ exports.getNextQuotationNoVatNo = async (req, res) => {
     }
 }
 
-exports.createQuotationNoVat = async (req, res) => {
+exports.createInvoiceNoVat = async (req, res) => {
     const {
         order,
         customer,
@@ -36,7 +37,6 @@ exports.createQuotationNoVat = async (req, res) => {
         head_eng,
         date,
         due_date,
-        dueDateChecked,
         payment_term,
         credit,
         remark,
@@ -47,11 +47,13 @@ exports.createQuotationNoVat = async (req, res) => {
         isWithholding,
         withholding_percent,
         withholding_price,
+        dueDateChecked,
+        refer
     } = req.body
     try {
         const currentDate = dayjs(new Date()).format("BBMM")
-        const allQuotationNoVats = await QuotationNoVat.find()
-        const no = "QT" + currentDate + padString(allQuotationNoVats.length, 3)
+        const allInvoiceNoVats = await InvoiceNoVat.find()
+        const no = "IN" + currentDate + padString(allInvoiceNoVats.length+1, 3)
         const newData = {
             order: order,
             customer: customer,
@@ -74,10 +76,11 @@ exports.createQuotationNoVat = async (req, res) => {
             isWithholding: isWithholding,
             withholding_percent: withholding_percent,
             withholding_price: withholding_price,
-            status: [{ name: "pending", createdAt: new Date() }]
+            status: [ { name: "pending", createdAt: new Date() } ],
+            refer: [ refer ]
         }
-        const quotationNoVat = await QuotationNoVat.create(newData)
-        if (!quotationNoVat) {
+        const invoiceNoVat = await InvoiceNoVat.create(newData)
+        if (!invoiceNoVat) {
             return res.status(400).json({
                 message: "can not create data"
             })
@@ -86,7 +89,7 @@ exports.createQuotationNoVat = async (req, res) => {
         return res.status(200).json({
             message: "success",
             status: true,
-            data: quotationNoVat
+            data: invoiceNoVat
         })
     }
     catch(err) {
@@ -97,7 +100,7 @@ exports.createQuotationNoVat = async (req, res) => {
     }
 }
 
-exports.updateQuotationNoVat = async (req, res) => {
+exports.updateInvoiceNoVat = async (req, res) => {
     const {
         order,
         customer,
@@ -108,7 +111,6 @@ exports.updateQuotationNoVat = async (req, res) => {
         head_eng,
         date,
         due_date,
-        dueDateChecked,
         payment_term,
         credit,
         remark,
@@ -116,6 +118,7 @@ exports.updateQuotationNoVat = async (req, res) => {
         color,
         doc_type,
         signation,
+        dueDateChecked,
         no,
         isWithholding,
         withholding_percent,
@@ -125,19 +128,19 @@ exports.updateQuotationNoVat = async (req, res) => {
     } = req.body
     const { id } = req.params
     try {
-        const existquotationNoVat = await QuotationNoVat.findById(id)
-        if (!existquotationNoVat) {
+        const existinvoiceNoVat = await InvoiceNoVat.findById(id)
+        if (!existinvoiceNoVat) {
             return res.status(404).json({
                 message: "data not found"
             })
         }
-        const quotationNoVat = await QuotationNoVat.findByIdAndUpdate(id, {
+        const invoiceNoVat = await InvoiceNoVat.findByIdAndUpdate(id, {
             $set: {
                 no: no,
                 order: order,
                 customer: customer,
                 products: products,
-                from: from,
+                frpm: from,
                 head: head,
                 head_eng: head_eng,
                 no : no,
@@ -157,7 +160,7 @@ exports.updateQuotationNoVat = async (req, res) => {
                 withholding_price: withholding_price,
             },
             $push: {
-                status: { name: status || existquotationNoVat.status[existquotationNoVat.status.length-1].name, createdAt: new Date() },
+                status: { name: status || existinvoiceNoVat.status[existinvoiceNoVat.status.length-1].name, createdAt: new Date() },
                 refer: refer
             }
         }, { new: true })
@@ -165,7 +168,7 @@ exports.updateQuotationNoVat = async (req, res) => {
         return res.status(201).json({
             message: "success",
             status: true,
-            data: quotationNoVat
+            data: invoiceNoVat
         })
     }
     catch(err) {
@@ -176,11 +179,11 @@ exports.updateQuotationNoVat = async (req, res) => {
     }
 }
 
-exports.getQuotationNoVat = async (req, res) => {
+exports.getInvoiceNoVat = async (req, res) => {
     const { id } = req.params
     try {
-        const quotationNoVat = await QuotationNoVat.findById(id)
-        if (!quotationNoVat) {
+        const invoiceNoVat = await InvoiceNoVat.findById(id)
+        if (!invoiceNoVat) {
             return res.status(404).json({
                 message: "data not found"
             })
@@ -189,7 +192,7 @@ exports.getQuotationNoVat = async (req, res) => {
         return res.status(200).json({
             message: "success",
             status: true,
-            data: quotationNoVat
+            data: invoiceNoVat
         })
     }
     catch(err) {
@@ -200,12 +203,12 @@ exports.getQuotationNoVat = async (req, res) => {
     }
 }
 
-exports.getQuotationsNoVat = async (req, res) => {
+exports.getInvoicesNoVat = async (req, res) => {
     const { order } = req.query
     try {
-        let quotationVats = []
+        let invoiceNoVats = []
         if (order) {
-            quotationVats = await QuotationVat.aggregate([
+            invoiceNoVats = await InvoiceNoVat.aggregate([
                 { $match: { order: order } },
                 {
                     $addFields: {
@@ -219,7 +222,7 @@ exports.getQuotationsNoVat = async (req, res) => {
                 }
             ])
         } else {
-            quotationNoVats = await QuotationNoVat.aggregate([
+            invoiceNoVats = await InvoiceNoVat.aggregate([
                 {
                     $addFields: {
                         lastStatus: { $arrayElemAt: ["$status", -1] }
@@ -235,7 +238,7 @@ exports.getQuotationsNoVat = async (req, res) => {
         return res.status(200).json({
             message: "success",
             status: true,
-            data: quotationNoVats
+            data: invoiceNoVats
         })
     }
     catch(err) {
@@ -246,9 +249,9 @@ exports.getQuotationsNoVat = async (req, res) => {
     }
 }
 
-exports.getQuotationsNoVatHide = async (req, res) => {
+exports.getInvoicesNoVatHide = async (req, res) => {
     try {
-        const quotationNoVats = await QuotationNoVat.aggregate([
+        const invoiceNoVats = await InvoiceNoVat.aggregate([
             {
                 $addFields: {
                     lastStatus: { $arrayElemAt: ["$status", -1] }
@@ -264,7 +267,7 @@ exports.getQuotationsNoVatHide = async (req, res) => {
         return res.status(200).json({
             message: "success",
             status: true,
-            data: quotationNoVats
+            data: invoiceNoVats
         })
     }
     catch(err) {
@@ -275,19 +278,19 @@ exports.getQuotationsNoVatHide = async (req, res) => {
     }
 }
 
-exports.getQuotationsNoVatAll = async (req, res) => {
+exports.getInvoicesNoVatAll = async (req, res) => {
     const { order } = req.query
     try {
-        let quotationNoVats = []
+        let invoiceNoVats = []
         if (order) {
-            quotationNoVats = await QuotationNoVat.find({ order: order })
+            invoiceNoVats = await InvoiceNoVat.find({ order: order })
         } else {
-            quotationNoVats = await QuotationNoVat.find()
+            invoiceNoVats = await InvoiceNoVat.find()
         }
         return res.status(200).json({
             message: "success",
             status: true,
-            data: quotationNoVats
+            data: invoiceNoVats
         })
     }
     catch(err) {
@@ -298,11 +301,11 @@ exports.getQuotationsNoVatAll = async (req, res) => {
     }
 }
 
-exports.deleteQuotationNoVat = async (req, res) => {
+exports.deleteInvoiceNoVat = async (req, res) => {
     const { id } = req.params
     try {
-        const quotationNoVat = await QuotationNoVat.findByIdAndDelete(id)
-        if (!quotationNoVat) {
+        const invoiceNoVat = await InvoiceNoVat.findByIdAndDelete(id)
+        if (!invoiceNoVat) {
             return res.status(404).json({
                 message: "data not found"
             })
@@ -311,6 +314,47 @@ exports.deleteQuotationNoVat = async (req, res) => {
         return res.status(200).json({
             message: "success",
             status: true,
+        })
+    }
+    catch(err) {
+        console.log(err)
+        return res.status(500).json({
+            message: err.message
+        })
+    }
+}
+
+exports.checkPaidStatus = async(req, res) => {
+    const { id } = req.params
+    try {
+        const invoice = await InvoiceNoVat.findById(id)
+        if (!invoice) {
+            return res.status(404).json({
+                message: "not found"
+            })
+        }
+        const receipt = await ReceiptNoVat.findOne({ 'refer.refer_id': id }).sort({ createdAt: -1 })
+        if (!receipt || receipt?.status[receipt?.status?.length-1]?.name === 'hide') {
+            return res.status(200).json({
+                data: {
+                    status_name: "pending",
+                    receipt: {}
+                },
+                status: true
+            })
+        }
+
+        return res.status(200).json({
+            data: {
+                status_name: "paid",
+                receipt: {
+                    no: receipt.no,
+                    date: receipt.date,
+                    price: receipt.summary[4]?.show ? receipt.summary[4]?.value : receipt.summary[5]?.show ? receipt.summary[5]?.value : 0,
+                    _id: receipt._id
+                }
+            },
+            status: true
         })
     }
     catch(err) {

@@ -17,6 +17,8 @@ router.post("/quotation-novat", QuotationNoVat.createQuotationNoVat)
 router.put("/quotation-novat/:id", QuotationNoVat.updateQuotationNoVat)
 router.get("/quotation-novat/:id", QuotationNoVat.getQuotationNoVat)
 router.get("/quotations-novat", QuotationNoVat.getQuotationsNoVat)
+router.get("/quotations-vat-hide", QuotationNoVat.getQuotationsNoVatHide)
+router.get("/quotations-vat-all", QuotationNoVat.getQuotationsNoVatAll)
 router.get("/quotation-novat-nextno", QuotationNoVat.getNextQuotationNoVatNo)
 router.delete("/quotation-novat/:id", QuotationNoVat.deleteQuotationNoVat)
 
