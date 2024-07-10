@@ -8,7 +8,8 @@ const expenseNoVatSchema = new Schema(
         detail: { type: String, default: "" },
         type: { type: String, default: "none" },
         amount: { type: Number, default: 0 },
-        refer: { type: Object, default: {} }
+        refer: { type: Object, default: {} },
+        date: { type: String, default: new Date() }
     },
     {
         timestamps: true

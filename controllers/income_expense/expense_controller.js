@@ -2,7 +2,7 @@ const Expense = require("../../models/income_expense/expense_model.js")
 
 exports.createExpense = async (req, res) => {
     try {
-        const { name, detail, amount, type, refer, user } = req.body
+        const { name, detail, amount, type, refer, user, date } = req.body
         if (!amount || amount <= 0) {
             return res.status(400).json({
                 message: "require name and amount greater than 0"
@@ -14,7 +14,8 @@ exports.createExpense = async (req, res) => {
             detail: detail,
             amount: amount,
             type: type,
-            refer: refer
+            refer: refer,
+            date: date
         }
         const expense = await Expense.create(newData)
         if (!expense) {
@@ -39,7 +40,7 @@ exports.createExpense = async (req, res) => {
 
 exports.updateExpense = async (req, res) => {
     try {
-        const { name, detail, amount, type, refer } = req.body
+        const { name, detail, amount, type, refer, date } = req.body
         if (!amount || amount <= 0) {
             return res.status(400).json({
                 message: "require amount greater than 0"
@@ -57,7 +58,8 @@ exports.updateExpense = async (req, res) => {
                 detail: detail,
                 amount: amount,
                 type: type,
-                refer: refer
+                refer: refer,
+                date: date
             }
         })
         if (!expense) {

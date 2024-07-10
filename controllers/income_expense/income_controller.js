@@ -3,7 +3,7 @@ const ReceiptVat = require("../../models/order/receiptVat_model")
 
 exports.createIncome = async (req, res) => {
     try {
-        const { name, detail, amount, type, refer, user } = req.body
+        const { name, detail, amount, type, refer, user, date } = req.body
         if (!name || !amount || amount <= 0) {
             return res.status(400).json({
                 message: "require name and amount greater than 0"
@@ -15,7 +15,8 @@ exports.createIncome = async (req, res) => {
             detail: detail,
             amount: amount,
             type: type,
-            refer: refer
+            refer: refer,
+            date: date
         }
         const income = await Income.create(newData)
         if (!income) {
@@ -40,7 +41,7 @@ exports.createIncome = async (req, res) => {
 
 exports.updateIncome = async (req, res) => {
     try {
-        const { name, detail, amount, type, refer } = req.body
+        const { name, detail, amount, type, refer, date } = req.body
         if (!name || !amount || amount <= 0) {
             return res.status(400).json({
                 message: "require name and amount greater than 0"
@@ -58,7 +59,8 @@ exports.updateIncome = async (req, res) => {
                 detail: detail,
                 amount: amount,
                 type: type,
-                refer: refer
+                refer: refer,
+                date: date
             }
         })
         if (!income) {
