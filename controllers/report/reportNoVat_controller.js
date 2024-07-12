@@ -1,9 +1,9 @@
 const dayjs = require("dayjs")
-const QuotationVat = require("../../models/order/quotationVat_model")
-const InvoiceVat = require("../../models/order/invoiceVat_model")
-const ReceiptVat = require("../../models/order/receiptVat_model")
+const QuotationNoVat = require("../../models/order/quotationNoVat_model")
+const InvoiceNoVat = require("../../models/order/invoiceNoVat_model")
+const ReceiptNoVat = require("../../models/order/receiptNoVat_model")
 
-exports.quotationVatAmount = async (req, res) => {
+exports.quotationNoVatAmount = async (req, res) => {
     const { period } = req.query
     try {
         let quotationAmount = 0
@@ -14,7 +14,7 @@ exports.quotationVatAmount = async (req, res) => {
         const startOfMonth = dayjs().startOf('month').toISOString();
         const endOfMonth = dayjs().endOf('month').toISOString();
         if (period === 'currentMonth') {
-            const rawDocs = await QuotationVat.find(
+            const rawDocs = await QuotationNoVat.find(
                 {
                     date: {
                         $gte: startOfMonth,
@@ -34,8 +34,9 @@ exports.quotationVatAmount = async (req, res) => {
             const total_withholding_list = quotations.map(item => item.withholding_price)
             total_withholding = total_withholding_list.reduce((a, b) => a + b, 0)
         } else {
-            const rawDocs = await QuotationVat.find()
+            const rawDocs = await QuotationNoVat.find()
             const quotations = rawDocs.filter(qt => qt.status[qt.status?.length-1]?.name !== 'hide')
+
             quotationAmount = quotations.length
 
             const total_net_list = quotations.map(item => item.summary.find(s => s.id === '_6')?.value )
@@ -69,7 +70,7 @@ exports.quotationVatAmount = async (req, res) => {
     }
 }
 
-exports.invoiceVatAmount = async (req, res) => {
+exports.invoiceNoVatAmount = async (req, res) => {
     const { period } = req.query
     try {
         let invoiceAmount = 0
@@ -80,7 +81,7 @@ exports.invoiceVatAmount = async (req, res) => {
         const startOfMonth = dayjs().startOf('month').toISOString();
         const endOfMonth = dayjs().endOf('month').toISOString();
         if (period === 'currentMonth') {
-            const rawDocs = await InvoiceVat.find(
+            const rawDocs = await InvoiceNoVat.find(
                 {
                     date: {
                         $gte: startOfMonth,
@@ -100,7 +101,7 @@ exports.invoiceVatAmount = async (req, res) => {
             const total_withholding_list = invoices.map(item => item.withholding_price)
             total_withholding = total_withholding_list.reduce((a, b) => a + b, 0)
         } else {
-            const rawDocs = await InvoiceVat.find()
+            const rawDocs = await InvoiceNoVat.find()
             const invoices = rawDocs.filter(qt => qt.status[qt.status?.length-1]?.name !== 'hide')
             invoiceAmount = invoices.length
 
@@ -135,7 +136,7 @@ exports.invoiceVatAmount = async (req, res) => {
     }
 }
 
-exports.receiptVatAmount = async (req, res) => {
+exports.receiptNoVatAmount = async (req, res) => {
     const { period } = req.query
     try {
         let receiptAmount = 0
@@ -146,7 +147,7 @@ exports.receiptVatAmount = async (req, res) => {
         const startOfMonth = dayjs().startOf('month').toISOString();
         const endOfMonth = dayjs().endOf('month').toISOString();
         if (period === 'currentMonth') {
-            const rawDocs = await ReceiptVat.find(
+            const rawDocs = await ReceiptNoVat.find(
                 {
                     date: {
                         $gte: startOfMonth,
@@ -166,7 +167,7 @@ exports.receiptVatAmount = async (req, res) => {
             const total_withholding_list = receipts.map(item => item.withholding_price)
             total_withholding = total_withholding_list.reduce((a, b) => a + b, 0)
         } else {
-            const rawDocs = await ReceiptVat.find()
+            const rawDocs = await ReceiptNoVat.find()
             const receipts = rawDocs.filter(qt => qt.status[qt.status?.length-1]?.name !== 'hide')
             receiptAmount = receipts.length
 

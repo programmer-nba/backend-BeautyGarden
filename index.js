@@ -19,6 +19,7 @@ app.use(prefix, require("./router/product"));
 app.use(prefix, require("./router/client"));
 app.use(prefix, require("./router/income_expense"));
 app.use(prefix + '/report', require("./router/report/reportVat_router"));
+app.use(prefix + '/report', require("./router/report/reportNoVat_router"));
 
 // app.use(prefix+'/log',require("./router/index"))
 
