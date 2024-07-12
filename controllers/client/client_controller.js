@@ -13,6 +13,10 @@ exports.createClient = async (req, res) => {
         map_url,
         contact_person,
         tel,
+        contact_person2,
+        tel2,
+        contact_person3,
+        tel3,
         customer_type,
         sign_name,
     } = req.body
@@ -28,6 +32,10 @@ exports.createClient = async (req, res) => {
             map_url: map_url,
             contact_person: contact_person,
             tel: tel,
+            contact_person2: contact_person2,
+            tel2: tel2,
+            contact_person3: contact_person3,
+            tel3: tel3,
             customer_type: customer_type,
             sign_name: sign_name,
         }
@@ -62,6 +70,10 @@ exports.updateClient = async (req, res) => {
         map_url,
         contact_person,
         tel,
+        contact_person2,
+        tel2,
+        contact_person3,
+        tel3,
         customer_type,
         sign_name,
     } = req.body
@@ -77,6 +89,10 @@ exports.updateClient = async (req, res) => {
                 map_url: map_url,
                 contact_person: contact_person,
                 tel: tel,
+                contact_person2: contact_person2,
+                tel2: tel2,
+                contact_person3: contact_person3,
+                tel3: tel3,
                 customer_type: customer_type,
                 sign_name: sign_name,
             }
