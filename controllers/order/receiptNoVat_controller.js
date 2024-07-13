@@ -47,7 +47,8 @@ exports.createReceiptNoVat = async (req, res) => {
         withholding_percent,
         withholding_price,
         dueDateChecked,
-        refer
+        refer,
+        subPeriod
     } = req.body
     try {
         const currentDate = dayjs(new Date()).format("BBMM")
@@ -76,7 +77,8 @@ exports.createReceiptNoVat = async (req, res) => {
             withholding_percent: withholding_percent,
             withholding_price: withholding_price,
             status: [ { name: "pending", createdAt: new Date() } ],
-            refer: [ refer ]
+            refer: [ refer ],
+            subPeriod: subPeriod
         }
         const receiptNoVat = await ReceiptNoVat.create(newData)
         if (!receiptNoVat) {
@@ -123,7 +125,8 @@ exports.updateReceiptNoVat = async (req, res) => {
         withholding_percent,
         withholding_price,
         status,
-        refer
+        refer,
+        subPeriod
     } = req.body
     const { id } = req.params
     try {
@@ -157,6 +160,7 @@ exports.updateReceiptNoVat = async (req, res) => {
                 isWithholding: isWithholding,
                 withholding_percent: withholding_percent,
                 withholding_price: withholding_price,
+                subPeriod: subPeriod
             },
             $push: {
                 status: { name: status || existreceiptNoVat.status[existreceiptNoVat.status.length-1].name, createdAt: new Date() },

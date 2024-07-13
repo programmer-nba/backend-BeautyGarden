@@ -19,14 +19,15 @@ const invoiceVatSchema = new Schema(
         remark: { type: String, default: "" },
         payment: { type: String, default: "" },
         color: { type: String, default: "bg-blue-200" },
-        doc_type: { type: String, default: "ฉบับร่าง" },
+        doc_type: { type: String, default: "ต้นฉบับ" },
         signation: { type: Object },
         isWithholding: { type: Boolean, defailt: false },
         withholding_percent: { type: Number, default: null },
         withholding_price: { type: Number, default: 0 },
         status: { type: Array, default: [] },
         refer: { type: Array, default: [] },
-        type: { type: String, default: "invoice" }
+        type: { type: String, default: "invoice" },
+        subPeriod: { type: Number, default: 0 }
     },
     {
         timestamps: true

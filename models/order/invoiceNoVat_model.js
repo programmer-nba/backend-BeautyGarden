@@ -26,7 +26,8 @@ const invoiceNoVatSchema = new Schema(
         withholding_price: { type: Number, default: 0 },
         status: { type: Array, default: [] },
         refer: { type: Array, default: [] },
-        type: { type: String, default: "invoice" }
+        type: { type: String, default: "invoice" },
+        subPeriod: { type: Number, default: 0 }
     },
     {
         timestamps: true
