@@ -65,5 +65,7 @@ app.use(prefix + "/costtype", require("./router/costtype/index"));
 
 app.use(prefix + "/picture64", require("./router/admin/picture64.route"));
 
+app.use(prefix, require("./router/dataset"));
+
 const port = process.env.PORT || 4348;
 app.listen(port, console.log(`Listening on port ${port}`));
