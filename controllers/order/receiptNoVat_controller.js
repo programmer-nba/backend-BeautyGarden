@@ -75,7 +75,7 @@ exports.createReceiptNoVat = async (req, res) => {
     try {
         //const currentDate = dayjs(new Date()).format("BBMM")
         //const allReceiptNoVats = await ReceiptNoVat.find()
-        const no = getReceiptNoVatNo(date)
+        const no = await getReceiptNoVatNo(date)
         const newData = {
             order: order,
             customer: customer,

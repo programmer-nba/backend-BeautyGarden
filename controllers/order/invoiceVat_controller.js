@@ -76,7 +76,7 @@ exports.createInvoiceVat = async (req, res) => {
     try {
         //const currentDate = dayjs(new Date()).format("BBMM")
         //const allInvoiceVats = await InvoiceVat.find()
-        const no = getInvoiceVatNo(date)
+        const no = await getInvoiceVatNo(date)
         const newData = {
             order: order,
             customer: customer,

@@ -73,7 +73,7 @@ exports.createQuotationNoVat = async (req, res) => {
     try {
         //const currentDate = dayjs(new Date()).format("BBMM")
         //const allQuotationNoVats = await QuotationNoVat.find()
-        const no = getQuotationNoVatNo(date)
+        const no = await getQuotationNoVatNo(date)
         const newData = {
             order: order,
             customer: customer,
