@@ -10,8 +10,9 @@ function padString(value, targetLength, padChar = '0') {
 exports.getNextQuotationNoVatNo = async (req, res) => {
     try {
         const currentDate = dayjs(new Date()).format("BBMM")
-        const allQuotationVats = await QuotationNoVat.find()
-        const no = "QT" + currentDate + padString(allQuotationVats.length, 3)
+        const allQuotationNoVats = await QuotationNoVat.find()
+        const activeDocs = allQuotationNoVats.filter(doc => doc.status[doc.status?.length-1]?.name !== 'hide')
+        const no = "QT" + currentDate + padString(activeDocs.length, 3)
         return res.status(200).json({
             status: true,
             data: no

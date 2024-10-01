@@ -12,7 +12,8 @@ exports.getNextInvoiceNoVatNo = async (req, res) => {
     try {
         const currentDate = dayjs(new Date()).format("BBMM")
         const allInvoiceNoVats = await InvoiceNoVat.find()
-        const no = "IN" + currentDate + padString(allInvoiceNoVats.length+1, 3)
+        const activeDocs = allInvoiceNoVats.filter(doc => doc.status[doc.status?.length-1]?.name !== 'hide')
+        const no = "IN" + currentDate + padString(activeDocs.length+1, 3)
         return res.status(200).json({
             status: true,
             data: no

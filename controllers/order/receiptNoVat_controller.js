@@ -11,7 +11,8 @@ exports.getNextReceiptNoVatNo = async (req, res) => {
     try {
         const currentDate = dayjs(new Date()).format("BBMM")
         const allReceiptNoVats = await ReceiptNoVat.find()
-        const no = "RE" + currentDate + padString(allReceiptNoVats.length+1, 3)
+        const activeDocs = allReceiptNoVats.filter(doc => doc.status[doc.status?.length-1]?.name !== 'hide')
+        const no = "RE" + currentDate + padString(activeDocs.length+1, 3)
         return res.status(200).json({
             status: true,
             data: no

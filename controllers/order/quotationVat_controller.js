@@ -11,7 +11,8 @@ exports.getNextQuotationVatNo = async (req, res) => {
     try {
         const currentDate = dayjs(new Date()).format("BBMM")
         const allQuotationVats = await QuotationVat.find()
-        const no = "QT" + currentDate + padString(allQuotationVats.length+1, 3)
+        const activeDocs = allQuotationVats.filter(doc => doc.status[doc.status?.length-1]?.name !== 'hide')
+        const no = "QT" + currentDate + padString(activeDocs.length+1, 3)
         return res.status(200).json({
             status: true,
             data: no
