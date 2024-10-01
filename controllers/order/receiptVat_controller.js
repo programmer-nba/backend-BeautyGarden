@@ -9,12 +9,13 @@ function padString(value, targetLength, padChar = '0') {
 
 exports.getNextReceiptVatNo = async (req, res) => {
     try {
-        const currentDate = dayjs(new Date()).format("BBMM")
+        const targetDate = dayjs(new Date()).format("BBMM")
         const allReceiptVats = await ReceiptVat.find()
         const activeDocs = allReceiptVats.filter(doc => doc.status[doc.status?.length-1]?.name !== 'hide')
-        const lastDoc = activeDocs[activeDocs.length-1]
+        const sameDateDocs = activeDocs.filter(doc => doc.no.slice(2, 6) === targetDate)
+        const lastDoc = sameDateDocs[sameDateDocs.length-1]
         const lastNum = parseInt(lastDoc?.no?.slice(-3))
-        const no = "RE" + currentDate + padString(lastNum+1, 3)
+        const no = "RE" + targetDate + padString(lastNum+1, 3)
         return res.status(200).json({
             status: true,
             data: no
@@ -25,6 +26,24 @@ exports.getNextReceiptVatNo = async (req, res) => {
         return res.status(500).json({
             message: err.message
         })
+    }
+}
+
+const getReceiptVatNo = async (date) => {
+    if (!date) return false
+    try {
+        const targetDate = dayjs(new Date(date)).format("BBMM")
+        const allReceiptVats = await ReceiptVat.find()
+        const activeDocs = allReceiptVats.filter(doc => doc.status[doc.status?.length-1]?.name !== 'hide')
+        const sameDateDocs = activeDocs.filter(doc => doc.no.slice(2, 6) === targetDate)
+        const lastDoc = sameDateDocs[sameDateDocs.length-1]
+        const lastNum = parseInt(lastDoc?.no?.slice(-3))
+        const no = "RE" + targetDate + padString(lastNum+1, 3)
+        return no
+    }
+    catch(err) {
+        //console.log(err)
+        return false
     }
 }
 
@@ -54,9 +73,7 @@ exports.createReceiptVat = async (req, res) => {
         subPeriod
     } = req.body
     try {
-        const currentDate = dayjs(new Date()).format("BBMM")
-        const allReceiptVats = await ReceiptVat.find()
-        const no = "RE" + currentDate + padString(allReceiptVats.length+1, 3)
+        const no = await getReceiptVatNo(date)
         const newData = {
             order: order,
             customer: customer,

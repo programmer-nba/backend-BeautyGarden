@@ -10,12 +10,13 @@ function padString(value, targetLength, padChar = '0') {
 
 exports.getNextInvoiceVatNo = async (req, res) => {
     try {
-        const currentDate = dayjs(new Date()).format("BBMM")
+        const targetDate = dayjs(new Date()).format("BBMM")
         const allInvoiceVats = await InvoiceVat.find()
         const activeDocs = allInvoiceVats.filter(doc => doc.status[doc.status?.length-1]?.name !== 'hide')
-        const lastDoc = activeDocs[activeDocs.length-1]
+        const sameDateDocs = activeDocs.filter(doc => doc.no.slice(2, 6) === targetDate)
+        const lastDoc = sameDateDocs[sameDateDocs.length-1]
         const lastNum = parseInt(lastDoc?.no?.slice(-3))
-        const no = "IN" + currentDate + padString(lastNum+1, 3)
+        const no = "IN" + targetDate + padString(lastNum+1, 3)
         return res.status(200).json({
             status: true,
             data: no
@@ -26,6 +27,24 @@ exports.getNextInvoiceVatNo = async (req, res) => {
         return res.status(500).json({
             message: err.message
         })
+    }
+}
+
+const getInvoiceVatNo = async (date) => {
+    if (!date) return false
+    try {
+        const targetDate = dayjs(new Date(date)).format("BBMM")
+        const allInvoiceVats = await InvoiceVat.find()
+        const activeDocs = allInvoiceVats.filter(doc => doc.status[doc.status?.length-1]?.name !== 'hide')
+        const sameDateDocs = activeDocs.filter(doc => doc.no.slice(2, 6) === targetDate)
+        const lastDoc = sameDateDocs[sameDateDocs.length-1]
+        const lastNum = parseInt(lastDoc?.no?.slice(-3))
+        const no = "IN" + targetDate + padString(lastNum+1, 3)
+        return no
+    }
+    catch(err) {
+        //console.log(err)
+        return false
     }
 }
 
@@ -55,9 +74,9 @@ exports.createInvoiceVat = async (req, res) => {
         subPeriod
     } = req.body
     try {
-        const currentDate = dayjs(new Date()).format("BBMM")
-        const allInvoiceVats = await InvoiceVat.find()
-        const no = "IN" + currentDate + padString(allInvoiceVats.length+1, 3)
+        //const currentDate = dayjs(new Date()).format("BBMM")
+        //const allInvoiceVats = await InvoiceVat.find()
+        const no = getInvoiceVatNo(date)
         const newData = {
             order: order,
             customer: customer,
