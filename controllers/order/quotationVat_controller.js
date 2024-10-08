@@ -33,11 +33,11 @@ const getQuotationVatNo = async (date) => {
     if (!date) return false
     try {
         const targetDate = dayjs(new Date(date)).format("BBMM")
-        const allQuotationVats = await QuotationVat.find()
+        const allQuotationVats = await QuotationVat.find({doc_type: {$ne: 'งวดย่อย'}})
         const activeDocs = allQuotationVats.filter(doc => doc.status[doc.status?.length-1]?.name !== 'hide')
         const sameDateDocs = activeDocs.filter(doc => doc.no.slice(2, 6) === targetDate)
         const lastDoc = sameDateDocs[sameDateDocs.length-1]
-        const lastNum = parseInt(lastDoc?.no?.slice(-3))
+        const lastNum = lastDoc?.no ? parseInt(lastDoc?.no?.slice(-3)) : 0
         const no = "QT" + targetDate + padString(lastNum+1, 3)
         return no
     }
@@ -45,6 +45,15 @@ const getQuotationVatNo = async (date) => {
         //console.log(err)
         return false
     }
+}
+
+exports.predictNo = async (req, res) => {
+    const { date } = req.body
+    const no = await getQuotationVatNo(date)
+    return res.status(200).json({
+        status: true,
+        data: no
+    })
 }
 
 exports.createQuotationVat = async (req, res) => {
