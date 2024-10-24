@@ -21,7 +21,7 @@ exports.quotationVatAmount = async (req, res) => {
                         $lte: endOfMonth
                     }
                 }
-            )
+            ).select('-products -__v')
             const quotations = rawDocs.filter(qt => qt.status[qt.status?.length-1]?.name !== 'hide')
             quotationAmount = quotations.length
 
@@ -34,7 +34,7 @@ exports.quotationVatAmount = async (req, res) => {
             const total_withholding_list = quotations.map(item => item.withholding_price)
             total_withholding = total_withholding_list.reduce((a, b) => a + b, 0)
         } else {
-            const rawDocs = await QuotationVat.find()
+            const rawDocs = await QuotationVat.find().select('-products -__v')
             const quotations = rawDocs.filter(qt => qt.status[qt.status?.length-1]?.name !== 'hide')
             quotationAmount = quotations.length
 
@@ -87,7 +87,7 @@ exports.invoiceVatAmount = async (req, res) => {
                         $lte: endOfMonth
                     }
                 }
-            )
+            ).select('-products -__v')
             const invoices = rawDocs.filter(qt => qt.status[qt.status?.length-1]?.name !== 'hide')
             invoiceAmount = invoices.length
 
@@ -100,7 +100,7 @@ exports.invoiceVatAmount = async (req, res) => {
             const total_withholding_list = invoices.map(item => item.withholding_price)
             total_withholding = total_withholding_list.reduce((a, b) => a + b, 0)
         } else {
-            const rawDocs = await InvoiceVat.find()
+            const rawDocs = await InvoiceVat.find().select('-products -__v')
             const invoices = rawDocs.filter(qt => qt.status[qt.status?.length-1]?.name !== 'hide')
             invoiceAmount = invoices.length
 
@@ -153,7 +153,7 @@ exports.receiptVatAmount = async (req, res) => {
                         $lte: endOfMonth
                     }
                 }
-            )
+            ).select('-products -__v')
             const receipts = rawDocs.filter(qt => qt.status[qt.status?.length-1]?.name !== 'hide')
             receiptAmount = receipts.length
 
@@ -166,7 +166,7 @@ exports.receiptVatAmount = async (req, res) => {
             const total_withholding_list = receipts.map(item => item.withholding_price)
             total_withholding = total_withholding_list.reduce((a, b) => a + b, 0)
         } else {
-            const rawDocs = await ReceiptVat.find()
+            const rawDocs = await ReceiptVat.find().select('-products -__v')
             const receipts = rawDocs.filter(qt => qt.status[qt.status?.length-1]?.name !== 'hide')
             receiptAmount = receipts.length
 

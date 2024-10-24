@@ -252,16 +252,25 @@ exports.getQuotationsVat = async (req, res) => {
         } else {
             quotationVats = await QuotationVat.aggregate([
                 {
-                    $addFields: {
-                        lastStatus: { $arrayElemAt: ["$status", -1] }
-                    }
+                  // Add a field to store the last status
+                  $addFields: {
+                    lastStatus: { $arrayElemAt: ['$status', -1] } // Get the last element of the 'status' array
+                  }
                 },
                 {
-                    $match: {
-                        "lastStatus.name": { $ne: 'hide' }
-                    }
+                  // Filter documents where the last status is not 'hide'
+                  $match: {
+                    'lastStatus.name': { $ne: 'hide' } // Match where last status name is not 'hide'
+                  }
+                },
+                {
+                  // Exclude the '__v' and 'products' fields from the results
+                  $project: {
+                    __v: 0, // Exclude '__v'
+                    products: 0 // Exclude 'products'
+                  }
                 }
-            ])
+              ]);
         }
         return res.status(200).json({
             message: "success",

@@ -239,37 +239,29 @@ exports.getInvoiceNoVat = async (req, res) => {
 }
 
 exports.getInvoicesNoVat = async (req, res) => {
-    const { order } = req.query
     try {
-        let invoiceNoVats = []
-        if (order) {
-            invoiceNoVats = await InvoiceNoVat.aggregate([
-                { $match: { order: order } },
-                {
-                    $addFields: {
-                        lastStatus: { $arrayElemAt: ["$status", -1] }
-                    }
-                },
-                {
-                    $match: {
-                        "lastStatus.name": { $ne: 'hide' }
-                    }
-                }
-            ])
-        } else {
-            invoiceNoVats = await InvoiceNoVat.aggregate([
-                {
-                    $addFields: {
-                        lastStatus: { $arrayElemAt: ["$status", -1] }
-                    }
-                },
-                {
-                    $match: {
-                        "lastStatus.name": { $ne: 'hide' }
-                    }
-                }
-            ])
-        }
+        let invoiceNoVats = await InvoiceNoVat.aggregate([
+            {
+              // Add a field to store the last status
+              $addFields: {
+                lastStatus: { $arrayElemAt: ['$status', -1] } // Get the last element of the 'status' array
+              }
+            },
+            {
+              // Filter documents where the last status is not 'hide'
+              $match: {
+                'lastStatus.name': { $ne: 'hide' } // Match where last status name is not 'hide'
+              }
+            },
+            {
+              // Exclude the '__v' and 'products' fields from the results
+              $project: {
+                __v: 0, // Exclude '__v'
+                products: 0 // Exclude 'products'
+              }
+            }
+          ]);
+        
         return res.status(200).json({
             message: "success",
             status: true,
